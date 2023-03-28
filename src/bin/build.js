@@ -4,20 +4,16 @@ const getEntryFile = require('./util/get-entry-file');
 const simpleHtmlIndex = require('simple-html-index');
 const htmlInjectMeta = require('html-inject-meta');
 const minifyStream = require('minify-stream');
-const indexhtmlify = require('indexhtmlify');
 const hyperstream = require('hyperstream');
 const browserify = require('browserify');
 const glslify = require('glslify');
 const mkdirp = require('mkdirp');
 const assert = require('assert');
 const babelify = require('babelify');
-//const es2040 = require('es2040');
-const Idyll = require('idyll');
 const path = require('path');
-const rmrf = require('rimraf');
-const brfs = require('brfs');
 const cpr = require('cpr');
 const fs = require('fs');
+import {compile} from '@mdx-js/mdx'
 
 var projectDir = process.argv[2];
 if (!/^src\//.test(projectDir)) projectDir = path.join('pages', projectDir);
@@ -27,6 +23,11 @@ const outputDir = projectDir.replace(/^pages\//, '../');
 console.log('Building ', projectDir);
 
 switch (entryFile.type) {
+  case 'mdx':
+  case 'md':
+    const compiled = await compile(await fs.readFile(entryFile))
+    
+    break;
   case 'html':
     break;
   case 'js':
@@ -51,8 +52,7 @@ switch (entryFile.type) {
     var b = browserify(path.join(__dirname, '..', projectDir, entryFile.name), {
       transform: [
         glslify,
-        [babelify, {presets: ["@babel/preset-env"]}],
-        brfs
+        [babelify, {presets: ["@babel/preset-env"]}]
       ],
       debug: false
     });
@@ -97,8 +97,6 @@ switch (entryFile.type) {
       }
     });
 
-    break;
-  case 'md':
     break;
   default:
     assert(entryFile.type, 'Unknown filetype for file "' + entryFile.name + '"');

@@ -1,0 +1,16 @@
+{
+  "dependencies": {
+    "@mdx-js/mdx": "^2.3.0",
+    "assert": "^2.0.0",
+    "babelify": "^10.0.0",
+    "browserify": "^17.0.0",
+    "budo": "^11.8.4",
+    "cpr": "^3.0.1",
+    "glslify": "^7.1.1",
+    "html-inject-meta": "^3.0.0",
+    "hyperstream": "^1.2.2",
+    "minify-stream": "^2.1.0",
+    "mkdirp": "^2.1.6",
+    "simple-html-index": "^1.5.0"
+  }
+}

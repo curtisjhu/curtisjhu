@@ -1,10 +1,11 @@
 {
-  "name": "src",
+  "name": "curtisjhu",
   "version": "1.0.0",
-  "description": "",
+  "description": "personal website",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "start": "node bin/watch.js",
+    "build": "node bin/build.js"
   },
   "keywords": [],
   "author": "",
