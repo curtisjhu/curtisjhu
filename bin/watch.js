@@ -1,18 +1,16 @@
 #!/usr/bin/env node
 
-const getEntryFile = require('./util/get-entry-file');
-const glslify = require('glslify');
-const assert = require('assert');
-const babelify = require('babelify');
-const path = require('path');
-const fs = require('fs');
-const budo = require('budo');
-const cssLoader = require("css-loader");
-const styleLoader = require("style-loader");
+const getEntryFile = require("./util/get-entry-file");
+const glslify = require("glslify");
+const assert = require("assert");
+const babelify = require("babelify");
+const path = require("path");
+const fs = require("fs");
+const budo = require("budo");
 
 var projectDir = process.argv[2];
 if (!projectDir) {
-    throw new Error("Must provide filepath")
+    throw new Error("Must provide filepath");
 }
 
 if (!/^pages\//.test(projectDir)) projectDir = path.join("pages", projectDir);
@@ -25,8 +23,10 @@ switch (entryFile.type) {
     case "html":
         console.log("Serving as raw HTML");
 
+        var projectDest = path.join(__dirname, "..", projectDir);
+        
         budo(null, {
-            dir: path.join(__dirname, "..", projectDir),
+            dir: projectDest,
             live: true,
             open: true,
             host: host,
@@ -53,9 +53,13 @@ switch (entryFile.type) {
             browserify: {
                 transform: [
                     [glslify],
-                    [babelify, { presets: ["@babel/preset-env", "@babel/preset-react"] }],
+                    [
+                        babelify,
+                        {
+                            babelrc: true
+                        },
+                    ],
                 ],
-                
             },
         });
         break;

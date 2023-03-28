@@ -14,7 +14,9 @@ const getExt = (filename) => path.extname(filename).replace(/^\./,'').toLowerCas
 module.exports = function (projectDir) {
   assert(projectDir, 'Expected project directory but got ' + projectDir);
 
-  const indexFiles = fs.readdirSync(path.join(__dirname, '..', '..', projectDir))
+  const relativeDest = path.join(__dirname, '..', '..', projectDir);
+
+  const indexFiles = fs.readdirSync(relativeDest)
     .filter((filename) => /^index\./.test(filename))
     .sort((a, b) => (FILETYPE_PRIORITY[getExt(b)] || 0) - (FILETYPE_PRIORITY[getExt(a)] || 0));
 
@@ -22,6 +24,6 @@ module.exports = function (projectDir) {
 
   return {
     type: getExt(indexFiles[0]),
-    name: indexFiles[0]
+    name: path.resolve(path.join(relativeDest, indexFiles[0]))
   }
 };
