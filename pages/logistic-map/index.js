@@ -41,7 +41,7 @@ const drawTriangle = regl({
 })
 
 // regl.frame() wraps requestAnimationFrame and also handles viewport changes
-regl.frame(({ time } : { time: number}) => {
+regl.frame(({ time }) => {
   // clear contents of the drawing buffer
   regl.clear({
     color: [0, 0, 0, 0],

@@ -64,7 +64,7 @@ switch (entryFile.type) {
     var metaForInject = {
       name: metadata.title,
       description: metadata.description,
-      author: metadata.author ||  "Ricky Reusser",
+      author: metadata.author ||  "Curtis Hu",
     };
 
     if (metadata.image) {
