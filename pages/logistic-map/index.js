@@ -16,9 +16,10 @@ const regl = require('regl')({
 });
 const { h, render } = require("preact");
 
-const description = h('p', null, "Drag your mouse, scroll slowly, wait until the lines concentrate");
+const link = h('a', { href: "/" }, "Learn more");
+const description = h('p', null, "Drag your mouse, zoom slowly, wait until the lines concentrate");
 const title = h('h2', null, "Logistic Map")
-const div = h("div", { style: "z-index: 9999; position: absolute; margin: 10px;", children: [title, description]});
+const div = h("div", { style: "z-index: 9999; position: absolute; margin: 10px;", children: [title, description, link]});
 
 render(div, document.getElementsByTagName("body")[0])
 
