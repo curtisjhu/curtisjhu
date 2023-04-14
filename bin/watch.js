@@ -8,6 +8,7 @@ const path = require("path");
 const fs = require("fs");
 const budo = require("budo");
 
+
 var projectDir = process.argv[2];
 if (!projectDir) {
     throw new Error("Must provide filepath");
@@ -32,6 +33,11 @@ switch (entryFile.type) {
             host: host,
             port: port,
             stream: process.stdout,
+            browserify: {
+                transform: [
+                    [babelify, { babelrc: true }]
+                ]
+            }
         });
 
         break;
@@ -42,7 +48,8 @@ switch (entryFile.type) {
         var hasCss = fs.existsSync(
             path.join(__dirname, "..", projectDir, "index.css")
         );
-        budo(path.join(__dirname, "..", projectDir, entryFile.name), {
+        
+        budo(entryFile.name, {
             dir: path.join(__dirname, "..", projectDir),
             live: true,
             open: true,
@@ -50,6 +57,8 @@ switch (entryFile.type) {
             port: port,
             css: hasCss ? "index.css" : null,
             stream: process.stdout,
+            debug: true,
+            verbose: true,
             browserify: {
                 transform: [
                     [glslify],
