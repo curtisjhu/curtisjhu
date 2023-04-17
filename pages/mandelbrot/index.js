@@ -69,17 +69,17 @@ const draw = regl({
       for( int m=0; m<AA; m++ )
       for( int n=0; n<AA; n++ )
       {
-        vec2 p = (-iResolution.xy + 2.0*(fragCoord.xy+vec2(float(m),float(n))/float(AA)))/iResolution.y;
-        p = fragCoord;
+        vec2 temp = vec2(float(m),float(n))/float(AA);
+        vec2 p = fragCoord * iResolution.xy /iResolution.y;
         float w = float(AA*m+n);
         float time = iTime + 0.5*(1.0/24.0)*w/float(AA*AA);
     #else    
-        vec2 p = (2.0*fragCoord.xy - iResolution.xy)/iResolution.y;
+        vec2 p = fragCoord * iResolution.xy/iResolution.y;
         float time = iTime;
     #endif
       
         // zoom in and out motion
-        float zoo = 0.62 + 0.42*cos(.1*time);
+        float zoo = 0.63 + 0.42*cos(0.1*time);
 
         // rotating angles
         float coa = cos( 0.15*(1.0-zoo)*time );
@@ -108,7 +108,7 @@ const draw = regl({
 	  varying vec2 fragCoord;
 
     void main() {
-		  fragCoord = position;
+		fragCoord = position;
     	gl_Position = vec4(position, 0, 1);
     }`,
 
@@ -125,7 +125,10 @@ const draw = regl({
 
     uniforms: {
         iTime: (ctx) => ctx.time,
-        iResolution: (ctx) => [ctx.viewportWidth, ctx.viewportHeight, 0],
+        iResolution: (ctx) => {
+            console.log(ctx.viewportHeight, ctx.viewportWidth)
+            return [ctx.viewportWidth, ctx.viewportHeight, 0]
+        },
         primary: regl.prop("primary"),
     },
 
