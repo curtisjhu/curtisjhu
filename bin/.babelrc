@@ -1,0 +1,20 @@
+{
+    "presets": [
+        ["@babel/preset-env"],
+        "@babel/preset-react",
+    ],
+    "sourceMaps": true,
+    "plugins": [
+        [
+            "@babel/plugin-transform-react-jsx",
+            {
+                "pragma": "h",
+                "pragmaFrag": "Fragment"
+            },
+            
+        ],
+        "@babel/plugin-syntax-jsx",
+        "@babel",
+        "babel-plugin-postcss"
+    ],
+}

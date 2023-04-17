@@ -7,7 +7,7 @@ const babelify = require("babelify");
 const path = require("path");
 const fs = require("fs");
 const budo = require("budo");
-
+const esbuild = require("esbuild");
 
 var projectDir = process.argv[2];
 if (!projectDir) {
@@ -25,7 +25,16 @@ switch (entryFile.type) {
         console.log("Serving as raw HTML");
 
         var projectDest = path.join(__dirname, "..", projectDir);
-        
+
+        esbuild.buildSync({
+            entryPoints: [path.join(projectDest, "main.js")],
+            bundle: true,
+            outfile: path.join(projectDest, "bundle.js"),
+            minify: true,
+            treeShaking: true,
+            splitting: true,
+        });
+
         budo(null, {
             dir: projectDest,
             live: true,
@@ -34,21 +43,41 @@ switch (entryFile.type) {
             port: port,
             stream: process.stdout,
             browserify: {
-                transform: [
-                    [babelify, { babelrc: true }]
-                ]
-            }
+                transform: [[babelify]],
+            },
         });
 
         break;
 
+    case "jsx":
+        console.log("Serving for jsx");
+
+        var projectDest = path.join(__dirname, "..", projectDir);
+
+        esbuild
+            .context({
+                entryPoints: [path.join(projectDest, "index.jsx")],
+                outdir: projectDest,
+                bundle: true,
+                minify: true,
+                treeShaking: true,
+            })
+            .then((context) => {
+                console.log("Serving on port 4000");
+                context.serve({
+                    port: 4000,
+                    host: "localhost",
+                });
+            });
+
+        break;
     case "js":
         console.log("Serving as JavaScript");
 
         var hasCss = fs.existsSync(
             path.join(__dirname, "..", projectDir, "index.css")
         );
-        
+
         budo(entryFile.name, {
             dir: path.join(__dirname, "..", projectDir),
             live: true,
@@ -60,15 +89,7 @@ switch (entryFile.type) {
             debug: true,
             verbose: true,
             browserify: {
-                transform: [
-                    [glslify],
-                    [
-                        babelify,
-                        {
-                            babelrc: true
-                        },
-                    ],
-                ],
+                transform: [[glslify], [babelify]],
             },
         });
         break;

@@ -21,7 +21,7 @@ const description = h('p', null, "Drag your mouse, zoom slowly, wait until the l
 const title = h('h2', null, "Logistic Map")
 const div = h("div", { style: "z-index: 9999; position: absolute; margin: 10px;", children: [title, description, link]});
 
-render(div, document.getElementsByTagName("body")[0])
+render(div, document.body)
 
 function run (regl) {
   let accum = 0;
