@@ -3,11 +3,11 @@ const fs = require('fs');
 const path = require('path');
 
 const FILETYPE_PRIORITY = {
+  jsx: 5,
+  js: 4,
   mdx: 3,
-  md: 3,
-  html: 2,
-  jsx: 1,
-  js: 1
+  md: 2,
+  html: 1,
 };
 
 const getExt = (filename) => path.extname(filename).replace(/^\./,'').toLowerCase();

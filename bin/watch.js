@@ -19,12 +19,11 @@ const entryFile = getEntryFile(projectDir);
 
 const port = 4000;
 const host = "localhost";
+var projectDest = path.join(__dirname, "..", projectDir);
 
 switch (entryFile.type) {
     case "html":
         console.log("Serving as raw HTML");
-
-        var projectDest = path.join(__dirname, "..", projectDir);
 
         esbuild.buildSync({
             entryPoints: [path.join(projectDest, "main.js")],
@@ -52,34 +51,32 @@ switch (entryFile.type) {
     case "jsx":
         console.log("Serving for jsx");
 
-        var projectDest = path.join(__dirname, "..", projectDir);
-
         esbuild
             .context({
                 entryPoints: [path.join(projectDest, "index.jsx")],
-                outdir: projectDest,
                 bundle: true,
                 minify: true,
                 treeShaking: true,
+                outfile: path.join(projectDest, "bundle.js"),
             })
             .then((context) => {
                 console.log("Serving on port 4000");
+                
                 context.serve({
-                    port: 4000,
-                    host: "localhost",
+                    port: port,
+                    host: host,
+                    servedir: projectDest,
                 });
             });
-
         break;
+
     case "js":
         console.log("Serving as JavaScript");
 
-        var hasCss = fs.existsSync(
-            path.join(__dirname, "..", projectDir, "index.css")
-        );
+        var hasCss = fs.existsSync(path.join(projectDest, "index.css"));
 
         budo(entryFile.name, {
-            dir: path.join(__dirname, "..", projectDir),
+            dir: projectDest,
             live: true,
             open: true,
             host: host,
@@ -91,6 +88,33 @@ switch (entryFile.type) {
             browserify: {
                 transform: [[glslify], [babelify]],
             },
+        });
+        break;
+    case "mdx":
+        console.log("Serving mdx...");
+
+        if (!fs.existsSync(path.join(projectDest, "index.html"))) {
+            throw new Error("NEEDS HTML FILE TO SERVE")
+        }
+
+        import("@mdx-js/esbuild").then((mdx) => {
+            esbuild
+                .context({
+                    entryPoints: [path.join(projectDest, "index.mdx")],
+                    outfile: path.join(projectDest, "bundle.js"),
+                    plugins: [mdx.default({})],
+                    bundle: true,
+                    minify: true,
+                    treeShaking: true,
+                })
+                .then((context) => {
+                    console.log("Serving on port 4000");
+                    context.serve({
+                        port: port,
+                        host: host,
+                        servedir: projectDest,
+                    });
+                });
         });
         break;
 

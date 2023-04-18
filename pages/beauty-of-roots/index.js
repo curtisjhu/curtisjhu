@@ -24,7 +24,6 @@ function run(regl) {
         zoom: 2,
         colormap: "cdom",
     };
-    settings.n = settings.degree + 1;
 
     function randn() {
         // The Marsaglia Polar method
@@ -64,7 +63,7 @@ function run(regl) {
     function compute() {
         for (var j = 0; j < settings.batchSize; j++) {
             if (settings.gaussianRandom) {
-                for (var i = 1; i < settings.n; i++) {
+                for (var i = 1; i < settings.degree + 1; i++) {
                     coeffs[0][i] = settings.realRange
                         ? Math.round(randn() * settings.realRange)
                         : 0;
@@ -73,7 +72,7 @@ function run(regl) {
                         : 0;
                 }
             } else {
-                for (var i = 1; i < settings.n; i++) {
+                for (var i = 1; i < settings.degree + 1; i++) {
                     coeffs[0][i] = settings.realRange
                         ? Math.floor(
                               Math.random() * (settings.realRange * 2 + 1)
@@ -89,32 +88,27 @@ function run(regl) {
             coeffs[0][0] = 1;
             coeffs[1][0] = 0;
             var zeros = findRoots(coeffs[0], coeffs[1]);
-            for (var i = 0; i < settings.n; i++) {
-                buf[j * settings.n * 2 + 2 * i] = zeros[0][i];
-                buf[j * settings.n * 2 + 2 * i + 1] = zeros[1][i];
+            for (var i = 0; i < settings.degree + 1; i++) {
+                buf[j * (settings.degree + 1) * 2 + 2 * i] = zeros[0][i];
+                buf[j * (settings.degree + 1) * 2 + 2 * i + 1] = zeros[1][i];
             }
         }
-        points(buf);
+        points({
+            data: buf
+        });
+        console.log(buf)
         batchCnt +=
             (settings.useSymmetry ? 4 : 1) * (settings.batchSize * settings.n);
     }
 
-    const dat = require("dat.gui");
-    const gui = new dat.GUI({
-        name: "Beauty of Roots",
-        autoPlace: true,
+    const tweakpane = require("tweakpane");
+    const gui = new tweakpane.Pane().addFolder({
+        title: "Beauty of Roots",
+        expanded: true
     });
 
-    gui.add(settings, "degree", 1, 5, 1).onFinishChange((val) => {
-        clear();
-        buf = new Float32Array(settings.n * 2 * settings.batchSize);
-        coeffs = [[], []];
-        settings.n = settings.degree + 1;
-    });
-    gui.add(settings, "batchSize", 100, 1000, 10).onFinishChange((val) => {
-        buf = new Float32Array(settings.n * 2 * settings.batchSize);
-        coeffs = [[], []];
-    });
+    gui.addInput(settings, "degree", { min: 1, max: 5, step: 1});
+    gui.addInput(settings, "batchSize", { min: 100, max: 1000, step: 10 });
 
     var fbo = regl.framebuffer({
         width: regl._gl.canvas.width,
@@ -194,7 +188,7 @@ function run(regl) {
         },
         attributes: { xy: points },
         primitive: "points",
-        count: () => settings.n * settings.batchSize,
+        count: () => points.length,
     });
 
     var setParams = regl({
