@@ -12,11 +12,6 @@
   },
   "author": "curtisjhu",
   "license": "ISC",
-  "targets": {
-    "default": {
-      "distDir": "./output"
-    }
-  },
   "dependencies": {
     "@mdx-js/esbuild": "^2.3.0",
     "dat.gui": "^0.7.9",
@@ -36,7 +31,8 @@
     "regl": "^2.1.0",
     "showdown": "^2.1.0",
     "three": "^0.151.3",
-    "tweakpane": "^3.1.7"
+    "tweakpane": "^3.1.7",
+    "tweakpane-plugin-infodump": "github:doersino/tweakpane-plugin-infodump"
   },
   "devDependencies": {
     "concurrently": "^7.6.0"

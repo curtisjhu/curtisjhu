@@ -15,8 +15,8 @@ export const WINDOW = {
         max: 3
     },
     y: {
-        min: -2,
-        max: 2
+        min: -3,
+        max: 3
     },
     z: {
         min: -3,
@@ -25,7 +25,7 @@ export const WINDOW = {
 }
 
 export const FUNCTIONS = {
-    x: "t^3 - 3*t",
-    y: "t^4 - 4*t^2",
-    z: "(t^5 - 10*t)/5"
+    x: "cos(t)",
+    y: "sin(t)",
+    z: "0"
 }

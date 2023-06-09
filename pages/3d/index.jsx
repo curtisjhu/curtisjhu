@@ -7,7 +7,11 @@ import { FUNCTIONS, SETTINGS, WINDOW } from "./consts";
 GUI(FUNCTIONS, WINDOW, SETTINGS);
 
 var mathbox = MathBox.mathBox({
-  plugin: ['core', 'controls', 'cursor', 'mathbox'],
+    element: document.body,
+    controls: {
+        klass: THREE.OrbitControls,
+    },
+    // plugin: ["core", "controls", "cursor", "mathbox"],
 });
 
 if (mathbox.fallback) throw "WebGL not supported";
@@ -15,87 +19,74 @@ if (mathbox.fallback) throw "WebGL not supported";
 var three = mathbox.three;
 three.renderer.setClearColor(new THREE.Color(0xffffff), 1.0);
 
-
 // setting proxy:true allows interactive controls to override base position
 var camera = mathbox.camera({
     proxy: true,
-    position: [2, 1, 2],
+    position: [2, 2, 2],
+    lookAt: [0, 0, 0]
 });
 
 // save as variable to adjust later
-var view = mathbox.cartesian({
-    range: [
-        [WINDOW.x.min, WINDOW.x.max],
-        [WINDOW.y.min, WINDOW.y.max],
-        [WINDOW.z.min, WINDOW.z.max],
-    ],
-    scale: [2, 1, 2],
-});
-
-
-view.grid({ axes: [1, 3], width: 2, divideX: 20, divideY: 20, opacity: 0.25 });
+var view = mathbox
+    .cartesian({
+        range: [
+            [WINDOW.x.min, WINDOW.x.max],
+            [WINDOW.y.min, WINDOW.y.max],
+            [WINDOW.z.min, WINDOW.z.max],
+        ],
+        scale: [2, 1, 2],
+    })
 
 export const AXES = {
     x: {
-        axis: view.axis({ axis: 1, width: 8, detail: 40, color: "red" }),
-        scale: view.scale({ axis: 1, divide: 10, nice: true, zero: true }),
-        ticks: view.ticks({ width: 5, size: 15, color: "red", zBias: 2 }),
+        axis: view.axis({ axis: 1, width: 8, detail: 40, color: "grey" }),
+        scale: view.scale({ axis: 1, divide: 5, nice: true, zero: true }),
+        ticks: view.ticks({ width: 5, size: 15, color: "grey", zBias: 2 }),
         format: view.format({
             digits: 2,
             font: "Arial",
             weight: "bold",
             style: "normal",
-            // source: AXES.x.scale,
         }),
         labels: view.label({
-            color: "red",
+            color: "black",
             zIndex: 0,
             offset: [0, -20],
-            // points: AXES.x.scale,
-            // text: AXES.x.format,
-        })
-
+        }),
     },
     y: {
-        axis: view.axis({ axis: 3, width: 8, detail: 40, color: "green" }),
-        scale: view.scale({ axis: 3, divide: 5, nice: true, zero: false }),
-        ticks: view.ticks({ width: 5, size: 15, color: "green", zBias: 2 }),
+        axis: view.axis({ axis: 2, width: 8, detail: 40, color: "grey" }),
+        scale: view.scale({ axis: 2, divide: 5, nice: true, zero: false }),
+        ticks: view.ticks({ width: 5, size: 15, color: "grey", zBias: 2 }),
         format: view.format({
             digits: 2,
             font: "Arial",
             weight: "bold",
             style: "normal",
-            // source: AXES.y.scale,
         }),
         labels: view.label({
-            color: "green",
+            color: "black",
             zIndex: 0,
             offset: [0, 0],
-            // points: AXES.y.scale,
-            // text: AXES.y.format,
-        })
+        }),
     },
     z: {
-        axis: view.axis({ axis: 2, width: 8, detail: 40, color: "blue" }),
-        scale: view.scale({ axis: 2, divide: 5, nice: true, zero: false }),
-        ticks: view.ticks({ width: 5, size: 15, color: "blue", zBias: 2 }),
+        axis: view.axis({ axis: 3, width: 8, detail: 40, color: "grey" }),
+        scale: view.scale({ axis: 3, divide: 5, nice: true, zero: false }),
+        ticks: view.ticks({ width: 5, size: 15, color: "grey", zBias: 2 }),
         format: view.format({
             digits: 2,
             font: "Arial",
             weight: "bold",
             style: "normal",
-            // source: AXES.z.scale,
         }),
         labels: view.label({
-            color: "blue",
+            color: "black",
             zIndex: 0,
             offset: [0, 0],
-            // points: AXES.z.scale,
-            // text: AXES.z.format,
-        })
-    }
-}
-
+        }),
+    },
+};
 
 var updateGraphFunc = function () {
     var x = Parser.parse(FUNCTIONS.x).toJSFunction(["t"]);
@@ -142,11 +133,11 @@ var updateGraphFunc = function () {
         var N = normal(u).multiplyScalar(tubeRadius);
         var B = binormal(u).multiplyScalar(tubeRadius);
 
-        var M = P.add(N.multiplyScalar(Math.cos(v))).add(
-            B.multiplyScalar(Math.sin(v))
-        );
+        // var M = P.add(N.multiplyScalar(Math.cos(v))).add(
+        //     B.multiplyScalar(Math.sin(v))
+        // );
 
-        emit(M.x, M.y, M.z);
+        emit(P.x, P.y, P.z);
     });
 
     view.set("range", [
@@ -169,33 +160,8 @@ var updateGraphFunc = function () {
             emit(color.r, color.g, color.b, 1.0);
         });
     }
-
 };
 
-// curveData, curveView
-var curveDomain = mathbox.cartesian({
-    range: [[SETTINGS.t.min, SETTINGS.t.max]],
-});
-
-var curveData = curveDomain.interval({
-    width: SETTINGS.segments,
-    expr: function (emit, t, i, time) {
-        var dt = (SETTINGS.t.max - SETTINGS.t.min) / SETTINGS.segments;
-        // head, then tail.
-        emit(Math.cos(t), t, Math.sin(t));
-        emit(Math.cos(t - dt), t - dt, Math.sin(t - dt));
-    },
-    channels: 3, // 3D space
-    items: 2, // emit two vertices per line segment; required by view.
-});
-
-var curveView = view.vector({
-    points: curveData,
-    width: 4,
-    // expr: set later
-    color: "purple",
-    start: false,
-});
 
 // tubeData, tubeView
 var tubeDomain = mathbox.cartesian({
@@ -208,8 +174,8 @@ var tubeDomain = mathbox.cartesian({
 var tubeData = tubeDomain.area({
     width: SETTINGS.segments,
     height: SETTINGS.radiusSegments,
-    expr: function (emit, u, v, i, j, time) {
-        emit(u, v, u + v);
+    expr: function (emit, u, v, i, j, t) {
+        emit();
     },
     axes: [1, 2], // u,v
     channels: 3, // 3D space
@@ -218,21 +184,10 @@ var tubeData = tubeDomain.area({
 var tubeColors = tubeDomain.area({
     width: SETTINGS.segments,
     height: SETTINGS.radiusSegments,
-    // expr: set later
     channels: 4, // RGBA
 });
 
-var tubeViewFill = view.surface({
-    points: tubeData,
-    fill: true,
-    shaded: false,
-    lineX: false,
-    lineY: false,
-    color: "white",
-    colors: tubeColors,
-});
-
-var tubeViewLine = view.surface({
+view.surface({
     points: tubeData,
     fill: false,
     shaded: false,
@@ -241,6 +196,5 @@ var tubeViewLine = view.surface({
     width: 1,
     color: "black",
 });
-
 
 updateGraphFunc();
