@@ -8,7 +8,7 @@ const pane = new Pane();
 pane.registerPlugin(InfodumpPlugin);
 pane.addBlade({
     view: "infodump",
-    content: "STL Talent Show",
+    content: "STL Talent Show. I built the pulley example here! Drag and drop your own creations...",
     border: false,
     markdown: false,
 });
@@ -22,6 +22,7 @@ function STLViewer(model, elementID) {
     var elem = document.getElementById(elementID);
     document.body.style = "margin: 0";
     elem.style = "width: 100%; height: 100vh";
+    elem.innerHTML = "";
 
     var camera = new THREE.PerspectiveCamera(
         70,
@@ -91,3 +92,24 @@ function STLViewer(model, elementID) {
 window.onload = function () {
     STLViewer(PARAMS.file, "app");
 };
+
+window.addEventListener("dragover", function(e) {
+    console.log("Files in dragover zone");
+    e.preventDefault();
+});
+window.addEventListener("drop", function(e) {
+    // prevent it from being opened.
+    e.preventDefault();
+
+    if (e.dataTransfer.items) {
+        const item = e.dataTransfer.items[0];
+        if (item.kind === "file") {
+            const file = item.getAsFile();
+            PARAMS.file = file.name;
+            STLViewer(URL.createObjectURL(file), "app");
+        }
+    } else {
+        PARAMS.file = file.name;
+        STLViewer(URL.createObjectURL(e.dataTransfer.files[0]), "app");
+    }
+})

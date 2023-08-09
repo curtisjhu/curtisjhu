@@ -14,6 +14,8 @@
   "license": "ISC",
   "dependencies": {
     "@mdx-js/esbuild": "^2.3.0",
+    "babelify": "^10.0.0",
+    "budo": "^11.8.4",
     "dat.gui": "^0.7.9",
     "fail-nicely": "^2.0.0",
     "glsl-colormap": "^1.0.1",
