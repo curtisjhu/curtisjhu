@@ -13,46 +13,75 @@ const babelify = require('babelify');
 const path = require('path');
 const cpr = require('cpr');
 const fs = require('fs');
-import {compile} from '@mdx-js/mdx'
+const esbuild = require("esbuild");
+const fse = require("fs-extra");
 
 var projectDir = process.argv[2];
+
+if (!projectDir)
+  throw new Error("NEEDS PROJECT FOLDER")
+
 if (!/^src\//.test(projectDir)) projectDir = path.join('pages', projectDir);
 const entryFile = getEntryFile(projectDir);
-const outputDir = projectDir.replace(/^pages\//, '../');
+const outputFile = entryFile.name.replace("pages", 'dist');
+
+const outputDir = projectDir.replace("pages", "dist");
 
 console.log('Building ', projectDir);
 
 switch (entryFile.type) {
-  case 'mdx':
-  case 'md':
-    const compiled = await compile(await fs.readFile(entryFile))
-    
-    break;
   case 'html':
     break;
+  case 'jsx':
+    console.log("Building for jsx");
+
+    fse.copy(projectDir, outputDir, function (err) {
+      if (err) {
+        console.error(err);
+      } else {
+        console.log("success!");
+      }
+    });
+
+    if (fs.existsSync(outputFile)) {
+      fs.rmSync(outputFile);
+    }
+
+    esbuild
+        .buildSync({
+            entryPoints: [path.join(projectDir, "index.jsx")],
+            bundle: true,
+            minify: true,
+            treeShaking: true,
+            outfile: path.join(outputDir, "bundle.js"),
+        })
+    break;
   case 'js':
+    console.log("Building for js");
+
     var metadata = {};
     try {
       const metadataPath = require.resolve(path.join(__dirname, '..', projectDir, 'metadata.json'));
       metadata = require(metadataPath);
     } catch (e) { }
 
-    mkdirp.sync(path.join(__dirname, '..', outputDir));
+    fse.copy(projectDir, outputDir, function (err) {
+      if (err) {
+        console.error(err);
+      } else {
+        console.log("copied over!");
+      }
+    });
 
-    const cssInputPath = path.join(__dirname, '..', projectDir, 'index.css');
-    const cssExists = fs.existsSync(cssInputPath);
-    if (cssExists) {
-      const cssOutputPath = path.join(__dirname, '..', outputDir, 'index.css');
-      fs.createReadStream(cssInputPath).pipe(fs.createWriteStream(cssOutputPath));
-    }
 
     const htmlOutputPath = path.join(__dirname, '..', outputDir, 'index.html');
     const bundleOutputPath = path.join(__dirname, '..', outputDir, 'bundle.js');
 
-    var b = browserify(path.join(__dirname, '..', projectDir, entryFile.name), {
+    console.log(entryFile.name)
+    var b = browserify(entryFile.name, {
       transform: [
         glslify,
-        [babelify, {presets: ["@babel/preset-env"]}]
+        babelify
       ],
       debug: false
     });
@@ -61,6 +90,14 @@ switch (entryFile.type) {
       .pipe(minifyStream({sourceMap: false}))
       .pipe(fs.createWriteStream(bundleOutputPath));
 
+    console.log("bundle.js generated")
+    
+    if (fs.existsSync(path.join(outputDir, "index.js")))
+      fs.rmSync(path.join(outputDir, "index.js"));
+    
+
+    // creating html
+    console.log("creating html")
     var metaForInject = {
       name: metadata.title,
       description: metadata.description,
@@ -71,12 +108,11 @@ switch (entryFile.type) {
       metaForInject.image = metadata.image;
     }
 
-    console.log('metaForInject:', metaForInject);
 
     simpleHtmlIndex({
         entry: 'bundle.js',
         title: metadata.title,
-        css: cssExists ? 'index.css' : null
+        css: 'index.css'
       })
       .pipe(htmlInjectMeta(metaForInject))
       .pipe(hyperstream({
@@ -87,15 +123,7 @@ switch (entryFile.type) {
       }))
       .pipe(fs.createWriteStream(htmlOutputPath));
 
-    ['static', 'fonts'].forEach(dir => {
-      var cpInputDir = path.join(__dirname, '..', projectDir, dir);
-      var cpOutputDir = path.join(__dirname, '..', outputDir, dir);
-
-      if (fs.existsSync(cpInputDir)) {
-        console.log('copying', dir);
-        cpr(cpInputDir, cpOutputDir, {});
-      }
-    });
+    console.log("created html")
 
     break;
   default:
