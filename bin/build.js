@@ -65,6 +65,9 @@ switch (entryFile.type) {
       metadata = require(metadataPath);
     } catch (e) { }
 
+    if (!fs.existsSync(outputDir))
+      mkdirp.mkdirpSync(outputDir);
+
     fse.copy(projectDir, outputDir, function (err) {
       if (err) {
         console.error(err);
@@ -98,30 +101,9 @@ switch (entryFile.type) {
 
     // creating html
     console.log("creating html")
-    var metaForInject = {
-      name: metadata.title,
-      description: metadata.description,
-      author: metadata.author ||  "Curtis Hu",
-    };
-
-    if (metadata.image) {
-      metaForInject.image = metadata.image;
-    }
-
-
-    simpleHtmlIndex({
-        entry: 'bundle.js',
-        title: metadata.title,
-        css: 'index.css'
-      })
-      .pipe(htmlInjectMeta(metaForInject))
-      .pipe(hyperstream({
-        body: {_appendHtml: '<script src="../nav.bundle.js"></script>'},
-        head: {_appendHtml:
-          '<meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport" />'
-        }
-      }))
-      .pipe(fs.createWriteStream(htmlOutputPath));
+    fse.copy(path.join(__dirname, "../templates/_index.html"), htmlOutputPath, function(err) {
+      if (err) console.error(err);
+    })
 
     console.log("created html")
 
