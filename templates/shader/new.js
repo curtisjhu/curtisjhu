@@ -1,8 +1,7 @@
-const regl = require('regl')()
+const regl = require("regl")();
 
 const draw = regl({
-
-  frag: `
+    frag: `
     precision mediump float;
 	varying vec2 uv;
 	uniform float iTime;
@@ -12,7 +11,7 @@ const draw = regl({
       	gl_FragColor = vec4(col, 1);
     }`,
 
-  vert: `
+    vert: `
     precision mediump float;
     attribute vec2 position;
 	varying vec2 uv;
@@ -21,31 +20,30 @@ const draw = regl({
     	gl_Position = vec4(position, 0, 1);
     }`,
 
-  attributes: {
-    position: regl.buffer([
-      [-1, -1],
-      [1, 1],
-      [-1,  1],
+    attributes: {
+        position: regl.buffer([
+            [-1, -1],
+            [1, 1],
+            [-1, 1],
 
-      [1, 1],
-      [-1,  -1],
-	    [1, -1]
-    ])
-  },
+            [1, 1],
+            [-1, -1],
+            [1, -1],
+        ]),
+    },
 
-  uniforms: {
-	iTime: (ctx) => ctx.time
-  },
+    uniforms: {
+        iTime: (ctx) => ctx.time,
+    },
 
-  count: 6
-})
+    count: 6,
+});
 
-regl.frame(({time}) => {
-  regl.clear({
-    color: [0, 0, 0, 1],
-    depth: 1
-  })
+regl.frame(({ time }) => {
+    regl.clear({
+        color: [0, 0, 0, 1],
+        depth: 1,
+    });
 
-  draw({
-  })
-})
+    draw({});
+});

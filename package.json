@@ -30,6 +30,7 @@
     "html-inject-meta": "^3.0.0",
     "katex": "^0.16.4",
     "mathbox": "^2.3.1",
+    "mathjs": "^11.9.1",
     "mathlive": "^0.91.2",
     "milligram": "^1.4.1",
     "minify-stream": "^2.1.0",
