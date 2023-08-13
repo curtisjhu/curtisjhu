@@ -10,23 +10,28 @@ const pane = new Pane({
 	title: 'Graphing',
 	expanded: true,
 });
-pane.addBinding(PARAMS, 'f(x)=');
+pane.addInput(PARAMS, 'f(x)=');
 
+async function getPoints() {
+	const math = create(all);
+	const node = math.parse(PARAMS["f(x)="]); // into node tree
+	const code = node.compile(); // compile node tree
 
-const math = create(all);
-const node = math.parse(PARAMS["f(x)="]); // into node tree
-const code = node.compile(); // compile node tree
+	var domain = [-1, 1];
+	var range = [-1, 1];
 
-var domain = [-1, 1];
-var range = [-1, 1];
-
-const num = 100000;
-var coords = [];
-for (var i = 0; i < num; i++) {
-	var x = (domain[1]-domain[0])*(i/num) + domain[0];
-	var y = code.evaluate({ x: x});
-	coords[i] = [x, (range[1]-range[0])*y + range[0]]
+	const num = 100;
+	var coords = [];
+	for (var i = 0; i < num; i++) {
+		var x = (domain[1]-domain[0])*(i/num) + domain[0];
+		var y = code.evaluate({ x: x});
+		coords[i] = [x, (range[1]-range[0])*y + range[0]]
+	}
+	return getPoints();
 }
+
+var coords = [[-1, -1], [1, 1], [-1, 1], [1, -1]];
+// getPoints().then((e) => coords = e);
 
 
 const draw = regl({
@@ -41,7 +46,7 @@ const draw = regl({
         position: coords,
     },
     count: coords.length,
-	primitive: "line strip",
+	primitive: "line",
     vert: `
     precision mediump float;
     attribute vec2 position;

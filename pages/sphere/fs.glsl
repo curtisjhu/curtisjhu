@@ -10,16 +10,38 @@ float iSphere (in vec3 ro, in vec3 rd, in vec4 sphere)
     float b = 2.0 * dot(rd, nro);
     float c = dot(nro, nro) - r*r;
     
+    // discriminant shows the # of roots
     float h = b*b - 4.0*c;
     
+    // if discriminants < 0 (imaginary), then return a miss;
     if (h < 0.0)
         return -1.0;
+        
+    // if 1+ discriminant, return the t value that intersects
+    // this is the quadratic equation.
     return (-b - sqrt(h)) / 2.0;
 }
 
 vec3 nSphere(in vec3 source, in vec4 sph)
 {
+    // normal vector of the surface of the sphere
+    // current position on the surface - center of sphere position / sphere radius
     return (source - sph.xyz) / sph.w;
+}
+
+float iPlane( in vec3 ro, in vec3 rd)
+{
+    // Plane is:
+    // y = 0
+    // ro.y + t*rd.y = 0
+    // t = -ro.y/rd.y
+    return -ro.y/rd.y;
+}
+
+vec3 nPlane(in vec3 pla)
+{
+    // the normal vector
+    return vec3(0.0, 1.0, 0.0);
 }
 
 vec4 sphere = vec4(0.0, 1.0, 0.0, 1.0);
@@ -29,7 +51,14 @@ float intersect( in vec3 ro, in vec3 rd, out float t)
     t = 1000.0;
     float id = -1.0; // by default, it will be a miss
     float tsph = iSphere(ro, rd, sphere);
+    float tpla = iPlane(ro, rd);
     
+    
+    // report which ever comes first
+    if (tpla > 0.0) {
+        id = 2.0;
+        t = tpla;
+    }
     
     // reports hits and update t
     if (tsph > 0.0) {
