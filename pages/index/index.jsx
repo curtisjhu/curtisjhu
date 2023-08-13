@@ -94,6 +94,7 @@ function App() {
 
                 <div></div>
             </div>
+            <script src="https://cdn.tailwindcss.com"></script>
         </div>
     );
 }

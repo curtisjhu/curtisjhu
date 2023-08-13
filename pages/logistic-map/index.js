@@ -1,8 +1,3 @@
-/**
- * Author: rreusser
- * Source: https://rreusser.github.io/logistic-map/
- */
-
 const mouse = require('mouse-event');
 const mouseWheel = require('mouse-wheel');
 const mouseChange = require('mouse-change');
