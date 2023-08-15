@@ -22,12 +22,10 @@ pane.addInput(PARAMS, 'file', {
         cassini: "cassini.stl",
         odyssey: "odyssey.stl",
         voyager: "voyager.stl",
-        brain: "brain.stl",
         heartA: "heartA.stl",
         heartB: "heartB.stl",
         heartC: "heartC.stl",
         scalpula: "scalpula.stl",
-        spine: "spine.stl",
     }
 
 }).on("change", (e) => {
