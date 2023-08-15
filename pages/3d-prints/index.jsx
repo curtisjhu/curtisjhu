@@ -16,7 +16,24 @@ pane.addBlade({
 var PARAMS = {
     file: "pulley.stl"
 }
-pane.addInput(PARAMS, 'file');
+pane.addInput(PARAMS, 'file', {
+    options: {
+        pulley: "pulley.stl",
+        cassini: "cassini.stl",
+        odyssey: "odyssey.stl",
+        voyager: "voyager.stl",
+        brain: "brain.stl",
+        heartA: "heartA.stl",
+        heartB: "heartB.stl",
+        heartC: "heartC.stl",
+        scalpula: "scalpula.stl",
+        spine: "spine.stl",
+    }
+
+}).on("change", (e) => {
+    console.log(e.value)
+    STLViewer("./models/"+e.value, "app");
+})
 
 function STLViewer(model, elementID) {
     var elem = document.getElementById(elementID);
@@ -90,7 +107,7 @@ function STLViewer(model, elementID) {
 }
 
 window.onload = function () {
-    STLViewer(PARAMS.file, "app");
+    STLViewer("./models/"+PARAMS.file, "app");
 };
 
 window.addEventListener("dragover", function(e) {
