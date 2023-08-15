@@ -20,7 +20,7 @@ const PARAMS = {
 };
 
 const generators = {
-    "gaussian": d3.randomNormal(0, 0.15),
+    "gaussian": d3.randomNormal(0, 0.3),
     "uniform": d3.randomLcg(42),
     "exponential": d3.randomExponential(1 / 30),
     "bernoulli": d3.randomBernoulli(0.5),
@@ -36,9 +36,9 @@ function createPoints(gen=PARAMS["distribution"], numPoints=PARAMS["numPoints"])
     rng = generators[gen];
     console.log(rng)
     const points = d3.range(numPoints.toFixed(0)).map((i) => ({
-        x: rng() * 2,
-        y: rng() * 2,
-        z: rng() * 2,
+        x: rng(),
+        y: rng(),
+        z: rng(),
         color: [0, Math.random(), 0],
     }));
     return points;
