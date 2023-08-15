@@ -1,4 +1,3 @@
-// https://peterbeshai.com/blog/2017-05-26-beautifully-animate-points-with-webgl-and-regl/
 const regl = require("regl")();
 const d3 = require("./d3.min.js");
 const camera = require("regl-camera")(regl, {
