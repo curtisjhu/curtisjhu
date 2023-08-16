@@ -1,17 +1,13 @@
 #!/usr/bin/env node
 
 const getEntryFile = require('./util/get-entry-file');
-const simpleHtmlIndex = require('simple-html-index');
-const htmlInjectMeta = require('html-inject-meta');
 const minifyStream = require('minify-stream');
-const hyperstream = require('hyperstream');
 const browserify = require('browserify');
 const glslify = require('glslify');
 const mkdirp = require('mkdirp');
 const assert = require('assert');
 const babelify = require('babelify');
 const path = require('path');
-const cpr = require('cpr');
 const fs = require('fs');
 const esbuild = require("esbuild");
 const fse = require("fs-extra");

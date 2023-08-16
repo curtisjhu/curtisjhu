@@ -61,7 +61,7 @@ switch (entryFile.type) {
             })
             .then((context) => {
                 console.log("Serving on port 4000");
-                
+
                 context.serve({
                     port: port,
                     host: host,
@@ -86,7 +86,10 @@ switch (entryFile.type) {
             debug: true,
             verbose: true,
             browserify: {
-                transform: [[glslify], [babelify]],
+                transform: [
+                    [glslify],
+                    [babelify, { presets: ["@babel/preset-env"] }],
+                ],
             },
         });
         break;
@@ -94,7 +97,7 @@ switch (entryFile.type) {
         console.log("Serving mdx...");
 
         if (!fs.existsSync(path.join(projectDest, "index.html"))) {
-            throw new Error("NEEDS HTML FILE TO SERVE")
+            throw new Error("NEEDS HTML FILE TO SERVE");
         }
 
         import("@mdx-js/esbuild").then((mdx) => {
