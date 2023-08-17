@@ -8,7 +8,7 @@ const pane = new Pane();
 pane.registerPlugin(InfodumpPlugin);
 pane.addBlade({
     view: "infodump",
-    content: "STL Talent Show. I built the pulley example here! Drag and drop your own creations...",
+    content: "STL Talent Show. I built the pulley example here in Fusion 360! Drag and drop your own creations...",
     border: false,
     markdown: false,
 });
