@@ -1,112 +1,100 @@
-const regl = require("regl")();
+const regl = require("regl")({
+    extensions: ["ANGLE_instanced_arrays"],
+});
 const { Pane } = require("tweakpane");
 const { create, all } = require("mathjs");
 const camera = require("regl-camera")(regl, {
     zoomSpeed: 0.6,
     rotationSpeed: 0.6,
     theta: Math.PI / 2,
-    distance: 3,
+    distance: 8,
 });
+const InfoDump = require("tweakpane-plugin-infodump");
 const d3 = require("../d3.min.js");
+const reglLines = require("regl-gpu-lines");
 
+const functionList = require("./examples.js");
+
+const url = new URLSearchParams(window.location.search);
+var query = url.get("example") || "butterfly";
+console.log(query);
 const PARAMS = {
-    u: {
-        domain: { x: -1, y: 1 },
-        range: { x: -1, y: 1 },
-    },
-    v: {
-        domain: { x: -1, y: 1 },
-        range: { x: -1, y: 1 },
-    },
-    t: {
-        domain: { x: -1, y: 1 },
-        range: { x: -1, y: 1 },
-    },
-    x: "",
-    y: "",
-    z: "",
-	axis: {
-		xAxis: { x: -1, y: 1 },
-		yAxis: { x: -1, y: 1 },
-		zAxis: { x: -1, y: 1 },
-	},
-
+    t: { x: 0, y: 12 * Math.PI },
+    example: query,
     numPoints: 1000,
+    axis: {
+        xAxis: {x:-1, y:1},
+        yAxis: {x:-1, y:1},
+        zAxis: {x:-1, y:1}
+    }
 };
 
+// TWEAKPANE
 const pane = new Pane({
-    title: "Parametric Graphing",
+    title: "Parametric Curves",
     expanded: true,
 });
+pane.registerPlugin(InfoDump);
 pane.addInput(PARAMS, "numPoints", { format: (e) => e.toFixed(0) });
 
-const func = pane.addFolder({
-    title: "Functions",
-    expanded: true,
-});
-func.addInput(PARAMS, "x");
-func.addInput(PARAMS, "y");
-func.addInput(PARAMS, "z");
+const optionList = {};
+for (let x in functionList) {
+    optionList[x] = x;
+}
+pane.addInput(PARAMS, "example", {
+    options: optionList,
+}).on("change", (ev) => {
+    console.log(ev.value);
+    PARAMS.t.x = functionList[ev.value].interval.x;
+    PARAMS.t.y = functionList[ev.value].interval.y;
 
-const sub = pane.addFolder({
-    title: "Domain/Range",
-    expanded: false,
+    PARAMS.axis.xAxis.x = -1, 
+    PARAMS.axis.yAxis.x = -1, 
+    PARAMS.axis.zAxis.x = -1;
+    
+    PARAMS.axis.xAxis.y = 1,
+    PARAMS.axis.yAxis.y = 1,
+    PARAMS.axis.zAxis.y = 1;
+
+    coords = getParametric();
+});
+pane.addBlade({
+    view: "infodump",
+    content:
+        "Unfortunately, javascript will yell at me if I directly accept input to create functions. A workaround would be to use a math AST. For now we can just use some of the provided examples.",
 });
 
-const x = sub.addFolder({
-    title: "axis",
-    expanded: true,
-});
-x.addInput(PARAMS["axis"], "xAxis");
-x.addInput(PARAMS["axis"], "yAxis");
-x.addInput(PARAMS["axis"], "zAxis");
-
-const t = sub.addFolder({
-    title: "t",
-    expanded: false,
-});
-t.addInput(PARAMS["t"], "domain");
-t.addInput(PARAMS["t"], "range");
-
-const u = sub.addFolder({
-    title: "u",
-    expanded: false,
-});
-u.addInput(PARAMS["u"], "domain");
-u.addInput(PARAMS["u"], "range");
-
-const v = sub.addFolder({
-    title: "v",
-    expanded: false,
-});
-v.addInput(PARAMS["v"], "domain");
-v.addInput(PARAMS["v"], "range");
-
-const examples = pane.addFolder({
-    title: "Examples",
-    expanded: false,
-});
 
 // Creating points
-
-function getPointsSingleParametric() {
-    var tDom = PARAMS.t.domain;
+function getParametric() {
+    var { interval } = functionList[PARAMS.example];
+    var tDom = interval || PARAMS.t;
     var t = tDom.x,
-        dt = (tDom.y - tDom.x) / PARAMS["numPoints"];
-    const coords = d3.range(PARAMS["numPoints"]).map((el, ind) => {
+        dt = (tDom.y - tDom.x) / PARAMS.numPoints;
+    const coords = d3.range(PARAMS.numPoints).map((el, ind) => {
         t += dt;
+
+        var { f } = functionList[PARAMS.example];
+        var { x, y, z } = f(t);
+
+        PARAMS.axis.xAxis.x = Math.min( x, PARAMS.axis.xAxis.x);
+        PARAMS.axis.xAxis.y = Math.max( x, PARAMS.axis.xAxis.y);
+        PARAMS.axis.yAxis.x = Math.min( y, PARAMS.axis.yAxis.x);
+        PARAMS.axis.yAxis.y = Math.max( y, PARAMS.axis.yAxis.y);
+        PARAMS.axis.zAxis.x = Math.min( z, PARAMS.axis.zAxis.x);
+        PARAMS.axis.zAxis.y = Math.max( z, PARAMS.axis.zAxis.y);
+
         return {
-            x: Math.pow(Math.cos(t), 3),
-            y: Math.pow(Math.sin(t), 3),
-            z: 0,
+            x: x,
+            y: y,
+            z: z,
             color: [0, 0.7, 0],
         };
     });
-
     return coords;
 }
 
-var coords = getPointsSingleParametric();
+var coords = getParametric();
 
 const draw = regl({
     uniforms: {
@@ -143,55 +131,36 @@ const draw = regl({
     }`,
 });
 
-const drawPlane = regl({
-    uniforms: {
-        color: [0.3, 0.3, 0.3, 0.4],
-    },
-    attributes: {
-        position: regl.prop("domain"),
-    },
-    count: 6,
+const drawLines = reglLines(regl, {
     vert: `
-    precision mediump float;
-    attribute vec3 position;
-	uniform mat4 projection, view;
+    precision highp float;
+    uniform mat4 projection, view;
 
-    void main() {
-    	gl_Position = projection*view*vec4(position, 1);
+    // Use a vec2 attribute to construt the vec4 vertex position
+    #pragma lines: attribute vec3 pos;
+    #pragma lines: position = getPosition(pos);
+    vec4 getPosition(vec3 pos) {
+      return projection*view*vec4(pos, 1);
+    }
+
+    // Return the line width from a uniorm
+    #pragma lines: width = getWidth();
+    uniform float width;
+    float getWidth() {
+      return width;
     }`,
     frag: `
-    precision mediump float;
-	uniform vec4 color;
-
-    void main() {
-      	gl_FragColor = color;
+    precision lowp float;
+    uniform vec4 color;
+    void main () {
+      gl_FragColor = color;
     }`,
-});
 
-const drawAxis = regl({
+    // Multiply the width by the pixel ratio for consistent width
     uniforms: {
-        color: [0.2, 0.2, 0.2, 0.4],
+        width: (ctx, props) => ctx.pixelRatio * 3,
+        color: [0.4, 0.4, 0.4, 1],
     },
-    attributes: {
-        position: regl.prop("domain"),
-    },
-    count: 2,
-    primitive: "line strip",
-    vert: `
-    precision mediump float;
-    attribute vec3 position;
-	uniform mat4 projection, view;
-
-    void main() {
-    	gl_Position = projection*view*vec4(position, 1);
-    }`,
-    frag: `
-    precision mediump float;
-	uniform vec4 color;
-
-    void main() {
-      	gl_FragColor = color;
-    }`,
 });
 
 regl.frame(({ time }) => {
@@ -201,46 +170,62 @@ regl.frame(({ time }) => {
     });
 
     camera((state) => {
+        drawLines({
+            cap: "round",
+            vertexCount: 2,
+            vertexAttributes: {
+                pos: regl.buffer([
+                    [PARAMS.axis.xAxis.x, 0, 0],
+                    [PARAMS.axis.xAxis.y, 0, 0],
+                ]),
+            },
+            endpointCount: 2,
+            endpointAttributes: {
+                pos: regl.buffer([
+                    [PARAMS.axis.xAxis.x, 0, 0],
+                    [PARAMS.axis.xAxis.y, 0, 0],
+                ]),
+            },
+        });
+        drawLines({
+            cap: "round",
+            vertexCount: 2,
+            vertexAttributes: {
+                pos: regl.buffer([
+                    [0, PARAMS.axis.yAxis.x, 0],
+                    [0, PARAMS.axis.yAxis.y, 0],
+                ]),
+            },
+            endpointCount: 2,
+            endpointAttributes: {
+                pos: regl.buffer([
+                    [0, PARAMS.axis.yAxis.x, 0],
+                    [0, PARAMS.axis.yAxis.y, 0],
+                ]),
+            },
+        });
+        drawLines({
+            cap: "round",
+            vertexCount: 2,
+            vertexAttributes: {
+                pos: regl.buffer([
+                    [0, 0, PARAMS.axis.zAxis.x],
+                    [0, 0, PARAMS.axis.zAxis.y],
+                ]),
+            },
+            endpointCount: 2,
+            endpointAttributes: {
+                pos: regl.buffer([
+                    [0, 0, PARAMS.axis.zAxis.x],
+                    [0, 0, PARAMS.axis.zAxis.y],
+                ]),
+            },
+        });
+
         draw({
             coords: coords.map((e) => [e.x, e.y, e.z]),
             colors: coords.map((e) => e.color),
             numPoints: coords.length,
-        });
-        drawPlane({
-            domain: [
-                [-1, 0, -1],
-                [-1, 0, 1],
-                [1, 0, -1],
-                [-1, 0, 1],
-                [1, 0, -1],
-                [1, 0, 1],
-            ],
-        });
-
-        // Draw the Axis
-
-        // x
-        drawAxis({
-            domain: [
-                [-1, 0, 0],
-                [1, 0, 0],
-            ],
-        });
-
-        // y
-        drawAxis({
-            domain: [
-                [0, -1, 0],
-                [0, 1, 0],
-            ],
-        });
-
-        // z
-        drawAxis({
-            domain: [
-                [0, 0, -1],
-                [0, 0, 1],
-            ],
         });
     });
 });
