@@ -51,7 +51,8 @@ const functionList = {
   },
   "quad": (x, y) =>  {
     return 2.5*Math.pow(x, 4) - 2*x*x + 2.5*Math.pow(y, 4) - 2*y*y + 1
-  }
+  },
+  "gaussian_bell": (x, y) => 0.7*Math.exp(-3*(x*x + y*y))
 }
 
 var options = "";
@@ -59,10 +60,8 @@ for (let key in functionList) {
   options += `<option value='${key}'>${key}</option>`;
 }
 
-
 var elem = `
   <div style="position:sticky">
-    <label for="function">function:</label>
     <select name="function" id="function">
       ${options}
     </select>
