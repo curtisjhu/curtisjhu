@@ -28,28 +28,20 @@ const drawBottle = regl({
 	attributes: {
 		position: mesh.positions,
 		barycentric: mesh.barycentric,
-		uInt: regl.prop("uInt"),
-		vInt: regl.prop("vInt"),
-		R: regl.prop("R"),
-		P: regl.prop("P"),
 	},
 	elements: mesh.cells,
 	vert: `
 	precision mediump float;
 	attribute vec2 position, barycentric;
-	attribute float R, P;
 	uniform mat4 projection, view;
 
 	varying vec2 uv, b;
 
-	attribute vec2 uInt, vInt;
-
 	vec3 parametricFunc(vec2 uv) {
-		// will this overflow??
 
-		float x = R * (cos(uv.x/2.0)*cos(uv.y) - sin(uv.x/2.0)*sin(2.0*uv.y));
-		float y = R * (sin(uv.x/2.0)*cos(uv.y) - cos(uv.x/2.0)*sin(2.0*uv.y));
-		float z = P*cos(uv.x);
+		float x = ...;
+		float y = ...;
+		float z = ...;
 		return vec3(x, y, z);
 	}
 
