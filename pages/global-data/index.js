@@ -3,10 +3,13 @@ const d3 = require("../d3.min.js");
 const camera = require("regl-camera")(regl, {
     distance: 5,
     center: [0, 0, 0],
-    theta: 0,
-    phi: 0.0,
+    theta: Math.PI/2,
+    phi: -Math.PI,
+    zoomSpeed: 0.3,
+    rotateSpeed: 0.2
 });
 const { Pane } = require("tweakpane");
+const InfoDump = require("tweakpane-plugin-infodump");
 const createMesh = require("./createMesh.js");
 
 const pane = new Pane({
@@ -19,17 +22,21 @@ const PARAMS = {
     v: { x: 0, y: 2*Math.PI },
 	numPoints: 1000
 };
+pane.registerPlugin(InfoDump);
 
+pane.addBlade({
+    view: "infodump",
+    content: "This model was generated using a 100,000 dataset on sampled cities census. It may take a while to load due to the sheer amount of data. Hint: zoom in "
+})
 pane.addInput(PARAMS, "dataset", {
     options: {
         worldcities: "worldcities.csv",
-        airports: "airports.csv",
+        na: "airports.csv",
     },
 }).on("change", (ev) => {
 });
 
 const sphere = createMesh(PARAMS);
-console.log(sphere)
 
 const drawSphere = regl({
     uniforms: {
