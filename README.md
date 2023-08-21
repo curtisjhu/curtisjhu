@@ -3,3 +3,15 @@
 [<img align="left" alt="Youtube" width="22px" src="./icons/youtube.svg" />](http://youtube.com/@funnyscar)
 [<img align="left" alt="Website" width="22px" src="./icons/instagram.svg" />](http://instagram.com/funnyscar)
 [<img align="left" alt="Linkedin" width="22px" src="./icons/linkedin.svg" />](http://linkedin.com/in/curtisjhu)
+
+#
+#
+
+![](images/population.png)
+![](images/2d.png)
+![](images/3d.png)
+![](images/heart.png)
+![](images/kleinbottle.png)
+![](images/mobius-strip.png)
+
+many more...
