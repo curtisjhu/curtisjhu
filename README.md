@@ -7,9 +7,9 @@
 #
 #
 
-![](images/population.png)
-![](images/kleinbottle.png)
-![](images/mobius-strip.png)
-![](images/heart.png)
+[<img align="left" width="45%" src="./images/population.png" />]()
+[<img align="left" width="45%" src="./images/kleinbottle.png" />]()
+[<img align="left" width="45%" src="./images/mobius-strip.png" />]()
+[<img align="left" width="45%" src="./images/heart.png" />]()
 
 many more...
