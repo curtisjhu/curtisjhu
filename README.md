@@ -8,10 +8,8 @@
 #
 
 ![](images/population.png)
-![](images/2d.png)
-![](images/3d.png)
-![](images/heart.png)
 ![](images/kleinbottle.png)
 ![](images/mobius-strip.png)
+![](images/heart.png)
 
 many more...
