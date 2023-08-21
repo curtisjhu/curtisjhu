@@ -2,7 +2,7 @@
 const regl = require("regl")();
 const d3 = require("./d3.min.js");
 const camera = require("regl-camera")(regl, {
-    distance: 2,
+    distance: 4,
     center: [0, 0, 0],
     theta: Math.PI * 0.5,
     phi: 0.0,
@@ -16,44 +16,64 @@ const pane = new Pane({
 
 const PARAMS = {
     distribution: "gaussian",
+    numPoints: 10000
 };
 
+const generators = {
+    "gaussian": d3.randomNormal(0, 0.15),
+    "uniform": d3.randomLcg(42),
+    "exponential": d3.randomExponential(1 / 30),
+    "bernoulli": d3.randomBernoulli(0.5),
+    "geometric": d3.randomGeometric(0.1),
+    "binomial": d3.randomBinomial(100, 0.3),
+    "gamma": d3.randomGamma(2, 1),
+    "beta": d3.randomBeta(3, 1.4),
+    "weibull": d3.randomWeibull(10)
+}
+
+var rng;
+function createPoints(gen=PARAMS["distribution"], numPoints=PARAMS["numPoints"]) {
+    rng = generators[gen];
+    console.log(rng)
+    const points = d3.range(numPoints.toFixed(0)).map((i) => ({
+        x: rng() * 2,
+        y: rng() * 2,
+        z: rng() * 2,
+        color: [0, Math.random(), 0],
+    }));
+    return points;
+}
+
+var points = createPoints();
+
+pane.addInput(PARAMS, "numPoints").on("change", (ev) => {
+    points = createPoints(PARAMS["distribution"], ev.value);
+})
 pane.addInput(PARAMS, "distribution", {
     options: {
         uniform: "uniform",
         gaussian: "gaussian",
-        poisson: "poisson",
         binomial: "binomial",
         geometric: "geometric",
         bernoulli: "bernoulli",
         exponential: "exponential",
-        pareto: "pareto",
-        logistic: "logistic",
-        cauchy: "cauchy",
         gamma: "gamma",
         beta: "beta",
     },
+}).on("change", (ev) => {
+    points = createPoints(ev.value)
 });
 
-const numPoints = 10000;
-
-const rng = d3.randomNormal(0, 0.13);
-const points = d3.range(numPoints).map((i) => ({
-    x: rng() * 2,
-    y: rng() * 2,
-    z: rng() * 2,
-    color: [0, Math.random(), 0],
-}));
 
 const drawPoints = regl({
     uniforms: {
         pointWidth: 2,
     },
     attributes: {
-        position: points.map((d) => [d.x, d.y, d.z]),
-        color: points.map((d) => d.color),
+        position: regl.prop("positions"),
+        color: regl.prop("colors"),
     },
-    count: numPoints,
+    count: regl.prop("numPoints"),
     primitive: "points",
     vert: `
 	precision mediump float;
@@ -85,5 +105,12 @@ regl.frame((context) => {
         color: [0, 0, 0, 1],
         depth: 1,
     });
-    camera(drawPoints);
+
+    camera((state) => {
+        drawPoints({
+            positions: points.map(d => [d.x, d.y, d.z]),
+            colors: points.map(d => d.color),
+            numPoints: points.length
+        })
+    });
 });

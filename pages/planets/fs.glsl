@@ -10,15 +10,22 @@ float iSphere (in vec3 ro, in vec3 rd, in vec4 sphere)
     float b = 2.0 * dot(rd, nro);
     float c = dot(nro, nro) - r*r;
     
+    // discriminant shows the # of roots
     float h = b*b - 4.0*c;
     
+    // if discriminants < 0 (imaginary), then return a miss;
     if (h < 0.0)
         return -1.0;
+        
+    // if 1+ discriminant, return the t value that intersects
+    // this is the quadratic equation.
     return (-b - sqrt(h)) / 2.0;
 }
 
 vec3 nSphere(in vec3 source, in vec4 sph)
 {
+    // normal vector of the surface of the sphere
+    // current position on the surface - center of sphere position / sphere radius
     return (source - sph.xyz) / sph.w;
 }
 

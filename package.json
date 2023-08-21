@@ -13,24 +13,29 @@
   },
   "author": "curtisjhu",
   "license": "ISC",
+  "browserify-shim": {
+    "three": "global.THREE"
+  },
   "browserify": {
     "transform": [
+      "browserify-shim",
       "glslify"
     ]
   },
   "dependencies": {
+    "@babel/preset-env": "^7.22.10",
     "@mdx-js/esbuild": "^2.3.0",
+    "@tensorflow/tfjs": "^4.10.0",
     "babelify": "^10.0.0",
+    "browserify-shim": "^3.8.16",
     "budo": "^11.8.4",
     "bunny": "^1.0.1",
-    "cpr": "^3.0.1",
     "d3": "^7.8.5",
     "dat.gui": "^0.7.9",
     "fail-nicely": "^2.0.0",
     "fs-extra": "^11.1.1",
     "glsl-colormap": "^1.0.1",
     "glsl-solid-wireframe": "^1.0.1",
-    "html-inject-meta": "^3.0.0",
     "katex": "^0.16.4",
     "mathbox": "^2.3.1",
     "mathjs": "^11.9.1",
@@ -41,12 +46,14 @@
     "mouse-change": "^1.4.0",
     "mouse-wheel": "^1.2.0",
     "ndarray": "^1.0.19",
+    "numjs": "^0.16.1",
     "p5": "^1.6.0",
     "preact": "^10.13.2",
     "react": "^18.2.0",
     "regl": "^2.1.0",
     "regl-camera": "^2.1.1",
-    "showdown": "^2.1.0",
+    "regl-gpu-lines": "^2.4.1",
+    "regl-line": "^1.0.0",
     "three": "^0.151.3",
     "tweakpane": "^3.1.7",
     "tweakpane-plugin-infodump": "github:doersino/tweakpane-plugin-infodump"

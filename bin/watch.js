@@ -58,6 +58,8 @@ switch (entryFile.type) {
                 minify: true,
                 treeShaking: true,
                 outfile: path.join(projectDest, "bundle.js"),
+                loader: { ".js": "jsx" },
+                jsx: "automatic"
             })
             .then((context) => {
                 console.log("Serving on port 4000");
