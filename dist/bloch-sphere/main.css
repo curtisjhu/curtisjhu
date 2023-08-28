@@ -1,0 +1,74 @@
+@font-face {
+	font-family: 'Computer Modern Serif';
+	src: url('assets/cmunrm.otf');
+	font-weight: normal;
+	font-style: normal;
+}
+@font-face {
+	font-family: 'Computer Modern Serif';
+	src: url('assets/cmunti.otf');
+	font-weight: normal;
+	font-style: italic;
+}
+
+body {
+	margin: 0;
+	background-color: #fff;
+	color: #000;
+	overscroll-behavior: none;
+  font-family: Tahoma, Geneva, sans-serif;
+}
+
+button {
+	cursor: pointer;
+}
+
+#controls {
+  position: absolute;
+  height: 100%;
+  right: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+#controls > button {
+  margin: 0.2rem 1rem;
+}
+
+canvas {
+	display: block;
+  margin: 0 auto;
+  outline: none;
+}
+
+.state {
+  font-family: "Computer Modern Serif";
+  font-size: 2rem;
+	position: absolute;
+	top: 0;
+	width: 100%;
+	padding: 5px 0;
+  line-height: 1.3;
+	box-sizing: border-box;
+	text-align: center;
+	-moz-user-select: none;
+	-webkit-user-select: none;
+	-ms-user-select: none;
+	user-select: none;
+	pointer-events: none;
+}
+
+.settings {
+  user-select: none;
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  padding: 1rem;
+  box-sizing: border-box;
+  width: 100%;
+}
+
+.by {
+  float: right;
+  padding: 0;
+}
