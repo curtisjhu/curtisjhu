@@ -1,0 +1,21 @@
+
+
+# Perceptron
+
+# NOT Gate
+For input $x$:
+$$
+\sigma(x) =
+\case{}
+	1, if x >
+\end{}
+$$
+
+## OR Gate
+
+## AND Gate
+
+## XOR Gate
+
+## NAND Gate
+
