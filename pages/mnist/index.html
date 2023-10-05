@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <!-- Primary Meta Tags -->
+        <title>funnyscar - Curtis Hu</title>
+        <meta name="title" content="FunnyScar - Curtis Hu" />
+        <meta
+            name="description"
+            content="Hi! I'm an undergraduate student at UCB. Check me out on funnyscar.com "
+        />
+        <link rel="icon" type="image/x-icon" href="https://bucket.funnyscar.com/favicon.ico">
+
+        <!-- Open Graph / Facebook -->
+        <meta property="og:type" content="website" />
+        <meta property="og:url" content="https://funnyscar.com/" />
+        <meta property="og:title" content="FunnyScar - Curtis Hu" />
+        <meta
+            property="og:description"
+            content="Hi! I'm an undergraduate student at UCB. Check me out on funnyscar.com "
+        />
+        <meta
+            property="og:image"
+            content="https://bucket.funnyscar.com/logo.png"
+        />
+
+        <!-- Twitter -->
+        <meta property="twitter:card" content="summary_large_image" />
+        <meta property="twitter:url" content="https://twitter.com/funnyscar/" />
+        <meta property="twitter:title" content="FunnyScar - Curtis Hu" />
+        <meta
+            property="twitter:description"
+            content="Hi! I'm an undergraduate student at UCB. Check me out on funnyscar.com "
+        />
+        <meta
+            property="twitter:image"
+            content="https://bucket.funnyscar.com/logo.png"
+        />
+
+          <!-- Import TensorFlow.js -->
+        <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@1.0.0/dist/tf.min.js"></script>
+        <!-- Import tfjs-vis -->
+        <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs-vis@1.0.2/dist/tfjs-vis.umd.min.js"></script>
+
+        <!-- Import the data file -->
+        <script src="data.js" type="module"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.7.0/p5.js" integrity="sha512-M7uzkKVt12bO/ClDOwaTk0AUwDPmJzjxri/KQKft2cisI6q3zJ4KxX3IfSQXF9Z6WU6NNW67JAljgWrA4WiiOA==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    </head>
+    <body>
+        <div id="app">
+            <div>
+                <h1>Watching a convolutional neural network learn</h1>
+                <p>(in the browser)</p>
+                <button id="toggle-button">toggle graphs</button>
+                <button id="refresh-button">refresh</button>
+                <p>Warning: somewhat computationally intensive in browser</p>
+            </div>
+            <canvas id="main"></canvas>
+            <div>
+                <canvas id="1"></canvas>
+                Layer 1
+            </div>
+
+            <div>
+                <canvas id="2"></canvas>
+                Layer 2
+            </div>
+
+            <div>
+                <canvas id="3"></canvas>
+                Layer 3 (really abstract)
+            </div>
+
+            <div>
+                <canvas id="4"></canvas>
+                Layer 4
+            </div>
+
+            <div>
+                <canvas id="5"></canvas>
+                Layer 5 (scaling down)
+            </div>
+
+            <div>
+                <canvas id="6"></canvas>
+                Layer 6
+            </div>
+
+            <div>
+                <canvas id="7"></canvas>
+                Layer 7 (10 possible outputs)
+            </div>
+            <br />
+            <a href="https://github.com/curtisjhu/template-ml/tree/main/mnist" target="_blank">Here are some of my other MNIST implementations</a>
+        </div>
+        <script src="bundle.js" type="module"></script>
+    </body>
+</html>
