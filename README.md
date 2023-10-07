@@ -5,3 +5,4 @@
 [<img align="left" alt="Linkedin" width="22px" src="./icons/linkedin.svg" />](http://linkedin.com/in/curtisjhu)
 
 
+Check out some of the work here at: https://funnyscar.com/sketches
