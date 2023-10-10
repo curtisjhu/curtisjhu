@@ -1,0 +1,62 @@
+{
+  "name": "vector-field",
+  "version": "2.1.1",
+  "description": "A data structure and lookup for 3D vector fields (flow fields).",
+  "keywords": [
+    "vector-field",
+    "flow-field",
+    "3d",
+    "flow",
+    "vectors",
+    "lookup",
+    "noise",
+    "perlin"
+  ],
+  "homepage": "https://github.com/dmnsgn/vector-field",
+  "bugs": "https://github.com/dmnsgn/vector-field/issues",
+  "repository": "dmnsgn/vector-field",
+  "funding": [
+    {
+      "type": "individual",
+      "url": "https://paypal.me/dmnsgn"
+    },
+    {
+      "type": "individual",
+      "url": "https://commerce.coinbase.com/checkout/56cbdf28-e323-48d8-9c98-7019e72c97f3"
+    }
+  ],
+  "license": "MIT",
+  "author": "Damien Seguin (https://github.com/dmnsgn)",
+  "sideEffects": false,
+  "type": "module",
+  "exports": "./index.js",
+  "main": "index.js",
+  "types": "types/index.d.ts",
+  "devDependencies": {
+    "canvas-context": "^3.2.0",
+    "es-module-shims": "^1.8.0",
+    "simplex-noise": "^4.0.1",
+    "three": "^0.157.0",
+    "tweakpane": "^4.0.1"
+  },
+  "engines": {
+    "node": ">=18.0.0",
+    "npm": ">=8.6.0"
+  },
+  "snowdev": {
+    "dependencies": [
+      "./three/examples/jsm/controls/OrbitControls.js",
+      "canvas-context",
+      "tweakpane",
+      "es-module-shims",
+      "simplex-noise",
+      "three"
+    ],
+    "resolve": {
+      "exclude": [
+        "**.d.ts",
+        "**/three/examples/!(jsm/controls/OrbitControls.js)/**/*.*"
+      ]
+    }
+  }
+}
