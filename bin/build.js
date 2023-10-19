@@ -86,7 +86,7 @@ switch (entryFile.type) {
     });
 
     b.bundle()
-      .pipe(minifyStream({sourceMap: false}))
+      // .pipe(minifyStream({sourceMap: false}))
       .pipe(fs.createWriteStream(bundleOutputPath));
 
     console.log("bundle.js generated")

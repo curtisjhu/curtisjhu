@@ -59,7 +59,7 @@ switch (entryFile.type) {
                 treeShaking: true,
                 outfile: path.join(projectDest, "bundle.js"),
                 loader: { ".js": "jsx" },
-                jsx: "automatic"
+                jsx: "automatic",
             })
             .then((context) => {
                 console.log("Serving on port 4000");
@@ -90,7 +90,12 @@ switch (entryFile.type) {
             browserify: {
                 transform: [
                     [glslify],
-                    [babelify, { presets: ["@babel/preset-env"] }],
+                    [
+                        babelify,
+                        {
+                            presets: ["@babel/preset-env"],
+                        },
+                    ],
                 ],
             },
         });
