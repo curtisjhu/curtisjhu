@@ -33,9 +33,17 @@ const pane = new tweakpane.Pane({
 })
 
 pane.registerPlugin(TweakpaneLatexPlugin);
-pane.addInput(PARAMS, "u")
-pane.addInput(PARAMS, "v")
-pane.addInput(PARAMS, "mandelBrot")
+pane.addBlade({
+	view: "latex",
+	content: `
+The Mandelbrot set is perhaps the most iconic picture in mathematics.
+This animation shows the corresponence of the closed set with the bifurcation diagram of the logistic map.
+<a href="https://en.wikipedia.org/wiki/Mandelbrot_set#Basic_properties">Look more here.</a>
+I haven't seen anyone do the mandelbrot set in this particular interactive way.
+I hope it gives you some insight.
+Warning: may heat your computer, but the computation stops after a certain threshold.
+`
+})
 
 var bufferpositions = []
 

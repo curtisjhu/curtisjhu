@@ -22323,7 +22323,7 @@ var NdArray = require('../ndarray');
 var __ = require('../utils');
 
 // takes ~157ms on a 5000x5000 image
-var doRgb2gray = require('cwise/lib/wrapper')({"args":["array","array","array","array"],"pre":{"body":"{}","args":[],"thisVars":[],"localVars":[]},"body":{"body":"{_inline_37_arg0_=4899*_inline_37_arg1_+9617*_inline_37_arg2_+1868*_inline_37_arg3_+8192>>14}","args":[{"name":"_inline_37_arg0_","lvalue":true,"rvalue":false,"count":1},{"name":"_inline_37_arg1_","lvalue":false,"rvalue":true,"count":1},{"name":"_inline_37_arg2_","lvalue":false,"rvalue":true,"count":1},{"name":"_inline_37_arg3_","lvalue":false,"rvalue":true,"count":1}],"thisVars":[],"localVars":[]},"post":{"body":"{}","args":[],"thisVars":[],"localVars":[]},"debug":false,"funcName":"rgb2grayCwise","blockSize":64});
+var doRgb2gray = require('cwise/lib/wrapper')({"args":["array","array","array","array"],"pre":{"body":"{}","args":[],"thisVars":[],"localVars":[]},"body":{"body":"{_inline_34_arg0_=4899*_inline_34_arg1_+9617*_inline_34_arg2_+1868*_inline_34_arg3_+8192>>14}","args":[{"name":"_inline_34_arg0_","lvalue":true,"rvalue":false,"count":1},{"name":"_inline_34_arg1_","lvalue":false,"rvalue":true,"count":1},{"name":"_inline_34_arg2_","lvalue":false,"rvalue":true,"count":1},{"name":"_inline_34_arg3_","lvalue":false,"rvalue":true,"count":1}],"thisVars":[],"localVars":[]},"post":{"body":"{}","args":[],"thisVars":[],"localVars":[]},"debug":false,"funcName":"rgb2grayCwise","blockSize":64});
 
 /**
  * Compute Grayscale version of an RGB image.
@@ -22458,7 +22458,7 @@ var NdArray = require('../ndarray');
 var __ = require('../utils');
 var rgb2gray = require('./rgb2gray');
 
-var doSobel = require('cwise/lib/wrapper')({"args":["array","array",{"offset":[-1,-1],"array":1},{"offset":[-1,0],"array":1},{"offset":[-1,1],"array":1},{"offset":[0,-1],"array":1},{"offset":[0,1],"array":1},{"offset":[1,-1],"array":1},{"offset":[1,0],"array":1},{"offset":[1,1],"array":1}],"pre":{"body":"{}","args":[],"thisVars":[],"localVars":[]},"body":{"body":"{var _inline_28_q=_inline_28_arg2_+2*_inline_28_arg3_+_inline_28_arg4_-_inline_28_arg7_-2*_inline_28_arg8_-_inline_28_arg9_,_inline_28_s=_inline_28_arg2_-_inline_28_arg4_+2*_inline_28_arg5_-2*_inline_28_arg6_+_inline_28_arg7_-_inline_28_arg9_;_inline_28_arg0_=Math.sqrt(_inline_28_s*_inline_28_s+_inline_28_q*_inline_28_q)}","args":[{"name":"_inline_28_arg0_","lvalue":true,"rvalue":false,"count":1},{"name":"_inline_28_arg1_","lvalue":false,"rvalue":false,"count":0},{"name":"_inline_28_arg2_","lvalue":false,"rvalue":true,"count":2},{"name":"_inline_28_arg3_","lvalue":false,"rvalue":true,"count":1},{"name":"_inline_28_arg4_","lvalue":false,"rvalue":true,"count":2},{"name":"_inline_28_arg5_","lvalue":false,"rvalue":true,"count":1},{"name":"_inline_28_arg6_","lvalue":false,"rvalue":true,"count":1},{"name":"_inline_28_arg7_","lvalue":false,"rvalue":true,"count":2},{"name":"_inline_28_arg8_","lvalue":false,"rvalue":true,"count":1},{"name":"_inline_28_arg9_","lvalue":false,"rvalue":true,"count":2}],"thisVars":[],"localVars":["_inline_28_q","_inline_28_s"]},"post":{"body":"{}","args":[],"thisVars":[],"localVars":[]},"debug":false,"funcName":"doSobelBody","blockSize":64});
+var doSobel = require('cwise/lib/wrapper')({"args":["array","array",{"offset":[-1,-1],"array":1},{"offset":[-1,0],"array":1},{"offset":[-1,1],"array":1},{"offset":[0,-1],"array":1},{"offset":[0,1],"array":1},{"offset":[1,-1],"array":1},{"offset":[1,0],"array":1},{"offset":[1,1],"array":1}],"pre":{"body":"{}","args":[],"thisVars":[],"localVars":[]},"body":{"body":"{var _inline_37_q=_inline_37_arg2_+2*_inline_37_arg3_+_inline_37_arg4_-_inline_37_arg7_-2*_inline_37_arg8_-_inline_37_arg9_,_inline_37_s=_inline_37_arg2_-_inline_37_arg4_+2*_inline_37_arg5_-2*_inline_37_arg6_+_inline_37_arg7_-_inline_37_arg9_;_inline_37_arg0_=Math.sqrt(_inline_37_s*_inline_37_s+_inline_37_q*_inline_37_q)}","args":[{"name":"_inline_37_arg0_","lvalue":true,"rvalue":false,"count":1},{"name":"_inline_37_arg1_","lvalue":false,"rvalue":false,"count":0},{"name":"_inline_37_arg2_","lvalue":false,"rvalue":true,"count":2},{"name":"_inline_37_arg3_","lvalue":false,"rvalue":true,"count":1},{"name":"_inline_37_arg4_","lvalue":false,"rvalue":true,"count":2},{"name":"_inline_37_arg5_","lvalue":false,"rvalue":true,"count":1},{"name":"_inline_37_arg6_","lvalue":false,"rvalue":true,"count":1},{"name":"_inline_37_arg7_","lvalue":false,"rvalue":true,"count":2},{"name":"_inline_37_arg8_","lvalue":false,"rvalue":true,"count":1},{"name":"_inline_37_arg9_","lvalue":false,"rvalue":true,"count":2}],"thisVars":[],"localVars":["_inline_37_q","_inline_37_s"]},"post":{"body":"{}","args":[],"thisVars":[],"localVars":[]},"debug":false,"funcName":"doSobelBody","blockSize":64});
 
 /**
  * Find the edge magnitude using the Sobel transform.
@@ -22497,7 +22497,7 @@ module.exports = function computeSobel (img) {
 var NdArray = require('../ndarray');
 var rgb2gray = require('./rgb2gray');
 
-var doIntegrate = require('cwise/lib/wrapper')({"args":["array","array","index",{"offset":[-1,-1],"array":0},{"offset":[-1,0],"array":0},{"offset":[0,-1],"array":0}],"pre":{"body":"{}","args":[],"thisVars":[],"localVars":[]},"body":{"body":"{_inline_34_arg0_=0!==_inline_34_arg2_[0]&&0!==_inline_34_arg2_[1]?_inline_34_arg1_*_inline_34_arg1_+_inline_34_arg4_+_inline_34_arg5_-_inline_34_arg3_:0===_inline_34_arg2_[0]&&0===_inline_34_arg2_[1]?_inline_34_arg1_*_inline_34_arg1_:0===_inline_34_arg2_[0]?_inline_34_arg1_*_inline_34_arg1_+_inline_34_arg5_:_inline_34_arg1_*_inline_34_arg1_+_inline_34_arg4_}","args":[{"name":"_inline_34_arg0_","lvalue":true,"rvalue":false,"count":1},{"name":"_inline_34_arg1_","lvalue":false,"rvalue":true,"count":8},{"name":"_inline_34_arg2_","lvalue":false,"rvalue":true,"count":5},{"name":"_inline_34_arg3_","lvalue":false,"rvalue":true,"count":1},{"name":"_inline_34_arg4_","lvalue":false,"rvalue":true,"count":2},{"name":"_inline_34_arg5_","lvalue":false,"rvalue":true,"count":2}],"thisVars":[],"localVars":[]},"post":{"body":"{}","args":[],"thisVars":[],"localVars":[]},"debug":false,"funcName":"doIntegrateBody","blockSize":64});
+var doIntegrate = require('cwise/lib/wrapper')({"args":["array","array","index",{"offset":[-1,-1],"array":0},{"offset":[-1,0],"array":0},{"offset":[0,-1],"array":0}],"pre":{"body":"{}","args":[],"thisVars":[],"localVars":[]},"body":{"body":"{_inline_28_arg0_=0!==_inline_28_arg2_[0]&&0!==_inline_28_arg2_[1]?_inline_28_arg1_*_inline_28_arg1_+_inline_28_arg4_+_inline_28_arg5_-_inline_28_arg3_:0===_inline_28_arg2_[0]&&0===_inline_28_arg2_[1]?_inline_28_arg1_*_inline_28_arg1_:0===_inline_28_arg2_[0]?_inline_28_arg1_*_inline_28_arg1_+_inline_28_arg5_:_inline_28_arg1_*_inline_28_arg1_+_inline_28_arg4_}","args":[{"name":"_inline_28_arg0_","lvalue":true,"rvalue":false,"count":1},{"name":"_inline_28_arg1_","lvalue":false,"rvalue":true,"count":8},{"name":"_inline_28_arg2_","lvalue":false,"rvalue":true,"count":5},{"name":"_inline_28_arg3_","lvalue":false,"rvalue":true,"count":1},{"name":"_inline_28_arg4_","lvalue":false,"rvalue":true,"count":2},{"name":"_inline_28_arg5_","lvalue":false,"rvalue":true,"count":2}],"thisVars":[],"localVars":[]},"post":{"body":"{}","args":[],"thisVars":[],"localVars":[]},"debug":false,"funcName":"doIntegrateBody","blockSize":64});
 
 /**
  * Compute Squared Sum Area Table, also known as the integral of the squared image
@@ -50404,9 +50404,17 @@ const pane = new tweakpane.Pane({
   title: "Mandelbrot Set / Logistic Map"
 });
 pane.registerPlugin(TweakpaneLatexPlugin);
-pane.addInput(PARAMS, "u");
-pane.addInput(PARAMS, "v");
-pane.addInput(PARAMS, "mandelBrot");
+pane.addBlade({
+  view: "latex",
+  content: `
+The Mandelbrot set is perhaps the most iconic picture in mathematics.
+This animation shows the corresponence of the closed set with the bifurcation diagram of the logistic map.
+<a href="https://en.wikipedia.org/wiki/Mandelbrot_set#Basic_properties">Look more here.</a>
+I haven't seen anyone do the mandelbrot set in this particular interactive way.
+I hope it gives you some insight.
+Warning: may heat your computer, but the computation stops after a certain threshold.
+`
+});
 var bufferpositions = [];
 var count = 0;
 function addPoints(num = 500) {
