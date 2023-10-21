@@ -25091,6 +25091,11 @@ exports.functions = [{
   "text": "dynamic"
 }, {
   "f": `
+			return cdiv(cmul(csqr(z) - vec2(1, 0), csqr(z - vec2(2, 1))), csqr(z) + vec2(2, 2));
+		`,
+  "text": "f(z)=..."
+}, {
+  "f": `
 			return z;
 		`,
   "text": "f(z)=z"
@@ -25112,14 +25117,64 @@ exports.functions = [{
   "text": "f(z)=z^3"
 }, {
   "f": `
-			return cdiv(cmul(csqr(z) - vec2(1, 0), csqr(z - vec2(2, 1))), csqr(z) + vec2(2, 2));
+			return csqrt(z);
 		`,
-  "text": "f(z)=..."
+  "text": "f(z)=sqrt(z)"
 }, {
   "f": `
 			return z + cinv(z);
 		`,
-  "text": "f(z)=z.1/z"
+  "text": "f(z)=z+1/z"
+}, {
+  "f": `
+			return clog(z);
+		`,
+  "text": "f(z)=log(z)"
+}, {
+  "f": `
+			return cdiv(z-1.0, z+1.0);
+		`,
+  "text": "f(z)=(z-1)/(z+1)"
+}, {
+  "f": `
+			return cexp(z);
+		`,
+  "text": "f(z)=exp(z)"
+}, {
+  "f": `
+			return cexp(cinv(z));
+		`,
+  "text": "f(z)=exp(1/z)"
+}, {
+  "f": `
+			return csin(z);
+		`,
+  "text": "f(z)=sin(z)"
+}, {
+  "f": `
+			return csec(z);
+		`,
+  "text": "f(z)=sec(z)"
+}, {
+  "f": `
+			return ccos(z);
+		`,
+  "text": "f(z)=cos(z)"
+}, {
+  "f": `
+			return ccot(z);
+		`,
+  "text": "f(z)=cot(z)"
+}, {
+  "f": `
+			return ccsc(z);
+		`,
+  "text": "f(z)=csc(z)"
+}, {
+  "f": `
+			return ctan(z);
+		`,
+  "text": "f(z)=tan(z)"
 }];
 
 },{}],11:[function(require,module,exports){
@@ -25139,10 +25194,10 @@ const {
   functions
 } = require("./funcs");
 var params = new URLSearchParams(document.location.search);
-var currentFunc = params.get("function") ? params.get("function") : "f(z)=z";
+var currentFunc = params.get("function") ? params.get("function") : 0;
 console.log(currentFunc);
 const PARAMS = {
-  function: currentFunc,
+  function: parseInt(currentFunc),
   preserveGridSpacing: false
 };
 const pane = new Pane({
@@ -25166,15 +25221,12 @@ DRAG SCROSS, ZOOM
 pane.addInput(PARAMS, "preserveGridSpacing");
 var optionList = {};
 for (let i = 0; i < functions.length; i++) {
-  optionList[functions[i]["text"]] = {
-    index: i,
-    text: functions[i].text
-  };
+  optionList[functions[i]["text"]] = i;
 }
 pane.addInput(PARAMS, "function", {
   options: optionList
 }).on("change", function (ev) {
-  document.location.search = "?function=" + ev.value.text;
+  document.location.search = "?function=" + ev.value;
 });
 
 //  Function from Iñigo Quiles
@@ -25243,7 +25295,7 @@ const draw = regl({
     }
 
 	vec2 f(vec2 z) {
-		${functions.find(v => v["text"] == currentFunc).f}
+		${functions[PARAMS.function].f}
 		return z;
 	}
 
