@@ -2,8 +2,6 @@ const regl = require("regl")({
 	extensions: ["oes_standard_derivatives"]
 });
 const {cfuncs} = require("./cfuncs.js")
-const mouseWheel = require("mouse-wheel");
-const mouseMove = require("mouse-change");
 
 const { Pane } = require("tweakpane");
 const TweakpaneLatex = require("tweakpane-latex");
@@ -11,18 +9,28 @@ const TweakpaneLatex = require("tweakpane-latex");
 
 const PARAMS = {
 	transform: true,
-	offsetX: -0.1,
-	offsetY: 0.08
+	offsetX: -0.25,
+	offsetY: 0.16,
+	overlay: false,
+	flip: false,
 }
 const pane = new Pane({
-    title: "Joukowsky's Airfoil (Prototype I)"
+    title: "Joukowsky's Airfoil"
 })
 pane.registerPlugin(TweakpaneLatex);
 pane.addBlade({
   view: "latex",
   content: `
 # The Joukowsky's Airfoil
-This famous airfoil is a very famous complex function.
+How does one mathematically describe an airplane wing?
+This famous airfoil is a very famous complex function that transforms
+a complex number $\\zeta$ to a new complex number $f(\\zeta)$.
+
+$$ f(\\zeta)  = \\zeta + \\frac{1}{\\zeta} $$
+
+Here we are mapping a circle on the original complex plane and passing it through the function.
+Toggle the 'transform' to see this effect.
+
 Read more here.
 <a href="https://complex-analysis.com/content/joukowsky_airfoil.html">Great resource here</a>
 <a href="https://rreusser.github.io/joukowsky-airfoil/">Inspired by rreusser</a>
@@ -33,8 +41,16 @@ Read more here.
 });
 
 pane.addInput(PARAMS, "transform");
-pane.addInput(PARAMS, "offsetX");
-pane.addInput(PARAMS, "offsetY");
+pane.addInput(PARAMS, "overlay");
+pane.addInput(PARAMS, "flip");
+pane.addInput(PARAMS, "offsetX", {
+	min: -0.5,
+	max: 0
+});
+pane.addInput(PARAMS, "offsetY", {
+	min: -0.5, 
+	max: 0.5
+});
 
 
 //  Function from Iñigo Quiles
@@ -67,6 +83,8 @@ const draw = regl({
 		offsetX: regl.prop("offsetX"),
 		offsetY: regl.prop("offsetY"),
 		transform: regl.prop("transform"),
+		flip: regl.prop("flip"),
+		overlay: regl.prop("overlay"),
     },
     attributes: {
         position: [
@@ -98,7 +116,7 @@ const draw = regl({
 	uniform vec2 u_resolution;
 	uniform float pixelRatio, gridWidth, opacity, t, gridSpacing, scale;
 	uniform float offsetX, offsetY;
-	uniform bool transform;
+	uniform bool transform, flip, overlay;
 
 	${cfuncs}
 
@@ -116,21 +134,39 @@ const draw = regl({
     }
 
 	vec2 f(vec2 z) {
-		// f(z) = z + 1/z;
-		// f^-1 = ...
+		return (z + csqrt(cmul(z,z)-4.0)) / 2.0;
+	}
+	vec2 f_low(vec2 z) {
+		return (z - csqrt(cmul(z,z)-4.0)) / 2.0;
+	}
 
-		float dir = 1.0;
-		return (z + dir*csqrt(cmul(z,z)-4.0)) / 2.0;
+	vec3 circle(vec2 z, vec2 offset, vec3 col) {
+		float radius = distance(z, offset);
+
+		float w = 0.1;
+
+		// why on earth is it 1.25????
+		float d = distance(offset, vec2(1.25, 0.0));
+		float isCircle = 1.0 - smoothstep(d, d-w, radius)*smoothstep(d-w, d, radius);
+		col = mix(vec3(0.0), col, isCircle);
+		return col;
 	}
 
     void main() {
 		vec2 z = (uv.xy) * scale / u_resolution.xy;
-		vec2 rect = z;
-		
 
+		vec2 zz = z;
 		// insert function
 		if (transform) {
 			z = f(z);
+			zz = f_low(zz);
+
+			if (overlay) {
+				if (flip)
+					z = zz;
+				else
+					zz = z;
+			}
 		}
 
 		// to hue
@@ -149,27 +185,16 @@ const draw = regl({
 		float gridFact = gridFactor(polar, 0.4 * gridWidth * pixelRatio, 1.0);
 		col = mix(vec3(0.6), col, opacity * gridFact);
 
-		vec2 zz = z;
 		// apply circle
 		vec2 offset = vec2(offsetX, offsetY);
-		float radius = distance(zz, offset);
-
-		float w = 0.1;
-		float d = length(offset + vec2(-1.0, 0.0));
-		float isCircle = 1.0 - smoothstep(d-w, d, radius)*smoothstep(d, d-w, radius);
-		col = mix(vec3(0.0), col, isCircle);
+		col = circle(z, offset, col); // top
+		col = circle(zz, offset, col); // cottom
 
       	gl_FragColor = vec4(col, 1);
     }`,
 });
 
-var s = 1.0;
-var gridSpacing = 2;
-var lastTimeWheel = 0;
-var lastTimeMove = 0;
-var lastPosition = { x: 0, y: 0};
-
-var offsets = { x: 0, y: 0};
+const scale = 3.0
 regl.frame(({ time }) => {
     regl.clear({
         color: [0, 0, 0, 1],
@@ -177,8 +202,10 @@ regl.frame(({ time }) => {
     });
 
     draw({
-		scale: 3.0,
+		scale: scale,
 		transform: PARAMS.transform,
+		flip: PARAMS.flip,
+		overlay: PARAMS.overlay,
 		offsetX: PARAMS.offsetX,
 		offsetY: PARAMS.offsetY
 	});

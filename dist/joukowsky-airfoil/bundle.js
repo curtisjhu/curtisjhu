@@ -1,326 +1,4 @@
 (function(){function r(e,n,t){function o(i,f){if(!n[i]){if(!e[i]){var c="function"==typeof require&&require;if(!f&&c)return c(i,!0);if(u)return u(i,!0);var a=new Error("Cannot find module '"+i+"'");throw a.code="MODULE_NOT_FOUND",a}var p=n[i]={exports:{}};e[i][0].call(p.exports,function(r){var n=e[i][1][r];return o(n||r)},p,p.exports,r,e,n,t)}return n[i].exports}for(var u="function"==typeof require&&require,i=0;i<t.length;i++)o(t[i]);return o}return r})()({1:[function(require,module,exports){
-'use strict'
-
-module.exports = mouseListen
-
-var mouse = require('mouse-event')
-
-function mouseListen (element, callback) {
-  if (!callback) {
-    callback = element
-    element = window
-  }
-
-  var buttonState = 0
-  var x = 0
-  var y = 0
-  var mods = {
-    shift: false,
-    alt: false,
-    control: false,
-    meta: false
-  }
-  var attached = false
-
-  function updateMods (ev) {
-    var changed = false
-    if ('altKey' in ev) {
-      changed = changed || ev.altKey !== mods.alt
-      mods.alt = !!ev.altKey
-    }
-    if ('shiftKey' in ev) {
-      changed = changed || ev.shiftKey !== mods.shift
-      mods.shift = !!ev.shiftKey
-    }
-    if ('ctrlKey' in ev) {
-      changed = changed || ev.ctrlKey !== mods.control
-      mods.control = !!ev.ctrlKey
-    }
-    if ('metaKey' in ev) {
-      changed = changed || ev.metaKey !== mods.meta
-      mods.meta = !!ev.metaKey
-    }
-    return changed
-  }
-
-  function handleEvent (nextButtons, ev) {
-    var nextX = mouse.x(ev)
-    var nextY = mouse.y(ev)
-    if ('buttons' in ev) {
-      nextButtons = ev.buttons | 0
-    }
-    if (nextButtons !== buttonState ||
-      nextX !== x ||
-      nextY !== y ||
-      updateMods(ev)) {
-      buttonState = nextButtons | 0
-      x = nextX || 0
-      y = nextY || 0
-      callback && callback(buttonState, x, y, mods)
-    }
-  }
-
-  function clearState (ev) {
-    handleEvent(0, ev)
-  }
-
-  function handleBlur () {
-    if (buttonState ||
-      x ||
-      y ||
-      mods.shift ||
-      mods.alt ||
-      mods.meta ||
-      mods.control) {
-      x = y = 0
-      buttonState = 0
-      mods.shift = mods.alt = mods.control = mods.meta = false
-      callback && callback(0, 0, 0, mods)
-    }
-  }
-
-  function handleMods (ev) {
-    if (updateMods(ev)) {
-      callback && callback(buttonState, x, y, mods)
-    }
-  }
-
-  function handleMouseMove (ev) {
-    if (mouse.buttons(ev) === 0) {
-      handleEvent(0, ev)
-    } else {
-      handleEvent(buttonState, ev)
-    }
-  }
-
-  function handleMouseDown (ev) {
-    handleEvent(buttonState | mouse.buttons(ev), ev)
-  }
-
-  function handleMouseUp (ev) {
-    handleEvent(buttonState & ~mouse.buttons(ev), ev)
-  }
-
-  function attachListeners () {
-    if (attached) {
-      return
-    }
-    attached = true
-
-    element.addEventListener('mousemove', handleMouseMove)
-
-    element.addEventListener('mousedown', handleMouseDown)
-
-    element.addEventListener('mouseup', handleMouseUp)
-
-    element.addEventListener('mouseleave', clearState)
-    element.addEventListener('mouseenter', clearState)
-    element.addEventListener('mouseout', clearState)
-    element.addEventListener('mouseover', clearState)
-
-    element.addEventListener('blur', handleBlur)
-
-    element.addEventListener('keyup', handleMods)
-    element.addEventListener('keydown', handleMods)
-    element.addEventListener('keypress', handleMods)
-
-    if (element !== window) {
-      window.addEventListener('blur', handleBlur)
-
-      window.addEventListener('keyup', handleMods)
-      window.addEventListener('keydown', handleMods)
-      window.addEventListener('keypress', handleMods)
-    }
-  }
-
-  function detachListeners () {
-    if (!attached) {
-      return
-    }
-    attached = false
-
-    element.removeEventListener('mousemove', handleMouseMove)
-
-    element.removeEventListener('mousedown', handleMouseDown)
-
-    element.removeEventListener('mouseup', handleMouseUp)
-
-    element.removeEventListener('mouseleave', clearState)
-    element.removeEventListener('mouseenter', clearState)
-    element.removeEventListener('mouseout', clearState)
-    element.removeEventListener('mouseover', clearState)
-
-    element.removeEventListener('blur', handleBlur)
-
-    element.removeEventListener('keyup', handleMods)
-    element.removeEventListener('keydown', handleMods)
-    element.removeEventListener('keypress', handleMods)
-
-    if (element !== window) {
-      window.removeEventListener('blur', handleBlur)
-
-      window.removeEventListener('keyup', handleMods)
-      window.removeEventListener('keydown', handleMods)
-      window.removeEventListener('keypress', handleMods)
-    }
-  }
-
-  // Attach listeners
-  attachListeners()
-
-  var result = {
-    element: element
-  }
-
-  Object.defineProperties(result, {
-    enabled: {
-      get: function () { return attached },
-      set: function (f) {
-        if (f) {
-          attachListeners()
-        } else {
-          detachListeners()
-        }
-      },
-      enumerable: true
-    },
-    buttons: {
-      get: function () { return buttonState },
-      enumerable: true
-    },
-    x: {
-      get: function () { return x },
-      enumerable: true
-    },
-    y: {
-      get: function () { return y },
-      enumerable: true
-    },
-    mods: {
-      get: function () { return mods },
-      enumerable: true
-    }
-  })
-
-  return result
-}
-
-},{"mouse-event":2}],2:[function(require,module,exports){
-'use strict'
-
-function mouseButtons(ev) {
-  if(typeof ev === 'object') {
-    if('buttons' in ev) {
-      return ev.buttons
-    } else if('which' in ev) {
-      var b = ev.which
-      if(b === 2) {
-        return 4
-      } else if(b === 3) {
-        return 2
-      } else if(b > 0) {
-        return 1<<(b-1)
-      }
-    } else if('button' in ev) {
-      var b = ev.button
-      if(b === 1) {
-        return 4
-      } else if(b === 2) {
-        return 2
-      } else if(b >= 0) {
-        return 1<<b
-      }
-    }
-  }
-  return 0
-}
-exports.buttons = mouseButtons
-
-function mouseElement(ev) {
-  return ev.target || ev.srcElement || window
-}
-exports.element = mouseElement
-
-function mouseRelativeX(ev) {
-  if(typeof ev === 'object') {
-    if('offsetX' in ev) {
-      return ev.offsetX
-    }
-    var target = mouseElement(ev)
-    var bounds = target.getBoundingClientRect()
-    return ev.clientX - bounds.left
-  }
-  return 0
-}
-exports.x = mouseRelativeX
-
-function mouseRelativeY(ev) {
-  if(typeof ev === 'object') {
-    if('offsetY' in ev) {
-      return ev.offsetY
-    }
-    var target = mouseElement(ev)
-    var bounds = target.getBoundingClientRect()
-    return ev.clientY - bounds.top
-  }
-  return 0
-}
-exports.y = mouseRelativeY
-
-},{}],3:[function(require,module,exports){
-'use strict'
-
-var toPX = require('to-px')
-
-module.exports = mouseWheelListen
-
-function mouseWheelListen(element, callback, noScroll) {
-  if(typeof element === 'function') {
-    noScroll = !!callback
-    callback = element
-    element = window
-  }
-  var lineHeight = toPX('ex', element)
-  var listener = function(ev) {
-    if(noScroll) {
-      ev.preventDefault()
-    }
-    var dx = ev.deltaX || 0
-    var dy = ev.deltaY || 0
-    var dz = ev.deltaZ || 0
-    var mode = ev.deltaMode
-    var scale = 1
-    switch(mode) {
-      case 1:
-        scale = lineHeight
-      break
-      case 2:
-        scale = window.innerHeight
-      break
-    }
-    dx *= scale
-    dy *= scale
-    dz *= scale
-    if(dx || dy || dz) {
-      return callback(dx, dy, dz, ev)
-    }
-  }
-  element.addEventListener('wheel', listener)
-  return listener
-}
-
-},{"to-px":6}],4:[function(require,module,exports){
-module.exports = function parseUnit(str, out) {
-    if (!out)
-        out = [ 0, '' ]
-
-    str = String(str)
-    var num = parseFloat(str, 10)
-    out[0] = num
-    out[1] = str.match(/[\d.\-\+]*\s*(.*)/)[1] || ''
-    return out
-}
-},{}],5:[function(require,module,exports){
 (function(Z,ka){"object"===typeof exports&&"undefined"!==typeof module?module.exports=ka():"function"===typeof define&&define.amd?define(ka):Z.createREGL=ka()})(this,function(){function Z(a,b){this.id=Db++;this.type=a;this.data=b}function ka(a){if(0===a.length)return[];var b=a.charAt(0),c=a.charAt(a.length-1);if(1<a.length&&b===c&&('"'===b||"'"===b))return['"'+a.substr(1,a.length-2).replace(/\\/g,"\\\\").replace(/"/g,'\\"')+'"'];if(b=/\[(false|true|null|\d+|'[^']*'|"[^"]*")\]/.exec(a))return ka(a.substr(0,
 b.index)).concat(ka(b[1])).concat(ka(a.substr(b.index+b[0].length)));b=a.split(".");if(1===b.length)return['"'+a.replace(/\\/g,"\\\\").replace(/"/g,'\\"')+'"'];a=[];for(c=0;c<b.length;++c)a=a.concat(ka(b[c]));return a}function cb(a){return"["+ka(a).join("][")+"]"}function db(a,b){if("function"===typeof a)return new Z(0,a);if("number"===typeof a||"boolean"===typeof a)return new Z(5,a);if(Array.isArray(a))return new Z(6,a.map(function(a,e){return db(a,b+"["+e+"]")}));if(a instanceof Z)return a}function Eb(){var a=
 {"":0},b=[""];return{id:function(c){var e=a[c];if(e)return e;e=a[c]=b.length;b.push(c);return e},str:function(a){return b[a]}}}function Fb(a,b,c){function e(){var b=window.innerWidth,e=window.innerHeight;a!==document.body&&(e=f.getBoundingClientRect(),b=e.right-e.left,e=e.bottom-e.top);f.width=c*b;f.height=c*e}var f=document.createElement("canvas");L(f.style,{border:0,margin:0,padding:0,top:0,left:0,width:"100%",height:"100%"});a.appendChild(f);a===document.body&&(f.style.position="absolute",L(a.style,
@@ -493,83 +171,7 @@ C={elements:null,primitive:4,count:-1,offset:0,instances:-1},M=Yb(l,w),y=Jb(l,p,
 vao:K.createVAO,attributes:g,frame:v,on:function(a,b){var c;switch(a){case "frame":return v(b);case "lost":c=R;break;case "restore":c=U;break;case "destroy":c=Z}c.push(b);return{cancel:function(){for(var a=0;a<c.length;++a)if(c[a]===b){c[a]=c[c.length-1];c.pop();break}}}},limits:M,hasExtension:function(a){return 0<=M.extensions.indexOf(a.toLowerCase())},read:r,destroy:function(){E.length=0;e();N&&(N.removeEventListener("webglcontextlost",f),N.removeEventListener("webglcontextrestored",d));F.clear();
 S.clear();O.clear();K.clear();A.clear();T.clear();y.clear();t&&t.clear();Z.forEach(function(a){a()})},_gl:l,_refresh:m,poll:function(){u();t&&t.update()},now:x,stats:p});a.onDone(null,g);return g}});
 
-},{}],6:[function(require,module,exports){
-'use strict'
-
-var parseUnit = require('parse-unit')
-
-module.exports = toPX
-
-var PIXELS_PER_INCH = getSizeBrutal('in', document.body) // 96
-
-
-function getPropertyInPX(element, prop) {
-  var parts = parseUnit(getComputedStyle(element).getPropertyValue(prop))
-  return parts[0] * toPX(parts[1], element)
-}
-
-//This brutal hack is needed
-function getSizeBrutal(unit, element) {
-  var testDIV = document.createElement('div')
-  testDIV.style['height'] = '128' + unit
-  element.appendChild(testDIV)
-  var size = getPropertyInPX(testDIV, 'height') / 128
-  element.removeChild(testDIV)
-  return size
-}
-
-function toPX(str, element) {
-  if (!str) return null
-
-  element = element || document.body
-  str = (str + '' || 'px').trim().toLowerCase()
-  if(element === window || element === document) {
-    element = document.body
-  }
-
-  switch(str) {
-    case '%':  //Ambiguous, not sure if we should use width or height
-      return element.clientHeight / 100.0
-    case 'ch':
-    case 'ex':
-      return getSizeBrutal(str, element)
-    case 'em':
-      return getPropertyInPX(element, 'font-size')
-    case 'rem':
-      return getPropertyInPX(document.body, 'font-size')
-    case 'vw':
-      return window.innerWidth/100
-    case 'vh':
-      return window.innerHeight/100
-    case 'vmin':
-      return Math.min(window.innerWidth, window.innerHeight) / 100
-    case 'vmax':
-      return Math.max(window.innerWidth, window.innerHeight) / 100
-    case 'in':
-      return PIXELS_PER_INCH
-    case 'cm':
-      return PIXELS_PER_INCH / 2.54
-    case 'mm':
-      return PIXELS_PER_INCH / 25.4
-    case 'pt':
-      return PIXELS_PER_INCH / 72
-    case 'pc':
-      return PIXELS_PER_INCH / 6
-    case 'px':
-      return 1
-  }
-
-  // detect number of units
-  var parts = parseUnit(str)
-  if (!isNaN(parts[0]) && parts[1]) {
-    var px = toPX(parts[1], element)
-    return typeof px === 'number' ? parts[0] * px : null
-  }
-
-  return null
-}
-
-},{"parse-unit":4}],7:[function(require,module,exports){
+},{}],2:[function(require,module,exports){
 (function (global, factory) {
     typeof exports === 'object' && typeof module !== 'undefined' ? factory(exports) :
     typeof define === 'function' && define.amd ? define(['exports'], factory) :
@@ -17124,7 +16726,7 @@ function toPX(str, element) {
 
 }));
 
-},{}],8:[function(require,module,exports){
+},{}],3:[function(require,module,exports){
 /*! Tweakpane 3.1.7 (c) 2016 cocopon, licensed under the MIT license. */
 (function (global, factory) {
     typeof exports === 'object' && typeof module !== 'undefined' ? factory(exports) :
@@ -24763,7 +24365,7 @@ function toPX(str, element) {
 
 }));
 
-},{}],9:[function(require,module,exports){
+},{}],4:[function(require,module,exports){
 exports.cfuncs = `
 #ifndef PI
 #define PI 3.141592653589793238
@@ -25076,33 +24678,41 @@ vec2 ctanh (vec2 z) {
   return vec2(sch.x, sin(z.y)) / (sch.y + cos(z.y));
 }`;
 
-},{}],10:[function(require,module,exports){
+},{}],5:[function(require,module,exports){
 const regl = require("regl")({
   extensions: ["oes_standard_derivatives"]
 });
 const {
   cfuncs
 } = require("./cfuncs.js");
-const mouseWheel = require("mouse-wheel");
-const mouseMove = require("mouse-change");
 const {
   Pane
 } = require("tweakpane");
 const TweakpaneLatex = require("tweakpane-latex");
 const PARAMS = {
   transform: true,
-  offsetX: -0.1,
-  offsetY: 0.08
+  offsetX: -0.25,
+  offsetY: 0.16,
+  overlay: false,
+  flip: false
 };
 const pane = new Pane({
-  title: "Joukowsky's Airfoil (Prototype I)"
+  title: "Joukowsky's Airfoil"
 });
 pane.registerPlugin(TweakpaneLatex);
 pane.addBlade({
   view: "latex",
   content: `
 # The Joukowsky's Airfoil
-This famous airfoil is a very famous complex function.
+How does one mathematically describe an airplane wing?
+This famous airfoil is a very famous complex function that transforms
+a complex number $\\zeta$ to a new complex number $f(\\zeta)$.
+
+$$ f(\\zeta)  = \\zeta + \\frac{1}{\\zeta} $$
+
+Here we are mapping a circle on the original complex plane and passing it through the function.
+Toggle the 'transform' to see this effect.
+
 Read more here.
 <a href="https://complex-analysis.com/content/joukowsky_airfoil.html">Great resource here</a>
 <a href="https://rreusser.github.io/joukowsky-airfoil/">Inspired by rreusser</a>
@@ -25112,8 +24722,16 @@ Read more here.
   markdown: true
 });
 pane.addInput(PARAMS, "transform");
-pane.addInput(PARAMS, "offsetX");
-pane.addInput(PARAMS, "offsetY");
+pane.addInput(PARAMS, "overlay");
+pane.addInput(PARAMS, "flip");
+pane.addInput(PARAMS, "offsetX", {
+  min: -0.5,
+  max: 0
+});
+pane.addInput(PARAMS, "offsetY", {
+  min: -0.5,
+  max: 0.5
+});
 
 //  Function from Iñigo Quiles
 //  https://www.shadertoy.com/view/MsS3Wc
@@ -25144,7 +24762,9 @@ const draw = regl({
     gridSpacing: 2,
     offsetX: regl.prop("offsetX"),
     offsetY: regl.prop("offsetY"),
-    transform: regl.prop("transform")
+    transform: regl.prop("transform"),
+    flip: regl.prop("flip"),
+    overlay: regl.prop("overlay")
   },
   attributes: {
     position: [[-1, -1], [1, 1], [-1, 1], [1, 1], [-1, -1], [1, -1]]
@@ -25168,7 +24788,7 @@ const draw = regl({
 	uniform vec2 u_resolution;
 	uniform float pixelRatio, gridWidth, opacity, t, gridSpacing, scale;
 	uniform float offsetX, offsetY;
-	uniform bool transform;
+	uniform bool transform, flip, overlay;
 
 	${cfuncs}
 
@@ -25186,21 +24806,39 @@ const draw = regl({
     }
 
 	vec2 f(vec2 z) {
-		// f(z) = z + 1/z;
-		// f^-1 = ...
+		return (z + csqrt(cmul(z,z)-4.0)) / 2.0;
+	}
+	vec2 f_low(vec2 z) {
+		return (z - csqrt(cmul(z,z)-4.0)) / 2.0;
+	}
 
-		float dir = 1.0;
-		return (z + dir*csqrt(cmul(z,z)-4.0)) / 2.0;
+	vec3 circle(vec2 z, vec2 offset, vec3 col) {
+		float radius = distance(z, offset);
+
+		float w = 0.1;
+
+		// why on earth is it 1.25????
+		float d = distance(offset, vec2(1.25, 0.0));
+		float isCircle = 1.0 - smoothstep(d, d-w, radius)*smoothstep(d-w, d, radius);
+		col = mix(vec3(0.0), col, isCircle);
+		return col;
 	}
 
     void main() {
 		vec2 z = (uv.xy) * scale / u_resolution.xy;
-		vec2 rect = z;
-		
 
+		vec2 zz = z;
 		// insert function
 		if (transform) {
 			z = f(z);
+			zz = f_low(zz);
+
+			if (overlay) {
+				if (flip)
+					z = zz;
+				else
+					zz = z;
+			}
 		}
 
 		// to hue
@@ -25219,31 +24857,15 @@ const draw = regl({
 		float gridFact = gridFactor(polar, 0.4 * gridWidth * pixelRatio, 1.0);
 		col = mix(vec3(0.6), col, opacity * gridFact);
 
-		vec2 zz = z;
 		// apply circle
 		vec2 offset = vec2(offsetX, offsetY);
-		float radius = distance(zz, offset);
-
-		float w = 0.1;
-		float d = length(offset + vec2(-1.0, 0.0));
-		float isCircle = 1.0 - smoothstep(d-w, d, radius)*smoothstep(d, d-w, radius);
-		col = mix(vec3(0.0), col, isCircle);
+		col = circle(z, offset, col); // top
+		col = circle(zz, offset, col); // cottom
 
       	gl_FragColor = vec4(col, 1);
     }`
 });
-var s = 1.0;
-var gridSpacing = 2;
-var lastTimeWheel = 0;
-var lastTimeMove = 0;
-var lastPosition = {
-  x: 0,
-  y: 0
-};
-var offsets = {
-  x: 0,
-  y: 0
-};
+const scale = 3.0;
 regl.frame(({
   time
 }) => {
@@ -25252,11 +24874,13 @@ regl.frame(({
     depth: 1
   });
   draw({
-    scale: 3.0,
+    scale: scale,
     transform: PARAMS.transform,
+    flip: PARAMS.flip,
+    overlay: PARAMS.overlay,
     offsetX: PARAMS.offsetX,
     offsetY: PARAMS.offsetY
   });
 });
 
-},{"./cfuncs.js":9,"mouse-change":1,"mouse-wheel":3,"regl":5,"tweakpane":8,"tweakpane-latex":7}]},{},[10]);
+},{"./cfuncs.js":4,"regl":1,"tweakpane":3,"tweakpane-latex":2}]},{},[5]);
