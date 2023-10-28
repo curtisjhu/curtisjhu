@@ -12,10 +12,10 @@ pane.registerPlugin(TweakpaneLatexPlugin);
 pane.addBlade({
   view: "latex",
   content: `
-The infamous DBSCAN algorithm.
-
-TODO:
-I think there is an edge case where, if it is a nonCore of two groups it gets added to both.
+The Density-Based Spatial Clustering Algorithm with Noise is a way of finding clusters in data.
+It it is density-based so it has a sense of where data is more dense regardless of shape
+ while also ignoring outliers.
+It also doesn't require us to know the number of clusters before hand like k-means.
 `,
   border: false,
   markdown: true,
@@ -24,11 +24,11 @@ I think there is an edge case where, if it is a nonCore of two groups it gets ad
 const url = new URLSearchParams(window.location.search);
 const maxSpeed = 4;
 const settings = {
-    function: url.get("function") || "clusters",
+    function: url.get("function") || "circles",
     n: parseInt(url.get("n")) || 100,
     groups: parseInt(url.get("groups")) || 20,
     speed: 0.8 * maxSpeed,
-    std: parseFloat(url.get("std")) || 0.3,
+    std: parseFloat(url.get("std")) || 0.1,
     minPoints: parseInt(url.get("minPoints")) || 4,
     epsilon: parseFloat(url.get("epsilon")) || 0.3
 };
@@ -44,22 +44,22 @@ pane.addInput(settings, "function", {
   window.history.replaceState(null, null, '?function='+ev.value);
   window.location.reload();
 });
-pane.addInput(settings, "n", {
-  step: 14,
-  min: 1,
-  max: 200
-}).on("change", (ev) => {
-  window.history.replaceState(null, null, '?n='+ev.value);
-  window.location.reload();
-});
-pane.addInput(settings, "groups", {
-  step: 1,
-  min: settings.n/14,
-  max: settings.n
-}).on("change", (ev) => {
-  window.history.replaceState(null, null, '?groups='+ev.value);
-  window.location.reload();
-});
+// pane.addInput(settings, "n", {
+//   step: 14,
+//   min: 1,
+//   max: 200
+// }).on("change", (ev) => {
+//   window.history.replaceState(null, null, '?n='+ev.value);
+//   window.location.reload();
+// });
+// pane.addInput(settings, "groups", {
+//   step: 1,
+//   min: settings.n/14,
+//   max: settings.n
+// }).on("change", (ev) => {
+//   window.history.replaceState(null, null, '?groups='+ev.value);
+//   window.location.reload();
+// });
 pane.addInput(settings, "speed", {
   min: 0,
   max: maxSpeed
@@ -93,6 +93,21 @@ const btn = pane.addButton({
 btn.on('click', () => {
   window.location.reload();
 });
+
+const algorithm = pane.addFolder({
+  title: "Algorithm",
+  expanded: false
+})
+algorithm.addBlade({
+  view: "latex",
+  content: `
+1. Find Core Points. Points with $\\geq$ minPts within $\\epsilon$ distance away
+2. Find the connected components of core points on the neighbor graph, ignoring all non-core points.
+3. Add non-core points to nearby clusters that are within $\\epsilon$ distance away
+`,
+  border: false,
+  markdown: true,
+})
 
 
 
@@ -151,7 +166,6 @@ const drawPoints = regl({
 
 window.addEventListener("resize", function(e) {
   iteration = 0;
-  previousCentroidsXY = null;
 })
 
 let iteration = 0;
