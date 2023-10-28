@@ -9,7 +9,7 @@ const regl = require("regl")({
 });
 const glsl = require("glslify");
 const camera = require("regl-camera")(regl, {
-	distance: 20,
+	distance: 60,
 	theta: Math.PI / 2,
 	phi: -Math.PI /4,
 	rotationSpeed: 0.7,
@@ -44,7 +44,7 @@ pane.addBlade({
 Optimization functions are used to test optimization algorithms.
 Here are some functions that have local minimas that try to test the performance of finding these local minimas.
 
-<a href="https://www.sfu.ca/~ssurjano/optimization.html">Link for more information</a>
+<a href="https://www.sfu.ca/~ssurjano/optimization.html">More information</a>
 `,
   markdown: true,
 });

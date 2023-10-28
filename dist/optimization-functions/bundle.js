@@ -22514,7 +22514,7 @@ var NdArray = require('../ndarray');
 var __ = require('../utils');
 var rgb2gray = require('./rgb2gray');
 
-var doSobel = require('cwise/lib/wrapper')({"args":["array","array",{"offset":[-1,-1],"array":1},{"offset":[-1,0],"array":1},{"offset":[-1,1],"array":1},{"offset":[0,-1],"array":1},{"offset":[0,1],"array":1},{"offset":[1,-1],"array":1},{"offset":[1,0],"array":1},{"offset":[1,1],"array":1}],"pre":{"body":"{}","args":[],"thisVars":[],"localVars":[]},"body":{"body":"{var _inline_28_q=_inline_28_arg2_+2*_inline_28_arg3_+_inline_28_arg4_-_inline_28_arg7_-2*_inline_28_arg8_-_inline_28_arg9_,_inline_28_s=_inline_28_arg2_-_inline_28_arg4_+2*_inline_28_arg5_-2*_inline_28_arg6_+_inline_28_arg7_-_inline_28_arg9_;_inline_28_arg0_=Math.sqrt(_inline_28_s*_inline_28_s+_inline_28_q*_inline_28_q)}","args":[{"name":"_inline_28_arg0_","lvalue":true,"rvalue":false,"count":1},{"name":"_inline_28_arg1_","lvalue":false,"rvalue":false,"count":0},{"name":"_inline_28_arg2_","lvalue":false,"rvalue":true,"count":2},{"name":"_inline_28_arg3_","lvalue":false,"rvalue":true,"count":1},{"name":"_inline_28_arg4_","lvalue":false,"rvalue":true,"count":2},{"name":"_inline_28_arg5_","lvalue":false,"rvalue":true,"count":1},{"name":"_inline_28_arg6_","lvalue":false,"rvalue":true,"count":1},{"name":"_inline_28_arg7_","lvalue":false,"rvalue":true,"count":2},{"name":"_inline_28_arg8_","lvalue":false,"rvalue":true,"count":1},{"name":"_inline_28_arg9_","lvalue":false,"rvalue":true,"count":2}],"thisVars":[],"localVars":["_inline_28_q","_inline_28_s"]},"post":{"body":"{}","args":[],"thisVars":[],"localVars":[]},"debug":false,"funcName":"doSobelBody","blockSize":64});
+var doSobel = require('cwise/lib/wrapper')({"args":["array","array",{"offset":[-1,-1],"array":1},{"offset":[-1,0],"array":1},{"offset":[-1,1],"array":1},{"offset":[0,-1],"array":1},{"offset":[0,1],"array":1},{"offset":[1,-1],"array":1},{"offset":[1,0],"array":1},{"offset":[1,1],"array":1}],"pre":{"body":"{}","args":[],"thisVars":[],"localVars":[]},"body":{"body":"{var _inline_25_q=_inline_25_arg2_+2*_inline_25_arg3_+_inline_25_arg4_-_inline_25_arg7_-2*_inline_25_arg8_-_inline_25_arg9_,_inline_25_s=_inline_25_arg2_-_inline_25_arg4_+2*_inline_25_arg5_-2*_inline_25_arg6_+_inline_25_arg7_-_inline_25_arg9_;_inline_25_arg0_=Math.sqrt(_inline_25_s*_inline_25_s+_inline_25_q*_inline_25_q)}","args":[{"name":"_inline_25_arg0_","lvalue":true,"rvalue":false,"count":1},{"name":"_inline_25_arg1_","lvalue":false,"rvalue":false,"count":0},{"name":"_inline_25_arg2_","lvalue":false,"rvalue":true,"count":2},{"name":"_inline_25_arg3_","lvalue":false,"rvalue":true,"count":1},{"name":"_inline_25_arg4_","lvalue":false,"rvalue":true,"count":2},{"name":"_inline_25_arg5_","lvalue":false,"rvalue":true,"count":1},{"name":"_inline_25_arg6_","lvalue":false,"rvalue":true,"count":1},{"name":"_inline_25_arg7_","lvalue":false,"rvalue":true,"count":2},{"name":"_inline_25_arg8_","lvalue":false,"rvalue":true,"count":1},{"name":"_inline_25_arg9_","lvalue":false,"rvalue":true,"count":2}],"thisVars":[],"localVars":["_inline_25_q","_inline_25_s"]},"post":{"body":"{}","args":[],"thisVars":[],"localVars":[]},"debug":false,"funcName":"doSobelBody","blockSize":64});
 
 /**
  * Find the edge magnitude using the Sobel transform.
@@ -22553,7 +22553,7 @@ module.exports = function computeSobel (img) {
 var NdArray = require('../ndarray');
 var rgb2gray = require('./rgb2gray');
 
-var doIntegrate = require('cwise/lib/wrapper')({"args":["array","array","index",{"offset":[-1,-1],"array":0},{"offset":[-1,0],"array":0},{"offset":[0,-1],"array":0}],"pre":{"body":"{}","args":[],"thisVars":[],"localVars":[]},"body":{"body":"{_inline_25_arg0_=0!==_inline_25_arg2_[0]&&0!==_inline_25_arg2_[1]?_inline_25_arg1_*_inline_25_arg1_+_inline_25_arg4_+_inline_25_arg5_-_inline_25_arg3_:0===_inline_25_arg2_[0]&&0===_inline_25_arg2_[1]?_inline_25_arg1_*_inline_25_arg1_:0===_inline_25_arg2_[0]?_inline_25_arg1_*_inline_25_arg1_+_inline_25_arg5_:_inline_25_arg1_*_inline_25_arg1_+_inline_25_arg4_}","args":[{"name":"_inline_25_arg0_","lvalue":true,"rvalue":false,"count":1},{"name":"_inline_25_arg1_","lvalue":false,"rvalue":true,"count":8},{"name":"_inline_25_arg2_","lvalue":false,"rvalue":true,"count":5},{"name":"_inline_25_arg3_","lvalue":false,"rvalue":true,"count":1},{"name":"_inline_25_arg4_","lvalue":false,"rvalue":true,"count":2},{"name":"_inline_25_arg5_","lvalue":false,"rvalue":true,"count":2}],"thisVars":[],"localVars":[]},"post":{"body":"{}","args":[],"thisVars":[],"localVars":[]},"debug":false,"funcName":"doIntegrateBody","blockSize":64});
+var doIntegrate = require('cwise/lib/wrapper')({"args":["array","array","index",{"offset":[-1,-1],"array":0},{"offset":[-1,0],"array":0},{"offset":[0,-1],"array":0}],"pre":{"body":"{}","args":[],"thisVars":[],"localVars":[]},"body":{"body":"{_inline_28_arg0_=0!==_inline_28_arg2_[0]&&0!==_inline_28_arg2_[1]?_inline_28_arg1_*_inline_28_arg1_+_inline_28_arg4_+_inline_28_arg5_-_inline_28_arg3_:0===_inline_28_arg2_[0]&&0===_inline_28_arg2_[1]?_inline_28_arg1_*_inline_28_arg1_:0===_inline_28_arg2_[0]?_inline_28_arg1_*_inline_28_arg1_+_inline_28_arg5_:_inline_28_arg1_*_inline_28_arg1_+_inline_28_arg4_}","args":[{"name":"_inline_28_arg0_","lvalue":true,"rvalue":false,"count":1},{"name":"_inline_28_arg1_","lvalue":false,"rvalue":true,"count":8},{"name":"_inline_28_arg2_","lvalue":false,"rvalue":true,"count":5},{"name":"_inline_28_arg3_","lvalue":false,"rvalue":true,"count":1},{"name":"_inline_28_arg4_","lvalue":false,"rvalue":true,"count":2},{"name":"_inline_28_arg5_","lvalue":false,"rvalue":true,"count":2}],"thisVars":[],"localVars":[]},"post":{"body":"{}","args":[],"thisVars":[],"localVars":[]},"debug":false,"funcName":"doIntegrateBody","blockSize":64});
 
 /**
  * Compute Squared Sum Area Table, also known as the integral of the squared image
@@ -50500,7 +50500,7 @@ const regl = require("regl")({
 });
 const glsl = require("glslify");
 const camera = require("regl-camera")(regl, {
-  distance: 20,
+  distance: 60,
   theta: Math.PI / 2,
   phi: -Math.PI / 4,
   rotationSpeed: 0.7,
@@ -50529,7 +50529,7 @@ pane.addBlade({
 Optimization functions are used to test optimization algorithms.
 Here are some functions that have local minimas that try to test the performance of finding these local minimas.
 
-<a href="https://www.sfu.ca/~ssurjano/optimization.html">Link for more information</a>
+<a href="https://www.sfu.ca/~ssurjano/optimization.html">More information</a>
 `,
   markdown: true
 });
