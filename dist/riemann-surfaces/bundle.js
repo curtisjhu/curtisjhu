@@ -22463,7 +22463,7 @@ var NdArray = require('../ndarray');
 var __ = require('../utils');
 var rgb2gray = require('./rgb2gray');
 
-var doScharr = require('cwise/lib/wrapper')({"args":["array","array",{"offset":[-1,-1],"array":1},{"offset":[-1,0],"array":1},{"offset":[-1,1],"array":1},{"offset":[0,-1],"array":1},{"offset":[0,1],"array":1},{"offset":[1,-1],"array":1},{"offset":[1,0],"array":1},{"offset":[1,1],"array":1}],"pre":{"body":"{}","args":[],"thisVars":[],"localVars":[]},"body":{"body":"{var _inline_34_q=3*_inline_34_arg2_+10*_inline_34_arg3_+3*_inline_34_arg4_-3*_inline_34_arg7_-10*_inline_34_arg8_-3*_inline_34_arg9_,_inline_34_s=3*_inline_34_arg2_-3*_inline_34_arg4_+10*_inline_34_arg5_-10*_inline_34_arg6_+3*_inline_34_arg7_-3*_inline_34_arg9_;_inline_34_arg0_=Math.sqrt(_inline_34_s*_inline_34_s+_inline_34_q*_inline_34_q)}","args":[{"name":"_inline_34_arg0_","lvalue":true,"rvalue":false,"count":1},{"name":"_inline_34_arg1_","lvalue":false,"rvalue":false,"count":0},{"name":"_inline_34_arg2_","lvalue":false,"rvalue":true,"count":2},{"name":"_inline_34_arg3_","lvalue":false,"rvalue":true,"count":1},{"name":"_inline_34_arg4_","lvalue":false,"rvalue":true,"count":2},{"name":"_inline_34_arg5_","lvalue":false,"rvalue":true,"count":1},{"name":"_inline_34_arg6_","lvalue":false,"rvalue":true,"count":1},{"name":"_inline_34_arg7_","lvalue":false,"rvalue":true,"count":2},{"name":"_inline_34_arg8_","lvalue":false,"rvalue":true,"count":1},{"name":"_inline_34_arg9_","lvalue":false,"rvalue":true,"count":2}],"thisVars":[],"localVars":["_inline_34_q","_inline_34_s"]},"post":{"body":"{}","args":[],"thisVars":[],"localVars":[]},"debug":false,"funcName":"doSobelBody","blockSize":64});
+var doScharr = require('cwise/lib/wrapper')({"args":["array","array",{"offset":[-1,-1],"array":1},{"offset":[-1,0],"array":1},{"offset":[-1,1],"array":1},{"offset":[0,-1],"array":1},{"offset":[0,1],"array":1},{"offset":[1,-1],"array":1},{"offset":[1,0],"array":1},{"offset":[1,1],"array":1}],"pre":{"body":"{}","args":[],"thisVars":[],"localVars":[]},"body":{"body":"{var _inline_31_q=3*_inline_31_arg2_+10*_inline_31_arg3_+3*_inline_31_arg4_-3*_inline_31_arg7_-10*_inline_31_arg8_-3*_inline_31_arg9_,_inline_31_s=3*_inline_31_arg2_-3*_inline_31_arg4_+10*_inline_31_arg5_-10*_inline_31_arg6_+3*_inline_31_arg7_-3*_inline_31_arg9_;_inline_31_arg0_=Math.sqrt(_inline_31_s*_inline_31_s+_inline_31_q*_inline_31_q)}","args":[{"name":"_inline_31_arg0_","lvalue":true,"rvalue":false,"count":1},{"name":"_inline_31_arg1_","lvalue":false,"rvalue":false,"count":0},{"name":"_inline_31_arg2_","lvalue":false,"rvalue":true,"count":2},{"name":"_inline_31_arg3_","lvalue":false,"rvalue":true,"count":1},{"name":"_inline_31_arg4_","lvalue":false,"rvalue":true,"count":2},{"name":"_inline_31_arg5_","lvalue":false,"rvalue":true,"count":1},{"name":"_inline_31_arg6_","lvalue":false,"rvalue":true,"count":1},{"name":"_inline_31_arg7_","lvalue":false,"rvalue":true,"count":2},{"name":"_inline_31_arg8_","lvalue":false,"rvalue":true,"count":1},{"name":"_inline_31_arg9_","lvalue":false,"rvalue":true,"count":2}],"thisVars":[],"localVars":["_inline_31_q","_inline_31_s"]},"post":{"body":"{}","args":[],"thisVars":[],"localVars":[]},"debug":false,"funcName":"doSobelBody","blockSize":64});
 
 /**
  * Find the edge magnitude using the Scharr transform.
@@ -22541,7 +22541,7 @@ module.exports = function computeSobel (img) {
 var NdArray = require('../ndarray');
 var rgb2gray = require('./rgb2gray');
 
-var doIntegrate = require('cwise/lib/wrapper')({"args":["array","array","index",{"offset":[-1,-1],"array":0},{"offset":[-1,0],"array":0},{"offset":[0,-1],"array":0}],"pre":{"body":"{}","args":[],"thisVars":[],"localVars":[]},"body":{"body":"{_inline_31_arg0_=0!==_inline_31_arg2_[0]&&0!==_inline_31_arg2_[1]?_inline_31_arg1_*_inline_31_arg1_+_inline_31_arg4_+_inline_31_arg5_-_inline_31_arg3_:0===_inline_31_arg2_[0]&&0===_inline_31_arg2_[1]?_inline_31_arg1_*_inline_31_arg1_:0===_inline_31_arg2_[0]?_inline_31_arg1_*_inline_31_arg1_+_inline_31_arg5_:_inline_31_arg1_*_inline_31_arg1_+_inline_31_arg4_}","args":[{"name":"_inline_31_arg0_","lvalue":true,"rvalue":false,"count":1},{"name":"_inline_31_arg1_","lvalue":false,"rvalue":true,"count":8},{"name":"_inline_31_arg2_","lvalue":false,"rvalue":true,"count":5},{"name":"_inline_31_arg3_","lvalue":false,"rvalue":true,"count":1},{"name":"_inline_31_arg4_","lvalue":false,"rvalue":true,"count":2},{"name":"_inline_31_arg5_","lvalue":false,"rvalue":true,"count":2}],"thisVars":[],"localVars":[]},"post":{"body":"{}","args":[],"thisVars":[],"localVars":[]},"debug":false,"funcName":"doIntegrateBody","blockSize":64});
+var doIntegrate = require('cwise/lib/wrapper')({"args":["array","array","index",{"offset":[-1,-1],"array":0},{"offset":[-1,0],"array":0},{"offset":[0,-1],"array":0}],"pre":{"body":"{}","args":[],"thisVars":[],"localVars":[]},"body":{"body":"{_inline_34_arg0_=0!==_inline_34_arg2_[0]&&0!==_inline_34_arg2_[1]?_inline_34_arg1_*_inline_34_arg1_+_inline_34_arg4_+_inline_34_arg5_-_inline_34_arg3_:0===_inline_34_arg2_[0]&&0===_inline_34_arg2_[1]?_inline_34_arg1_*_inline_34_arg1_:0===_inline_34_arg2_[0]?_inline_34_arg1_*_inline_34_arg1_+_inline_34_arg5_:_inline_34_arg1_*_inline_34_arg1_+_inline_34_arg4_}","args":[{"name":"_inline_34_arg0_","lvalue":true,"rvalue":false,"count":1},{"name":"_inline_34_arg1_","lvalue":false,"rvalue":true,"count":8},{"name":"_inline_34_arg2_","lvalue":false,"rvalue":true,"count":5},{"name":"_inline_34_arg3_","lvalue":false,"rvalue":true,"count":1},{"name":"_inline_34_arg4_","lvalue":false,"rvalue":true,"count":2},{"name":"_inline_34_arg5_","lvalue":false,"rvalue":true,"count":2}],"thisVars":[],"localVars":[]},"post":{"body":"{}","args":[],"thisVars":[],"localVars":[]},"debug":false,"funcName":"doIntegrateBody","blockSize":64});
 
 /**
  * Compute Squared Sum Area Table, also known as the integral of the squared image
@@ -50763,6 +50763,11 @@ exports.functions = [{
   "text": "f(z)=log(z)"
 }, {
   "f": [`
+			z = cpow(z, z);
+		`],
+  "text": "f(z)=z^z"
+}, {
+  "f": [`
 			z = cdiv(vec2(1.0, 0.0) - z, vec2(1.0, 0.0) + z);
 		`],
   "text": "f(z)=(1-z)/(1+z)"
@@ -51001,7 +51006,7 @@ pane.addBlade({
   view: "latex",
   content: `
 # Riemann Surfaces
-Riemann surfaces are complex manifolds of one dimension.
+<a href="https://en.wikipedia.org/wiki/Riemann_surface">Riemann surfaces</a> are complex manifolds of one dimension.
 
 We can map a complex number to another complex number using $f(x+yi)$
 $$x + yi \\rightarrow u + vi$$
