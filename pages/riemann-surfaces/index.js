@@ -2,20 +2,17 @@ const regl = require("regl")({
 	extensions: ["oes_standard_derivatives"]
 });
 const {cfuncs} = require("./cfuncs.js")
-const mouseWheel = require("mouse-wheel");
-const mouseMove = require("mouse-change");
 
 const { Pane } = require("tweakpane");
 const TweakpaneLatex = require("tweakpane-latex");
 const { functions } = require("./funcs");
-const glslify = require("glslify");
 
 
 const createMesh = require("./createMesh");
 const camera = require("regl-camera")(regl, {
-	distance: 3,
+	distance: 10,
 	theta: Math.PI / 2,
-	phi: Math.PI / 4
+	phi: -Math.PI / 3
 });
 
 
@@ -26,20 +23,29 @@ const PARAMS = {
 	function: parseInt(currentFunc),
 	u: {x: -Math.PI, y: Math.PI},
 	v: {x: -Math.PI, y: Math.PI},
-	numPoints: 5000,
+	numPoints: 10000,
 	overlayDomainColoring: true,
-	useRealAxis: false
+	useRealAxis: false,
+	projection: true,
 }
 const pane = new Pane({
-    title: "Riemann Surfaces (Prototype I)"
+    title: "Riemann Surfaces"
 })
 pane.registerPlugin(TweakpaneLatex);
 pane.addBlade({
   view: "latex",
   content: `
 # Riemann Surfaces
+Riemann surfaces are complex manifolds of one dimension.
 
-Definitely coming back to fix this one. Lots of problems.
+We can map a complex number to another complex number using $f(x+yi)$
+$$x + yi \\rightarrow u + vi$$
+In this rendering, points are described as 
+$(x, y, u)$ with color $(v)$ **OR**
+$(x,y,v)$ with color $(u)$
+
+Notice that sometimes, these functions can map $z$ to two separate complex numbers.
+These are multivalued functions that can map to separate branches as seen by the various layers for $f(\\zeta) = \\sqrt{\\zeta}$
 `,
   border: false,
   markdown: true,
@@ -55,8 +61,27 @@ pane.addInput(PARAMS, "function", {
 }).on("change", function(ev) {
 	document.location.search = "?function="+ev.value;
 })
-pane.addInput(PARAMS, "useRealAxis");
-pane.addInput(PARAMS, "overlayDomainColoring");
+const options = pane.addFolder({
+	title: "Options",
+	expanded: false
+})
+options.addInput(PARAMS, "useRealAxis");
+options.addInput(PARAMS, "projection");
+options.addInput(PARAMS, "overlayDomainColoring");
+options.addBlade({
+  view: "latex",
+  content: `
+| Options | Meaning |
+| --- | --- |
+| useRealAxis | **Draw** using real value as z-axis. Otherwise, use the imaginary value |
+| projection | **Draw** z-axis or not? |
+| overlayDomainColoring | **Draw** the domain coloring over transformation over. Otherwise, it'll color based off the Imaginary/Real Axis result. | 
+
+
+`,
+  border: false,
+  markdown: true,
+});
 
 const mesh = require("glsl-solid-wireframe")(createMesh(PARAMS));
 
@@ -71,116 +96,93 @@ const mesh = require("glsl-solid-wireframe")(createMesh(PARAMS));
 //     return c.z * mix(vec3(1.0), rgb, c.y);
 // }
 
-console.log(PARAMS.function)
-const draw = regl({
-    uniforms: {
-        u_resolution: (ctx) => {
-			if (ctx.viewportWidth > ctx.viewportHeight) {
-				return [ctx.viewportHeight/ctx.viewportWidth,1]
+var branches = [];
+
+for (var i = 0; i < functions[PARAMS.function].f.length; i++) {
+	const draw = regl({
+		uniforms: {
+			u_resolution: (ctx) => {
+				if (ctx.viewportWidth > ctx.viewportHeight) {
+					return [ctx.viewportHeight/ctx.viewportWidth,1]
+				}
+				return [1, ctx.viewportWidth/ctx.viewportHeight]
+			},
+			gridWidth: 1,
+			opacity: 0.9,
+			pixelRatio: (ctx) => ctx.pixelRatio,
+			t: (ctx) => ctx.time,
+			overlayDomainColoring: regl.prop("overlayDomainColoring"),
+			useRealAxis: regl.prop("useRealAxis"),
+			project: regl.prop("projection")
+		},
+		attributes: {
+			position: mesh.positions,
+			barycentric: mesh.barycentric,
+		},
+		elements: mesh.cells,
+		vert: `
+		precision highp float;
+		varying vec4 finalPos;
+		attribute vec2 position, barycentric;
+		uniform mat4 projection, view;
+		varying vec2 b;
+		uniform bool useRealAxis, project;
+
+		${cfuncs}
+
+		vec4 f(vec2 z) {
+			vec2 original = z;
+			${functions[PARAMS.function].f[i]}
+			return vec4(original, z);
+		}
+
+		void main() {
+			b = barycentric;
+			finalPos = f(position);
+
+			vec3 lastPos = finalPos.xyz;
+			if (useRealAxis) {
+				lastPos = finalPos.xyw;
 			}
-            return [1, ctx.viewportWidth/ctx.viewportHeight]
-        },
-		gridWidth: 1,
-		opacity: 0.9,
-		pixelRatio: (ctx) => ctx.pixelRatio,
-		t: (ctx) => ctx.time,
-		scale: regl.prop("scale"),
-		gridSpacing: regl.prop("gridSpacing"),
-		offsetX: regl.prop("offsetX"),
-		offsetY: regl.prop("offsetY"),
-		overlayDomainColoring: regl.prop("overlayDomainColoring"),
-		useRealAxis: regl.prop("useRealAxis")
-    },
-    attributes: {
-		position: mesh.positions,
-		barycentric: mesh.barycentric,
-	},
-	elements: mesh.cells,
-    vert: `
-    precision highp float;
-	varying vec4 finalPos;
-	attribute vec2 position, barycentric;
-	uniform mat4 projection, view;
-	varying vec2 b;
-	uniform bool useRealAxis;
 
-	${cfuncs}
+			if (project == false) {
+				lastPos = vec3(finalPos.xy, 0);
+			}
+			
+			gl_Position = projection*view*vec4(lastPos, 1);
+		}`,
+		frag: (`
+		#extension GL_OES_standard_derivatives : enable
+		#define PI 3.141592653589793238
+		#define TO_RADIANS 0.01745329251
+		precision mediump float;
+		varying vec4 finalPos;
+		varying vec2 b;
+		uniform vec2 u_resolution;
+		uniform float pixelRatio, gridWidth, opacity, t, gridSpacing, scale;
+		uniform float offsetX, offsetY;
+		uniform bool useRealAxis, overlayDomainColoring;
 
-	vec4 f(vec2 z) {
-		vec2 original = z;
-		${functions[PARAMS.function].f}
-		return vec4(original, z);
-	}
+		${cfuncs}
 
-    void main() {
-		b = barycentric;
-		finalPos = f(position);
+		void main() {
 
-		vec3 lastPos = finalPos.xyz;
-		if (useRealAxis) {
-			lastPos = finalPos.xyw;
-		}
-		
-    	gl_Position = projection*view*vec4(lastPos, 1);
-    }`,
-    frag: (`
-    #extension GL_OES_standard_derivatives : enable
-  	#define PI 3.141592653589793238
-  	#define TO_RADIANS 0.01745329251
-  	precision mediump float;
-	varying vec4 finalPos;
-	varying vec2 b;
-	uniform vec2 u_resolution;
-	uniform float pixelRatio, gridWidth, opacity, t, gridSpacing, scale;
-	uniform float offsetX, offsetY;
-	uniform bool useRealAxis, overlayDomainColoring;
+			vec3 col = colorWheel(finalPos.w);
+			if (useRealAxis) {
+				col = colorWheel(finalPos.z);
+			}
 
-	${cfuncs}
+			if (overlayDomainColoring) {
+				col = domainColoring(finalPos.zw);
+			}
 
-	vec3 hsl2rgb( in vec3 c ){
-		vec3 rgb = clamp( abs(mod(c.x*6.0+vec3(0.0,4.0,2.0),6.0)-3.0)-1.0, 0.0,1.0);
-		return c.z + c.y * (rgb-0.5)*(1.0-abs(2.0*c.z-1.0));
-	}
+			gl_FragColor = vec4(col, 1);
+		}`),
+	});
+	branches.push(draw);
+}
 
-	vec3 domainColoring(in vec2 uv) {
-		vec2 polar = cpolar(uv).gr;
-		float L = 1.0 - pow(0.5, polar.r);
-		float H = polar.g / (2.0 * PI);
 
-		// H hue, 1.0 saturation, L lightness
-		vec3 hsl = vec3(H, 1.0, L);
-		return hsl2rgb(hsl);
-	}
-
-	vec3 colorWheel(in float arg) {
-		arg = arg / (2.0 * PI);
-		vec3 hsl = vec3(arg, 1.0, 0.3);
-		return hsl2rgb(hsl);
-	}
-
-    void main() {
-
-		
-		vec3 col = colorWheel(finalPos.w);
-		if (useRealAxis) {
-			col = colorWheel(finalPos.z);
-		}
-
-		if (overlayDomainColoring) {
-			col = domainColoring(finalPos.zw);
-		}
-
-      	gl_FragColor = vec4(col, 1);
-    }`),
-});
-
-var s = 1.0;
-var gridSpacing = 2;
-var lastTimeWheel = 0;
-var lastTimeMove = 0;
-var lastPosition = { x: 0, y: 0};
-
-var offsets = { x: 0, y: 0};
 regl.frame(({ time }) => {
     regl.clear({
         color: [1, 1, 1, 1],
@@ -188,16 +190,16 @@ regl.frame(({ time }) => {
     });
 
 	camera((state) => {
-		draw({
-			gridSpacing: gridSpacing,
-			scale: s,
-			offsetX: offsets.x,
-			offsetY: offsets.y,
-			uInt: [PARAMS.u.x, PARAMS.u.y],
-			vInt: [PARAMS.v.x, PARAMS.v.y],
-			useRealAxis: PARAMS.useRealAxis,
-			overlayDomainColoring: PARAMS.overlayDomainColoring
-		});
+		for (var i = 0; i < branches.length; i++) {
+			var draw = branches[i];
+			draw({
+				uInt: [PARAMS.u.x, PARAMS.u.y],
+				vInt: [PARAMS.v.x, PARAMS.v.y],
+				useRealAxis: PARAMS.useRealAxis,
+				projection: PARAMS.projection,
+				overlayDomainColoring: PARAMS.overlayDomainColoring
+			});
+		}
 	})
 });
 
