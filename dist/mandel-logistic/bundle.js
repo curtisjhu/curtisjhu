@@ -22419,7 +22419,7 @@ var NdArray = require('../ndarray');
 var __ = require('../utils');
 var rgb2gray = require('./rgb2gray');
 
-var doScharr = require('cwise/lib/wrapper')({"args":["array","array",{"offset":[-1,-1],"array":1},{"offset":[-1,0],"array":1},{"offset":[-1,1],"array":1},{"offset":[0,-1],"array":1},{"offset":[0,1],"array":1},{"offset":[1,-1],"array":1},{"offset":[1,0],"array":1},{"offset":[1,1],"array":1}],"pre":{"body":"{}","args":[],"thisVars":[],"localVars":[]},"body":{"body":"{var _inline_31_q=3*_inline_31_arg2_+10*_inline_31_arg3_+3*_inline_31_arg4_-3*_inline_31_arg7_-10*_inline_31_arg8_-3*_inline_31_arg9_,_inline_31_s=3*_inline_31_arg2_-3*_inline_31_arg4_+10*_inline_31_arg5_-10*_inline_31_arg6_+3*_inline_31_arg7_-3*_inline_31_arg9_;_inline_31_arg0_=Math.sqrt(_inline_31_s*_inline_31_s+_inline_31_q*_inline_31_q)}","args":[{"name":"_inline_31_arg0_","lvalue":true,"rvalue":false,"count":1},{"name":"_inline_31_arg1_","lvalue":false,"rvalue":false,"count":0},{"name":"_inline_31_arg2_","lvalue":false,"rvalue":true,"count":2},{"name":"_inline_31_arg3_","lvalue":false,"rvalue":true,"count":1},{"name":"_inline_31_arg4_","lvalue":false,"rvalue":true,"count":2},{"name":"_inline_31_arg5_","lvalue":false,"rvalue":true,"count":1},{"name":"_inline_31_arg6_","lvalue":false,"rvalue":true,"count":1},{"name":"_inline_31_arg7_","lvalue":false,"rvalue":true,"count":2},{"name":"_inline_31_arg8_","lvalue":false,"rvalue":true,"count":1},{"name":"_inline_31_arg9_","lvalue":false,"rvalue":true,"count":2}],"thisVars":[],"localVars":["_inline_31_q","_inline_31_s"]},"post":{"body":"{}","args":[],"thisVars":[],"localVars":[]},"debug":false,"funcName":"doSobelBody","blockSize":64});
+var doScharr = require('cwise/lib/wrapper')({"args":["array","array",{"offset":[-1,-1],"array":1},{"offset":[-1,0],"array":1},{"offset":[-1,1],"array":1},{"offset":[0,-1],"array":1},{"offset":[0,1],"array":1},{"offset":[1,-1],"array":1},{"offset":[1,0],"array":1},{"offset":[1,1],"array":1}],"pre":{"body":"{}","args":[],"thisVars":[],"localVars":[]},"body":{"body":"{var _inline_37_q=3*_inline_37_arg2_+10*_inline_37_arg3_+3*_inline_37_arg4_-3*_inline_37_arg7_-10*_inline_37_arg8_-3*_inline_37_arg9_,_inline_37_s=3*_inline_37_arg2_-3*_inline_37_arg4_+10*_inline_37_arg5_-10*_inline_37_arg6_+3*_inline_37_arg7_-3*_inline_37_arg9_;_inline_37_arg0_=Math.sqrt(_inline_37_s*_inline_37_s+_inline_37_q*_inline_37_q)}","args":[{"name":"_inline_37_arg0_","lvalue":true,"rvalue":false,"count":1},{"name":"_inline_37_arg1_","lvalue":false,"rvalue":false,"count":0},{"name":"_inline_37_arg2_","lvalue":false,"rvalue":true,"count":2},{"name":"_inline_37_arg3_","lvalue":false,"rvalue":true,"count":1},{"name":"_inline_37_arg4_","lvalue":false,"rvalue":true,"count":2},{"name":"_inline_37_arg5_","lvalue":false,"rvalue":true,"count":1},{"name":"_inline_37_arg6_","lvalue":false,"rvalue":true,"count":1},{"name":"_inline_37_arg7_","lvalue":false,"rvalue":true,"count":2},{"name":"_inline_37_arg8_","lvalue":false,"rvalue":true,"count":1},{"name":"_inline_37_arg9_","lvalue":false,"rvalue":true,"count":2}],"thisVars":[],"localVars":["_inline_37_q","_inline_37_s"]},"post":{"body":"{}","args":[],"thisVars":[],"localVars":[]},"debug":false,"funcName":"doSobelBody","blockSize":64});
 
 /**
  * Find the edge magnitude using the Scharr transform.
@@ -22458,7 +22458,7 @@ var NdArray = require('../ndarray');
 var __ = require('../utils');
 var rgb2gray = require('./rgb2gray');
 
-var doSobel = require('cwise/lib/wrapper')({"args":["array","array",{"offset":[-1,-1],"array":1},{"offset":[-1,0],"array":1},{"offset":[-1,1],"array":1},{"offset":[0,-1],"array":1},{"offset":[0,1],"array":1},{"offset":[1,-1],"array":1},{"offset":[1,0],"array":1},{"offset":[1,1],"array":1}],"pre":{"body":"{}","args":[],"thisVars":[],"localVars":[]},"body":{"body":"{var _inline_37_q=_inline_37_arg2_+2*_inline_37_arg3_+_inline_37_arg4_-_inline_37_arg7_-2*_inline_37_arg8_-_inline_37_arg9_,_inline_37_s=_inline_37_arg2_-_inline_37_arg4_+2*_inline_37_arg5_-2*_inline_37_arg6_+_inline_37_arg7_-_inline_37_arg9_;_inline_37_arg0_=Math.sqrt(_inline_37_s*_inline_37_s+_inline_37_q*_inline_37_q)}","args":[{"name":"_inline_37_arg0_","lvalue":true,"rvalue":false,"count":1},{"name":"_inline_37_arg1_","lvalue":false,"rvalue":false,"count":0},{"name":"_inline_37_arg2_","lvalue":false,"rvalue":true,"count":2},{"name":"_inline_37_arg3_","lvalue":false,"rvalue":true,"count":1},{"name":"_inline_37_arg4_","lvalue":false,"rvalue":true,"count":2},{"name":"_inline_37_arg5_","lvalue":false,"rvalue":true,"count":1},{"name":"_inline_37_arg6_","lvalue":false,"rvalue":true,"count":1},{"name":"_inline_37_arg7_","lvalue":false,"rvalue":true,"count":2},{"name":"_inline_37_arg8_","lvalue":false,"rvalue":true,"count":1},{"name":"_inline_37_arg9_","lvalue":false,"rvalue":true,"count":2}],"thisVars":[],"localVars":["_inline_37_q","_inline_37_s"]},"post":{"body":"{}","args":[],"thisVars":[],"localVars":[]},"debug":false,"funcName":"doSobelBody","blockSize":64});
+var doSobel = require('cwise/lib/wrapper')({"args":["array","array",{"offset":[-1,-1],"array":1},{"offset":[-1,0],"array":1},{"offset":[-1,1],"array":1},{"offset":[0,-1],"array":1},{"offset":[0,1],"array":1},{"offset":[1,-1],"array":1},{"offset":[1,0],"array":1},{"offset":[1,1],"array":1}],"pre":{"body":"{}","args":[],"thisVars":[],"localVars":[]},"body":{"body":"{var _inline_31_q=_inline_31_arg2_+2*_inline_31_arg3_+_inline_31_arg4_-_inline_31_arg7_-2*_inline_31_arg8_-_inline_31_arg9_,_inline_31_s=_inline_31_arg2_-_inline_31_arg4_+2*_inline_31_arg5_-2*_inline_31_arg6_+_inline_31_arg7_-_inline_31_arg9_;_inline_31_arg0_=Math.sqrt(_inline_31_s*_inline_31_s+_inline_31_q*_inline_31_q)}","args":[{"name":"_inline_31_arg0_","lvalue":true,"rvalue":false,"count":1},{"name":"_inline_31_arg1_","lvalue":false,"rvalue":false,"count":0},{"name":"_inline_31_arg2_","lvalue":false,"rvalue":true,"count":2},{"name":"_inline_31_arg3_","lvalue":false,"rvalue":true,"count":1},{"name":"_inline_31_arg4_","lvalue":false,"rvalue":true,"count":2},{"name":"_inline_31_arg5_","lvalue":false,"rvalue":true,"count":1},{"name":"_inline_31_arg6_","lvalue":false,"rvalue":true,"count":1},{"name":"_inline_31_arg7_","lvalue":false,"rvalue":true,"count":2},{"name":"_inline_31_arg8_","lvalue":false,"rvalue":true,"count":1},{"name":"_inline_31_arg9_","lvalue":false,"rvalue":true,"count":2}],"thisVars":[],"localVars":["_inline_31_q","_inline_31_s"]},"post":{"body":"{}","args":[],"thisVars":[],"localVars":[]},"debug":false,"funcName":"doSobelBody","blockSize":64});
 
 /**
  * Find the edge magnitude using the Sobel transform.
@@ -50401,19 +50401,19 @@ const PARAMS = {
   mandelBrot: false
 };
 const pane = new tweakpane.Pane({
-  title: "Mandelbrot Set / Logistic Map"
+  title: "Mandelbrot Set / Bifurcation"
 });
 pane.registerPlugin(TweakpaneLatexPlugin);
 pane.addBlade({
   view: "latex",
   content: `
+# Mandel Brot Set and the Bifurcation Diagram
 The Mandelbrot set is perhaps the most iconic picture in mathematics.
-This animation shows the corresponence of the closed set with the bifurcation diagram of the logistic map.
+This animation shows the relationship between the two.
 <a href="https://en.wikipedia.org/wiki/Mandelbrot_set#Basic_properties">Look more here.</a>
-I haven't seen anyone do the mandelbrot set in this particular interactive way.
-I hope it gives you some insight.
-Warning: may heat your computer, but the computation stops after a certain threshold.
-`
+I haven't seen anyone do the mandelbrot set in this particular interactive way. I hope it gives you some insight.
+`,
+  markdown: true
 });
 var bufferpositions = [];
 var count = 0;
