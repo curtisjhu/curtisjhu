@@ -36,13 +36,12 @@ pane.addBlade({
   view: "latex",
   content: `
 # Riemann Surfaces
-Riemann surfaces are complex manifolds of one dimension.
+<a href="https://en.wikipedia.org/wiki/Riemann_surface">Riemann surfaces</a> are complex manifolds of one dimension.
 
 We can map a complex number to another complex number using $f(x+yi)$
 $$x + yi \\rightarrow u + vi$$
 In this rendering, points are described as 
-$(x, y, u)$ with color $(v)$ **OR**
-$(x,y,v)$ with color $(u)$
+$(x, y, u)$ **or ** $(x,y,v)$ with domain coloring **or** $v$ colors / $u$ colors depending on your settings under 'options'
 
 Notice that sometimes, these functions can map $z$ to two separate complex numbers.
 These are multivalued functions that can map to separate branches as seen by the various layers for $f(\\zeta) = \\sqrt{\\zeta}$

@@ -17,6 +17,13 @@ exports.functions = [
 	{
 		"f": [
 		`
+			z = cpow(z, z);
+		`],
+		"text": "f(z)=z^z"
+	},
+	{
+		"f": [
+		`
 			z = cdiv(vec2(1.0, 0.0) - z, vec2(1.0, 0.0) + z);
 		`],
 		"text": "f(z)=(1-z)/(1+z)"
