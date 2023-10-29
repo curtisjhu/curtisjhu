@@ -2137,7 +2137,7 @@ function numberIsNaN (obj) {
 }
 
 }).call(this)}).call(this,require("buffer").Buffer)
-},{"base64-js":1,"buffer":3,"ieee754":14}],4:[function(require,module,exports){
+},{"base64-js":1,"buffer":3,"ieee754":13}],4:[function(require,module,exports){
 "use strict"
 
 var createThunk = require("./lib/thunk.js")
@@ -2608,7 +2608,7 @@ function generateCWiseOp(proc, typesig) {
 }
 module.exports = generateCWiseOp
 
-},{"uniq":57}],6:[function(require,module,exports){
+},{"uniq":56}],6:[function(require,module,exports){
 "use strict"
 
 // The function below is called when constructing a cwise function object, and does the following:
@@ -2958,18 +2958,6 @@ module.exports = function (mesh, opts) {
 };
 
 },{}],13:[function(require,module,exports){
-module.exports = function(strings) {
-  if (typeof strings === 'string') strings = [strings]
-  var exprs = [].slice.call(arguments,1)
-  var parts = []
-  for (var i = 0; i < strings.length-1; i++) {
-    parts.push(strings[i], exprs[i] || '')
-  }
-  parts.push(strings[i])
-  return parts.join('')
-}
-
-},{}],14:[function(require,module,exports){
 /*! ieee754. BSD-3-Clause License. Feross Aboukhadijeh <https://feross.org/opensource> */
 exports.read = function (buffer, offset, isLE, mLen, nBytes) {
   var e, m
@@ -3056,7 +3044,7 @@ exports.write = function (buffer, value, offset, isLE, mLen, nBytes) {
   buffer[offset + i - d] |= s * 128
 }
 
-},{}],15:[function(require,module,exports){
+},{}],14:[function(require,module,exports){
 "use strict"
 
 function iota(n) {
@@ -3068,7 +3056,7 @@ function iota(n) {
 }
 
 module.exports = iota
-},{}],16:[function(require,module,exports){
+},{}],15:[function(require,module,exports){
 /*!
  * Determine if an object is a Buffer
  *
@@ -3091,7 +3079,7 @@ function isSlowBuffer (obj) {
   return typeof obj.readFloatLE === 'function' && typeof obj.slice === 'function' && isBuffer(obj.slice(0, 0))
 }
 
-},{}],17:[function(require,module,exports){
+},{}],16:[function(require,module,exports){
 (function (global){(function (){
 /**
  * @license
@@ -20304,7 +20292,7 @@ function isSlowBuffer (obj) {
 }.call(this));
 
 }).call(this)}).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{}],18:[function(require,module,exports){
+},{}],17:[function(require,module,exports){
 'use strict'
 
 module.exports = mouseListen
@@ -20511,7 +20499,7 @@ function mouseListen (element, callback) {
   return result
 }
 
-},{"mouse-event":19}],19:[function(require,module,exports){
+},{"mouse-event":18}],18:[function(require,module,exports){
 'use strict'
 
 function mouseButtons(ev) {
@@ -20573,7 +20561,7 @@ function mouseRelativeY(ev) {
 }
 exports.y = mouseRelativeY
 
-},{}],20:[function(require,module,exports){
+},{}],19:[function(require,module,exports){
 'use strict'
 
 var toPX = require('to-px')
@@ -20615,7 +20603,7 @@ function mouseWheelListen(element, callback, noScroll) {
   return listener
 }
 
-},{"to-px":53}],21:[function(require,module,exports){
+},{"to-px":52}],20:[function(require,module,exports){
 'use strict'
 
 var ops = require('ndarray-ops')
@@ -20698,7 +20686,7 @@ function ndfft(dir, x, y) {
 }
 
 module.exports = ndfft
-},{"./lib/fft-matrix.js":22,"ndarray":26,"ndarray-ops":25,"typedarray-pool":56}],22:[function(require,module,exports){
+},{"./lib/fft-matrix.js":21,"ndarray":25,"ndarray-ops":24,"typedarray-pool":55}],21:[function(require,module,exports){
 var bits = require('bit-twiddle')
 
 function fft(dir, nrows, ncols, buffer, x_ptr, y_ptr, scratch_ptr) {
@@ -20917,7 +20905,7 @@ function fftBluestein(dir, nrows, ncols, buffer, x_ptr, y_ptr, scratch_ptr) {
   }
 }
 
-},{"bit-twiddle":2}],23:[function(require,module,exports){
+},{"bit-twiddle":2}],22:[function(require,module,exports){
 "use strict"
 
 module.exports = matrixProduct
@@ -20980,7 +20968,7 @@ function matrixProduct(out, a, b, alpha, beta) {
   }
   return proc(out, a, b, alpha, beta)
 }
-},{"./lib/planner.js":24}],24:[function(require,module,exports){
+},{"./lib/planner.js":23}],23:[function(require,module,exports){
 "use strict"
 
 module.exports = generateMatrixProduct
@@ -21260,7 +21248,7 @@ function generateMatrixProduct(outType, aType, bType, useAlpha, useBeta) {
   var proc = new Function(code.join(""))
   return proc()
 }
-},{}],25:[function(require,module,exports){
+},{}],24:[function(require,module,exports){
 "use strict"
 
 var compile = require("cwise-compiler")
@@ -21723,7 +21711,7 @@ exports.equals = compile({
 
 
 
-},{"cwise-compiler":4}],26:[function(require,module,exports){
+},{"cwise-compiler":4}],25:[function(require,module,exports){
 var iota = require("iota-array")
 var isBuffer = require("is-buffer")
 
@@ -22074,7 +22062,7 @@ function wrappedNDArrayCtor(data, shape, stride, offset) {
 
 module.exports = wrappedNDArrayCtor
 
-},{"iota-array":15,"is-buffer":16}],27:[function(require,module,exports){
+},{"iota-array":14,"is-buffer":15}],26:[function(require,module,exports){
 'use strict';
 
 module.exports = {
@@ -22082,7 +22070,7 @@ module.exports = {
   nFloatingValues: 5
 };
 
-},{}],28:[function(require,module,exports){
+},{}],27:[function(require,module,exports){
 'use strict';
 
 module.exports = {
@@ -22097,7 +22085,7 @@ module.exports = {
   array: Array
 };
 
-},{}],29:[function(require,module,exports){
+},{}],28:[function(require,module,exports){
 'use strict';
 
 module.exports = {
@@ -22118,7 +22106,7 @@ module.exports = {
   }
 };
 
-},{}],30:[function(require,module,exports){
+},{}],29:[function(require,module,exports){
 'use strict';
 
 module.exports = function areaSum (h0, w0, H, W, SAT) {
@@ -22132,7 +22120,7 @@ module.exports = function areaSum (h0, w0, H, W, SAT) {
         : -SAT.selection.get(y1, x0) + SAT.selection.get(y1, x1);
 };
 
-},{}],31:[function(require,module,exports){
+},{}],30:[function(require,module,exports){
 'use strict';
 
 var areaSum = require('./area-sum');
@@ -22141,7 +22129,7 @@ module.exports = function areaValue (h0, w0, H, W, SAT) {
   return areaSum(h0, w0, H, W, SAT) / (H * W);
 };
 
-},{"./area-sum":30}],32:[function(require,module,exports){
+},{"./area-sum":29}],31:[function(require,module,exports){
 (function (__dirname){(function (){
 'use strict';
 var path = require('path');
@@ -22213,7 +22201,7 @@ Object.defineProperty(exports, 'moon', {
 module.exports = exports;
 
 }).call(this)}).call(this,"/node_modules/numjs/src/images")
-},{"./read":36,"path":49}],33:[function(require,module,exports){
+},{"./read":35,"path":48}],32:[function(require,module,exports){
 'use strict';
 
 var NdArray = require('../ndarray');
@@ -22222,7 +22210,7 @@ module.exports = function flipImage (img) {
   return new NdArray(img.selection.step(null, -1));
 };
 
-},{"../ndarray":46}],34:[function(require,module,exports){
+},{"../ndarray":45}],33:[function(require,module,exports){
 'use strict';
 
 /**
@@ -22248,7 +22236,7 @@ module.exports = {
   flip: require('./flip')
 };
 
-},{"./area-sum":30,"./area-value":31,"./data":32,"./flip":33,"./read":36,"./resize":37,"./rgb2gray":38,"./sat":39,"./save":40,"./scharr":41,"./sobel":42,"./ssat":43}],35:[function(require,module,exports){
+},{"./area-sum":29,"./area-value":30,"./data":31,"./flip":32,"./read":35,"./resize":36,"./rgb2gray":37,"./sat":38,"./save":39,"./scharr":40,"./sobel":41,"./ssat":42}],34:[function(require,module,exports){
 'use strict';
 
 
@@ -22272,7 +22260,7 @@ module.exports = function isGrayscaleImage (arr) {
   return false;
 };
 
-},{"../ndarray":46,"cwise/lib/wrapper":7}],36:[function(require,module,exports){
+},{"../ndarray":45,"cwise/lib/wrapper":7}],35:[function(require,module,exports){
 'use strict';
 
 /* global HTMLCanvasElement */
@@ -22326,7 +22314,7 @@ function processImg (img) {
   return new NdArray(hxw);
 }
 
-},{"../errors":29,"../ndarray":46,"./is-grayscale":35,"ndarray":26}],37:[function(require,module,exports){
+},{"../errors":28,"../ndarray":45,"./is-grayscale":34,"ndarray":25}],36:[function(require,module,exports){
 'use strict';
 
 var _ = require('./utils');
@@ -22371,7 +22359,7 @@ module.exports = function resizeImageDom (img, height, width) {
   return new NdArray(hxw);
 };
 
-},{"../ndarray":46,"./utils":44,"ndarray":26}],38:[function(require,module,exports){
+},{"../ndarray":45,"./utils":43,"ndarray":25}],37:[function(require,module,exports){
 'use strict';
 
 
@@ -22407,7 +22395,7 @@ module.exports = function rgb2gray (img) {
   return out;
 };
 
-},{"../ndarray":46,"../utils":47,"cwise/lib/wrapper":7}],39:[function(require,module,exports){
+},{"../ndarray":45,"../utils":46,"cwise/lib/wrapper":7}],38:[function(require,module,exports){
 'use strict';
 
 
@@ -22433,7 +22421,7 @@ module.exports = function computeSumAreaTable (img) {
   return out;
 };
 
-},{"../ndarray":46,"./rgb2gray":38,"cwise/lib/wrapper":7}],40:[function(require,module,exports){
+},{"../ndarray":45,"./rgb2gray":37,"cwise/lib/wrapper":7}],39:[function(require,module,exports){
 'use strict';
 
 var _ = require('./utils');
@@ -22466,7 +22454,7 @@ module.exports = function saveImageDom (img, dest) {
   }
 };
 
-},{"../errors":29,"./utils":44}],41:[function(require,module,exports){
+},{"../errors":28,"./utils":43}],40:[function(require,module,exports){
 'use strict';
 
 
@@ -22505,7 +22493,7 @@ module.exports = function computeScharr (img) {
   return out.divide(16 * Math.sqrt(2), false);
 };
 
-},{"../ndarray":46,"../utils":47,"./rgb2gray":38,"cwise/lib/wrapper":7,"ndarray-ops":25}],42:[function(require,module,exports){
+},{"../ndarray":45,"../utils":46,"./rgb2gray":37,"cwise/lib/wrapper":7,"ndarray-ops":24}],41:[function(require,module,exports){
 'use strict';
 
 
@@ -22546,7 +22534,7 @@ module.exports = function computeSobel (img) {
   return out.divide(4 * Math.sqrt(2), false);
 };
 
-},{"../ndarray":46,"../utils":47,"./rgb2gray":38,"cwise/lib/wrapper":7,"ndarray-ops":25}],43:[function(require,module,exports){
+},{"../ndarray":45,"../utils":46,"./rgb2gray":37,"cwise/lib/wrapper":7,"ndarray-ops":24}],42:[function(require,module,exports){
 'use strict';
 
 
@@ -22573,7 +22561,7 @@ module.exports = function computeSquaredSumAreaTable (img) {
   return out;
 };
 
-},{"../ndarray":46,"./rgb2gray":38,"cwise/lib/wrapper":7}],44:[function(require,module,exports){
+},{"../ndarray":45,"./rgb2gray":37,"cwise/lib/wrapper":7}],43:[function(require,module,exports){
 'use strict';
 
 var NdArray = require('../ndarray');
@@ -22692,7 +22680,7 @@ module.exports.setRawData = function setRawData (array, data) {
   }
 };
 
-},{"../ndarray":46}],45:[function(require,module,exports){
+},{"../ndarray":45}],44:[function(require,module,exports){
 'use strict';
 
 var ndarray = require('ndarray');
@@ -23535,7 +23523,7 @@ module.exports = {
   images: require('./images')
 };
 
-},{"./config":27,"./dtypes":28,"./errors":29,"./images":34,"./ndarray":46,"./utils":47,"cwise/lib/wrapper":7,"ndarray":26,"ndarray-fft":21,"ndarray-ops":25}],46:[function(require,module,exports){
+},{"./config":26,"./dtypes":27,"./errors":28,"./images":33,"./ndarray":45,"./utils":46,"cwise/lib/wrapper":7,"ndarray":25,"ndarray-fft":20,"ndarray-ops":24}],45:[function(require,module,exports){
 'use strict';
 
 var ndarray = require('ndarray');
@@ -24601,7 +24589,7 @@ function formatNumber (v) {
   return String(Number((v || 0).toFixed(CONF.nFloatingValues)));
 }
 
-},{"./config":27,"./errors":29,"./utils":47,"cwise/lib/wrapper":7,"ndarray":26,"ndarray-fft":21,"ndarray-gemm":23,"ndarray-ops":25,"typedarray-pool":56}],47:[function(require,module,exports){
+},{"./config":26,"./errors":28,"./utils":46,"cwise/lib/wrapper":7,"ndarray":25,"ndarray-fft":20,"ndarray-gemm":22,"ndarray-ops":24,"typedarray-pool":55}],46:[function(require,module,exports){
 'use strict';
 var DTYPES = require('./dtypes');
 var _ = require('lodash');
@@ -24694,7 +24682,7 @@ module.exports = {
   defaults: _.defaults
 };
 
-},{"./dtypes":28,"lodash":17}],48:[function(require,module,exports){
+},{"./dtypes":27,"lodash":16}],47:[function(require,module,exports){
 module.exports = function parseUnit(str, out) {
     if (!out)
         out = [ 0, '' ]
@@ -24705,7 +24693,7 @@ module.exports = function parseUnit(str, out) {
     out[1] = str.match(/[\d.\-\+]*\s*(.*)/)[1] || ''
     return out
 }
-},{}],49:[function(require,module,exports){
+},{}],48:[function(require,module,exports){
 (function (process){(function (){
 // 'path' module extracted from Node.js v8.11.1 (only the posix part)
 // transplited with Babel
@@ -25238,7 +25226,7 @@ posix.posix = posix;
 module.exports = posix;
 
 }).call(this)}).call(this,require('_process'))
-},{"_process":50}],50:[function(require,module,exports){
+},{"_process":49}],49:[function(require,module,exports){
 // shim for using process in browser
 var process = module.exports = {};
 
@@ -25424,7 +25412,7 @@ process.chdir = function (dir) {
 };
 process.umask = function() { return 0; };
 
-},{}],51:[function(require,module,exports){
+},{}],50:[function(require,module,exports){
 var mouseChange = require('mouse-change')
 var mouseWheel = require('mouse-wheel')
 var identity = require('gl-mat4/identity')
@@ -25613,7 +25601,7 @@ function createCamera (regl, props_) {
   return setupCamera
 }
 
-},{"gl-mat4/identity":9,"gl-mat4/lookAt":10,"gl-mat4/perspective":11,"mouse-change":18,"mouse-wheel":20}],52:[function(require,module,exports){
+},{"gl-mat4/identity":9,"gl-mat4/lookAt":10,"gl-mat4/perspective":11,"mouse-change":17,"mouse-wheel":19}],51:[function(require,module,exports){
 (function(Z,ka){"object"===typeof exports&&"undefined"!==typeof module?module.exports=ka():"function"===typeof define&&define.amd?define(ka):Z.createREGL=ka()})(this,function(){function Z(a,b){this.id=Db++;this.type=a;this.data=b}function ka(a){if(0===a.length)return[];var b=a.charAt(0),c=a.charAt(a.length-1);if(1<a.length&&b===c&&('"'===b||"'"===b))return['"'+a.substr(1,a.length-2).replace(/\\/g,"\\\\").replace(/"/g,'\\"')+'"'];if(b=/\[(false|true|null|\d+|'[^']*'|"[^"]*")\]/.exec(a))return ka(a.substr(0,
 b.index)).concat(ka(b[1])).concat(ka(a.substr(b.index+b[0].length)));b=a.split(".");if(1===b.length)return['"'+a.replace(/\\/g,"\\\\").replace(/"/g,'\\"')+'"'];a=[];for(c=0;c<b.length;++c)a=a.concat(ka(b[c]));return a}function cb(a){return"["+ka(a).join("][")+"]"}function db(a,b){if("function"===typeof a)return new Z(0,a);if("number"===typeof a||"boolean"===typeof a)return new Z(5,a);if(Array.isArray(a))return new Z(6,a.map(function(a,e){return db(a,b+"["+e+"]")}));if(a instanceof Z)return a}function Eb(){var a=
 {"":0},b=[""];return{id:function(c){var e=a[c];if(e)return e;e=a[c]=b.length;b.push(c);return e},str:function(a){return b[a]}}}function Fb(a,b,c){function e(){var b=window.innerWidth,e=window.innerHeight;a!==document.body&&(e=f.getBoundingClientRect(),b=e.right-e.left,e=e.bottom-e.top);f.width=c*b;f.height=c*e}var f=document.createElement("canvas");L(f.style,{border:0,margin:0,padding:0,top:0,left:0,width:"100%",height:"100%"});a.appendChild(f);a===document.body&&(f.style.position="absolute",L(a.style,
@@ -25786,7 +25774,7 @@ C={elements:null,primitive:4,count:-1,offset:0,instances:-1},M=Yb(l,w),y=Jb(l,p,
 vao:K.createVAO,attributes:g,frame:v,on:function(a,b){var c;switch(a){case "frame":return v(b);case "lost":c=R;break;case "restore":c=U;break;case "destroy":c=Z}c.push(b);return{cancel:function(){for(var a=0;a<c.length;++a)if(c[a]===b){c[a]=c[c.length-1];c.pop();break}}}},limits:M,hasExtension:function(a){return 0<=M.extensions.indexOf(a.toLowerCase())},read:r,destroy:function(){E.length=0;e();N&&(N.removeEventListener("webglcontextlost",f),N.removeEventListener("webglcontextrestored",d));F.clear();
 S.clear();O.clear();K.clear();A.clear();T.clear();y.clear();t&&t.clear();Z.forEach(function(a){a()})},_gl:l,_refresh:m,poll:function(){u();t&&t.update()},now:x,stats:p});a.onDone(null,g);return g}});
 
-},{}],53:[function(require,module,exports){
+},{}],52:[function(require,module,exports){
 'use strict'
 
 var parseUnit = require('parse-unit')
@@ -25862,7 +25850,7 @@ function toPX(str, element) {
   return null
 }
 
-},{"parse-unit":48}],54:[function(require,module,exports){
+},{"parse-unit":47}],53:[function(require,module,exports){
 (function (global, factory) {
     typeof exports === 'object' && typeof module !== 'undefined' ? factory(exports) :
     typeof define === 'function' && define.amd ? define(['exports'], factory) :
@@ -42417,7 +42405,7 @@ function toPX(str, element) {
 
 }));
 
-},{}],55:[function(require,module,exports){
+},{}],54:[function(require,module,exports){
 /*! Tweakpane 3.1.7 (c) 2016 cocopon, licensed under the MIT license. */
 (function (global, factory) {
     typeof exports === 'object' && typeof module !== 'undefined' ? factory(exports) :
@@ -50056,7 +50044,7 @@ function toPX(str, element) {
 
 }));
 
-},{}],56:[function(require,module,exports){
+},{}],55:[function(require,module,exports){
 (function (global){(function (){
 'use strict'
 
@@ -50311,7 +50299,7 @@ exports.clearCache = function clearCache() {
 }
 
 }).call(this)}).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"bit-twiddle":2,"buffer":3,"dup":8}],57:[function(require,module,exports){
+},{"bit-twiddle":2,"buffer":3,"dup":8}],56:[function(require,module,exports){
 "use strict"
 
 function unique_pred(list, compare) {
@@ -50370,7 +50358,7 @@ function unique(list, compare, sorted) {
 
 module.exports = unique
 
-},{}],58:[function(require,module,exports){
+},{}],57:[function(require,module,exports){
 exports.cfuncs = `
 #ifndef PI
 #define PI 3.141592653589793238
@@ -50681,9 +50669,33 @@ vec2 ctanh (vec2 z) {
   z *= 2.0;
   vec2 sch = sinhcosh(z.x);
   return vec2(sch.x, sin(z.y)) / (sch.y + cos(z.y));
-}`;
+}
 
-},{}],59:[function(require,module,exports){
+vec3 hsl2rgb( in vec3 c ){
+  vec3 rgb = clamp( abs(mod(c.x*6.0+vec3(0.0,4.0,2.0),6.0)-3.0)-1.0, 0.0,1.0);
+  return c.z + c.y * (rgb-0.5)*(1.0-abs(2.0*c.z-1.0));
+}
+
+vec3 domainColoring(in vec2 uv) {
+  vec2 polar = cpolar(uv).gr;
+  float L = 1.0 - pow(0.5, polar.r);
+  float H = polar.g / (2.0 * PI);
+
+  // H hue, 1.0 saturation, L lightness
+  vec3 hsl = vec3(H, 1.0, L);
+  return hsl2rgb(hsl);
+}
+
+vec3 colorWheel(in float arg) {
+  arg = arg / (2.0 * PI);
+  vec3 hsl = vec3(arg, 1.0, 0.5);
+  return hsl2rgb(hsl);
+}
+
+
+`;
+
+},{}],58:[function(require,module,exports){
 const nj = require("numjs");
 function createMesh(PARAMS) {
   // calculate du, dv, perfectly-squared
@@ -50738,50 +50750,218 @@ function createMesh(PARAMS) {
 }
 module.exports = createMesh;
 
-},{"numjs":45}],60:[function(require,module,exports){
+},{"numjs":44}],59:[function(require,module,exports){
 exports.functions = [{
-  "f": `
+  "f": [`
 			z = z;
-		`,
+		`],
   "text": "f(z)=z"
 }, {
-  "f": `
+  "f": [`
 			z = clog(z);
-		`,
+		`],
   "text": "f(z)=log(z)"
 }, {
-  "f": `
+  "f": [`
+			z = cdiv(vec2(1.0, 0.0) - z, vec2(1.0, 0.0) + z);
+		`],
+  "text": "f(z)=(1-z)/(1+z)"
+}, {
+  "f": [`
+			const float max = 100.0;
+			vec2 sum = vec2(0.0);
+			for (float n = 1.0; n < max; n+=1.0 ) {
+				sum = sum + cinv(cpow(vec2(n, 0.0), z));
+			}
+			z = sum;
+		`],
+  "text": "riemann_zeta(z)"
+}, {
+  "f": [`
+			z = cexp(cinv(z));
+		`],
+  "text": "f(z)=e^(1/z)"
+}, {
+  "f": [`
+			z = cexp(z);
+		`],
+  "text": "f(z)=e^z"
+}, {
+  "f": [`
 			z = cpow(z, 0.5);
-		`,
+		`, `
+			z = -cpow(z, 0.5);
+		`],
   "text": "f(z)=z^0.5"
 }, {
-  "f": `
+  "f": [`
 			z = cpow(z, 1.0/3.0);
-		`,
+		`, `
+			vec2 polar = cpolar(z).gr;
+			float r = pow(polar.r, 1.0/3.0);
+			float real = cos((polar.g + 2.0*PI) /3.0);
+			float imag = sin((polar.g + 2.0*PI) / 3.0);
+			z = r*vec2(real, imag);
+		`, `
+			vec2 polar = cpolar(z).gr;
+			float r = pow(polar.r, 1.0/3.0);
+			float real = cos((polar.g + 4.0*PI) /3.0);
+			float imag = sin((polar.g + 4.0*PI) / 3.0);
+			z = r*vec2(real, imag);
+		`],
   "text": "f(z)=z^(1/3)"
 }, {
-  "f": `
+  "f": [`
 			z = cpow(z, 0.25);
-		`,
+		`, `
+			z = cmul(vec2(0.0, 1.0), cpow(z, 0.25));
+		`, `
+			z = -cmul(vec2(0.0, 1.0), cpow(z, 0.25));
+		`, `
+			z = -cpow(z, 0.25);
+		`],
   "text": "f(z)=z^(1/4)"
 }, {
-  "f": `
+  "f": [`
+			z = z + cinv(z);
+		`],
+  "text": "f(z)=z + 1/z"
+}, {
+  "f": [`
+			z = csin(z);
+		`],
+  "text": "f(z)=sin(z)"
+}, {
+  "f": [`
 			z = casin(z);
-		`,
-  "text": "f(z)=arcsin(z)"
+		`],
+  "text": "f(z)=asin(z)"
+}, {
+  "f": [`
+			z = csinh(z);
+		`],
+  "text": "f(z)=sinh(z)"
+}, {
+  "f": [`
+			z = casinh(z);
+		`],
+  "text": "f(z)=asinh(z)"
+}, {
+  "f": [`
+			z = ccsc(z);
+		`],
+  "text": "f(z)=csc(z)"
+}, {
+  "f": [`
+			z = ccsch(z);
+		`],
+  "text": "f(z)=csch(z)"
+}, {
+  "f": [`
+			z = cacsch(z);
+		`],
+  "text": "f(z)=acsch(z)"
+}, {
+  "f": [`
+			z = csinh(z);
+		`],
+  "text": "f(z)=sinh(z)"
+}, {
+  "f": [`
+			z = casinh(z);
+		`],
+  "text": "f(z)=asinh(z)"
+}, {
+  "f": [`
+			z = ccos(z);
+		`],
+  "text": "f(z)=cos(z)"
+}, {
+  "f": [`
+			z = cacos(z);
+		`],
+  "text": "f(z)=acos(z)"
+}, {
+  "f": [`
+			z = ccosh(z);
+		`],
+  "text": "f(z)=cosh(z)"
+}, {
+  "f": [`
+			z = cacosh(z);
+		`],
+  "text": "f(z)=acosh(z)"
+}, {
+  "f": [`
+			z = csec(z);
+		`],
+  "text": "f(z)=sec(z)"
+}, {
+  "f": [`
+			z = casec(z);
+		`],
+  "text": "f(z)=asec(z)"
+}, {
+  "f": [`
+			z = csech(z);
+		`],
+  "text": "f(z)=sech(z)"
+}, {
+  "f": [`
+			z = casech(z);
+		`],
+  "text": "f(z)=asech(z)"
+}, {
+  "f": [`
+			z = ctan(z);
+		`],
+  "text": "f(z)=tan(z)"
+}, {
+  "f": [`
+			z = catan(z);
+		`],
+  "text": "f(z)=atan(z)"
+}, {
+  "f": [`
+			z = ctanh(z);
+		`],
+  "text": "f(z)=tanh(z)"
+}, {
+  "f": [`
+			z = catanh(z);
+		`],
+  "text": "f(z)=atanh(z)"
+}, {
+  "f": [`
+			z = ccot(z);
+		`],
+  "text": "f(z)=cot(z)"
+}, {
+  "f": [`
+			z = cacot(z);
+		`],
+  "text": "f(z)=acot(z)"
+}, {
+  "f": [`
+			z = ccoth(z);
+		`],
+  "text": "f(z)=coth(z)"
+}, {
+  "f": [`
+			z = cacoth(z);
+		`],
+  "text": "f(z)=acoth(z)"
 }];
 //https://demonstrations.wolfram.com/DomainColoringForCommonFunctionsInComplexAnalysis/
 //https://www.geogebra.org/m/K6V72GpC
 
-},{}],61:[function(require,module,exports){
+},{}],60:[function(require,module,exports){
 const regl = require("regl")({
   extensions: ["oes_standard_derivatives"]
 });
 const {
   cfuncs
 } = require("./cfuncs.js");
-const mouseWheel = require("mouse-wheel");
-const mouseMove = require("mouse-change");
 const {
   Pane
 } = require("tweakpane");
@@ -50789,12 +50969,11 @@ const TweakpaneLatex = require("tweakpane-latex");
 const {
   functions
 } = require("./funcs");
-const glslify = require("glslify");
 const createMesh = require("./createMesh");
 const camera = require("regl-camera")(regl, {
-  distance: 3,
+  distance: 10,
   theta: Math.PI / 2,
-  phi: Math.PI / 4
+  phi: -Math.PI / 3
 });
 var params = new URLSearchParams(document.location.search);
 var currentFunc = params.get("function") ? params.get("function") : "1";
@@ -50809,20 +50988,29 @@ const PARAMS = {
     x: -Math.PI,
     y: Math.PI
   },
-  numPoints: 5000,
+  numPoints: 10000,
   overlayDomainColoring: true,
-  useRealAxis: false
+  useRealAxis: false,
+  projection: true
 };
 const pane = new Pane({
-  title: "Riemann Surfaces (Prototype I)"
+  title: "Riemann Surfaces"
 });
 pane.registerPlugin(TweakpaneLatex);
 pane.addBlade({
   view: "latex",
   content: `
 # Riemann Surfaces
+Riemann surfaces are complex manifolds of one dimension.
 
-Definitely coming back to fix this one. Lots of problems.
+We can map a complex number to another complex number using $f(x+yi)$
+$$x + yi \\rightarrow u + vi$$
+In this rendering, points are described as 
+$(x, y, u)$ with color $(v)$ **OR**
+$(x,y,v)$ with color $(u)$
+
+Notice that sometimes, these functions can map $z$ to two separate complex numbers.
+These are multivalued functions that can map to separate branches as seen by the various layers for $f(\\zeta) = \\sqrt{\\zeta}$
 `,
   border: false,
   markdown: true
@@ -50836,8 +51024,27 @@ pane.addInput(PARAMS, "function", {
 }).on("change", function (ev) {
   document.location.search = "?function=" + ev.value;
 });
-pane.addInput(PARAMS, "useRealAxis");
-pane.addInput(PARAMS, "overlayDomainColoring");
+const options = pane.addFolder({
+  title: "Options",
+  expanded: false
+});
+options.addInput(PARAMS, "useRealAxis");
+options.addInput(PARAMS, "projection");
+options.addInput(PARAMS, "overlayDomainColoring");
+options.addBlade({
+  view: "latex",
+  content: `
+| Options | Meaning |
+| --- | --- |
+| useRealAxis | **Draw** using real value as z-axis. Otherwise, use the imaginary value |
+| projection | **Draw** z-axis or not? |
+| overlayDomainColoring | **Draw** the domain coloring over transformation over. Otherwise, it'll color based off the Imaginary/Real Axis result. | 
+
+
+`,
+  border: false,
+  markdown: true
+});
 const mesh = require("glsl-solid-wireframe")(createMesh(PARAMS));
 
 //  Function from Iñigo Quiles
@@ -50851,120 +51058,90 @@ const mesh = require("glsl-solid-wireframe")(createMesh(PARAMS));
 //     return c.z * mix(vec3(1.0), rgb, c.y);
 // }
 
-console.log(PARAMS.function);
-const draw = regl({
-  uniforms: {
-    u_resolution: ctx => {
-      if (ctx.viewportWidth > ctx.viewportHeight) {
-        return [ctx.viewportHeight / ctx.viewportWidth, 1];
-      }
-      return [1, ctx.viewportWidth / ctx.viewportHeight];
+var branches = [];
+for (var i = 0; i < functions[PARAMS.function].f.length; i++) {
+  const draw = regl({
+    uniforms: {
+      u_resolution: ctx => {
+        if (ctx.viewportWidth > ctx.viewportHeight) {
+          return [ctx.viewportHeight / ctx.viewportWidth, 1];
+        }
+        return [1, ctx.viewportWidth / ctx.viewportHeight];
+      },
+      gridWidth: 1,
+      opacity: 0.9,
+      pixelRatio: ctx => ctx.pixelRatio,
+      t: ctx => ctx.time,
+      overlayDomainColoring: regl.prop("overlayDomainColoring"),
+      useRealAxis: regl.prop("useRealAxis"),
+      project: regl.prop("projection")
     },
-    gridWidth: 1,
-    opacity: 0.9,
-    pixelRatio: ctx => ctx.pixelRatio,
-    t: ctx => ctx.time,
-    scale: regl.prop("scale"),
-    gridSpacing: regl.prop("gridSpacing"),
-    offsetX: regl.prop("offsetX"),
-    offsetY: regl.prop("offsetY"),
-    overlayDomainColoring: regl.prop("overlayDomainColoring"),
-    useRealAxis: regl.prop("useRealAxis")
-  },
-  attributes: {
-    position: mesh.positions,
-    barycentric: mesh.barycentric
-  },
-  elements: mesh.cells,
-  vert: `
-    precision highp float;
-	varying vec4 finalPos;
-	attribute vec2 position, barycentric;
-	uniform mat4 projection, view;
-	varying vec2 b;
-	uniform bool useRealAxis;
+    attributes: {
+      position: mesh.positions,
+      barycentric: mesh.barycentric
+    },
+    elements: mesh.cells,
+    vert: `
+		precision highp float;
+		varying vec4 finalPos;
+		attribute vec2 position, barycentric;
+		uniform mat4 projection, view;
+		varying vec2 b;
+		uniform bool useRealAxis, project;
 
-	${cfuncs}
+		${cfuncs}
 
-	vec4 f(vec2 z) {
-		vec2 original = z;
-		${functions[PARAMS.function].f}
-		return vec4(original, z);
-	}
-
-    void main() {
-		b = barycentric;
-		finalPos = f(position);
-
-		vec3 lastPos = finalPos.xyz;
-		if (useRealAxis) {
-			lastPos = finalPos.xyw;
-		}
-		
-    	gl_Position = projection*view*vec4(lastPos, 1);
-    }`,
-  frag: `
-    #extension GL_OES_standard_derivatives : enable
-  	#define PI 3.141592653589793238
-  	#define TO_RADIANS 0.01745329251
-  	precision mediump float;
-	varying vec4 finalPos;
-	varying vec2 b;
-	uniform vec2 u_resolution;
-	uniform float pixelRatio, gridWidth, opacity, t, gridSpacing, scale;
-	uniform float offsetX, offsetY;
-	uniform bool useRealAxis, overlayDomainColoring;
-
-	${cfuncs}
-
-	vec3 hsl2rgb( in vec3 c ){
-		vec3 rgb = clamp( abs(mod(c.x*6.0+vec3(0.0,4.0,2.0),6.0)-3.0)-1.0, 0.0,1.0);
-		return c.z + c.y * (rgb-0.5)*(1.0-abs(2.0*c.z-1.0));
-	}
-
-	vec3 domainColoring(in vec2 uv) {
-		vec2 polar = cpolar(uv).gr;
-		float L = 1.0 - pow(0.5, polar.r);
-		float H = polar.g / (2.0 * PI);
-
-		// H hue, 1.0 saturation, L lightness
-		vec3 hsl = vec3(H, 1.0, L);
-		return hsl2rgb(hsl);
-	}
-
-	vec3 colorWheel(in float arg) {
-		arg = arg / (2.0 * PI);
-		vec3 hsl = vec3(arg, 1.0, 0.3);
-		return hsl2rgb(hsl);
-	}
-
-    void main() {
-
-		
-		vec3 col = colorWheel(finalPos.w);
-		if (useRealAxis) {
-			col = colorWheel(finalPos.z);
+		vec4 f(vec2 z) {
+			vec2 original = z;
+			${functions[PARAMS.function].f[i]}
+			return vec4(original, z);
 		}
 
-		if (overlayDomainColoring) {
-			col = domainColoring(finalPos.zw);
-		}
+		void main() {
+			b = barycentric;
+			finalPos = f(position);
 
-      	gl_FragColor = vec4(col, 1);
-    }`
-});
-var s = 1.0;
-var gridSpacing = 2;
-var lastTimeWheel = 0;
-var lastTimeMove = 0;
-var lastPosition = {
-  x: 0,
-  y: 0
-};
-var offsets = {
-  x: 0,
-  y: 0
-};
+			vec3 lastPos = finalPos.xyz;
+			if (useRealAxis) {
+				lastPos = finalPos.xyw;
+			}
+
+			if (project == false) {
+				lastPos = vec3(finalPos.xy, 0);
+			}
+			
+			gl_Position = projection*view*vec4(lastPos, 1);
+		}`,
+    frag: `
+		#extension GL_OES_standard_derivatives : enable
+		#define PI 3.141592653589793238
+		#define TO_RADIANS 0.01745329251
+		precision mediump float;
+		varying vec4 finalPos;
+		varying vec2 b;
+		uniform vec2 u_resolution;
+		uniform float pixelRatio, gridWidth, opacity, t, gridSpacing, scale;
+		uniform float offsetX, offsetY;
+		uniform bool useRealAxis, overlayDomainColoring;
+
+		${cfuncs}
+
+		void main() {
+
+			vec3 col = colorWheel(finalPos.w);
+			if (useRealAxis) {
+				col = colorWheel(finalPos.z);
+			}
+
+			if (overlayDomainColoring) {
+				col = domainColoring(finalPos.zw);
+			}
+
+			gl_FragColor = vec4(col, 1);
+		}`
+  });
+  branches.push(draw);
+}
 regl.frame(({
   time
 }) => {
@@ -50973,17 +51150,17 @@ regl.frame(({
     depth: 1
   });
   camera(state => {
-    draw({
-      gridSpacing: gridSpacing,
-      scale: s,
-      offsetX: offsets.x,
-      offsetY: offsets.y,
-      uInt: [PARAMS.u.x, PARAMS.u.y],
-      vInt: [PARAMS.v.x, PARAMS.v.y],
-      useRealAxis: PARAMS.useRealAxis,
-      overlayDomainColoring: PARAMS.overlayDomainColoring
-    });
+    for (var i = 0; i < branches.length; i++) {
+      var draw = branches[i];
+      draw({
+        uInt: [PARAMS.u.x, PARAMS.u.y],
+        vInt: [PARAMS.v.x, PARAMS.v.y],
+        useRealAxis: PARAMS.useRealAxis,
+        projection: PARAMS.projection,
+        overlayDomainColoring: PARAMS.overlayDomainColoring
+      });
+    }
   });
 });
 
-},{"./cfuncs.js":58,"./createMesh":59,"./funcs":60,"glsl-solid-wireframe":12,"glslify":13,"mouse-change":18,"mouse-wheel":20,"regl":52,"regl-camera":51,"tweakpane":55,"tweakpane-latex":54}]},{},[61]);
+},{"./cfuncs.js":57,"./createMesh":58,"./funcs":59,"glsl-solid-wireframe":12,"regl":51,"regl-camera":50,"tweakpane":54,"tweakpane-latex":53}]},{},[60]);
