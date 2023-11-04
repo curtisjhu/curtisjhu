@@ -25091,9 +25091,14 @@ exports.functions = [{
   "text": "dynamic"
 }, {
   "f": `
-			return cdiv(cmul(csqr(z) - vec2(1, 0), csqr(z - vec2(2, 1))), csqr(z) + vec2(2, 2));
+			const float max = 100.0;
+			vec2 sum = vec2(0.0);
+			for (float n = 1.0; n < max; n+=1.0 ) {
+				sum = sum + cinv(cpow(vec2(n, 0.0), z));
+			}
+			z = sum;
 		`,
-  "text": "f(z)=..."
+  "text": "riemann_zeta(z)"
 }, {
   "f": `
 			return z;
@@ -25107,14 +25112,19 @@ exports.functions = [{
   "text": "f(z)=sin(1/z)"
 }, {
   "f": `
+			return cpow(z, 0.5);
+		`,
+  "text": "f(z)=z^0.5"
+}, {
+  "f": `
 			return cpow(z, 2.0);
 		`,
   "text": "f(z)=z^2"
 }, {
   "f": `
-			return cpow(z, 3.0);
+			return cpow(z, z);
 		`,
-  "text": "f(z)=z^3"
+  "text": "f(z)=z^z"
 }, {
   "f": `
 			return csqrt(z);
@@ -25152,19 +25162,14 @@ exports.functions = [{
   "text": "f(z)=sin(z)"
 }, {
   "f": `
-			return csec(z);
-		`,
-  "text": "f(z)=sec(z)"
-}, {
-  "f": `
 			return ccos(z);
 		`,
   "text": "f(z)=cos(z)"
 }, {
   "f": `
-			return ccot(z);
+			return ctan(z);
 		`,
-  "text": "f(z)=cot(z)"
+  "text": "f(z)=tan(z)"
 }, {
   "f": `
 			return ccsc(z);
@@ -25172,9 +25177,59 @@ exports.functions = [{
   "text": "f(z)=csc(z)"
 }, {
   "f": `
-			return ctan(z);
+			return csec(z);
 		`,
-  "text": "f(z)=tan(z)"
+  "text": "f(z)=sec(z)"
+}, {
+  "f": `
+			return ccot(z);
+		`,
+  "text": "f(z)=cot(z)"
+}, {
+  "f": `
+			return casin(z);
+		`,
+  "text": "f(z)=asin(z)"
+}, {
+  "f": `
+			return cacos(z);
+		`,
+  "text": "f(z)=acos(z)"
+}, {
+  "f": `
+			return catan(z);
+		`,
+  "text": "f(z)=atan(z)"
+}, {
+  "f": `
+			return csinh(z);
+		`,
+  "text": "f(z)=sinh(z)"
+}, {
+  "f": `
+			return ccosh(z);
+		`,
+  "text": "f(z)=cosh(z)"
+}, {
+  "f": `
+			return ctanh(z);
+		`,
+  "text": "f(z)=tanh(z)"
+}, {
+  "f": `
+			return casinh(z);
+		`,
+  "text": "f(z)=asinh(z)"
+}, {
+  "f": `
+			return cacosh(z);
+		`,
+  "text": "f(z)=acosh(z)"
+}, {
+  "f": `
+			return catanh(z);
+		`,
+  "text": "f(z)=atanh(z)"
 }];
 
 },{}],11:[function(require,module,exports){
@@ -25198,27 +25253,30 @@ var currentFunc = params.get("function") ? params.get("function") : 0;
 console.log(currentFunc);
 const PARAMS = {
   function: parseInt(currentFunc),
-  preserveGridSpacing: false
+  preserveGridSpacing: false,
+  applyGridLines: false
 };
 const pane = new Pane({
-  title: "Domain Coloring (Prototype I)"
+  title: "Domain Coloring"
 });
 pane.registerPlugin(TweakpaneLatex);
 pane.addBlade({
   view: "latex",
   content: `
 # Domain coloring
-Basically you map a complex number $z$ to another complex number $z'$.
+Map a complex number $z$ to another complex number $z'$.
 Here, each $z$, which is assigned a color on a colorwheel,
-are mapped onto a new complex plane seen here.
+is mapped onto a new complex plane seen here.
 
-## Controls
-DRAG SCROSS, ZOOM
+Hint: drag and scroll!
+
+References: <a href="https://rreusser.github.io/sketches/">Ricky Reusser</a>
 `,
   border: false,
   markdown: true
 });
 pane.addInput(PARAMS, "preserveGridSpacing");
+pane.addInput(PARAMS, "applyGridLines");
 var optionList = {};
 for (let i = 0; i < functions.length; i++) {
   optionList[functions[i]["text"]] = i;
@@ -25253,6 +25311,7 @@ const draw = regl({
     t: ctx => ctx.time,
     scale: regl.prop("scale"),
     gridSpacing: regl.prop("gridSpacing"),
+    applyGridLines: regl.prop("applyGridLines"),
     offsetX: regl.prop("offsetX"),
     offsetY: regl.prop("offsetY")
   },
@@ -25278,6 +25337,7 @@ const draw = regl({
 	uniform vec2 u_resolution;
 	uniform float pixelRatio, gridWidth, opacity, t, gridSpacing, scale;
 	uniform float offsetX, offsetY;
+	uniform bool applyGridLines;
 
 	${cfuncs}
 
@@ -25318,26 +25378,23 @@ const draw = regl({
 		vec3 col = hsl2rgb(hsl);
 
 		// apply polar gridlines
-		polar.g = polar.g * 4.0 / (PI);
-		polar.r = polar.r*gridSpacing;
-		float gridFact = gridFactor(polar, 0.4 * gridWidth * pixelRatio, 1.0);
-		col = mix(vec3(0.6), col, opacity * gridFact);
-
-		// apply rectangular grid lines
-		// float gridFact2 = gridFactor(z, 0.4 * gridWidth * pixelRatio, 1.0);
-		// col = mix(vec3(0.3), col, opacity * gridFact2);
+		if (applyGridLines) {
+			polar.g = polar.g * 4.0 / (PI);
+			polar.r = polar.r*gridSpacing;
+			float gridFact = gridFactor(polar, 0.4 * gridWidth * pixelRatio, 1.0);
+			col = mix(vec3(0.6), col, opacity * gridFact);
+		}
 
       	gl_FragColor = vec4(col, 1);
     }`
 });
 var s = 1.0;
 var gridSpacing = 2;
-var lastTimeWheel = 0;
-var lastTimeMove = 0;
 var lastPosition = {
   x: 0,
   y: 0
 };
+var dragEvent = false;
 var offsets = {
   x: 0,
   y: 0
@@ -25349,37 +25406,44 @@ regl.frame(({
     color: [0, 0, 0, 1],
     depth: 1
   });
-  mouseWheel(function (dx, dy) {
-    if (time - lastTimeWheel < 0.3) return;
-    var inc = dy > 0 ? 0.1 : -0.1;
-    var maxScale = 10;
-    s = Math.min(Math.max(1, s + inc), maxScale);
-
-    // or preserve the number with
-    if (PARAMS.preserveGridSpacing) {
-      gridSpacing = maxScale;
-    } else {
-      gridSpacing = 3.0 * Math.exp(-0.2 * s);
-    }
-    lastTimeWheel = time;
-  });
-  mouseMove(function (button, x, y) {
-    if (time - lastTimeMove < 0.05) return;
-    var moveDist = 0.1 * Math.exp(-0.4 * s);
-    if (button == 1) {
-      offsets.x += x - lastPosition.x > 0 ? moveDist : -moveDist;
-      offsets.y += y - lastPosition.y > 0 ? -moveDist : moveDist;
-    }
-    lastPosition.x = x;
-    lastPosition.y = y;
-    lastTimeMove = time;
-  });
   draw({
     gridSpacing: gridSpacing,
+    applyGridLines: PARAMS.applyGridLines,
     scale: s,
     offsetX: offsets.x,
     offsetY: offsets.y
   });
 });
+document.onwheel = function (ev) {
+  var dy = ev.deltaY;
+  var increment = 0.08;
+  var inc = dy > 0 ? increment : -increment;
+  var maxScale = 10;
+  s = Math.min(Math.max(1, s + inc), maxScale);
+
+  // or preserve the number with
+  if (PARAMS.preserveGridSpacing) {
+    gridSpacing = maxScale;
+  } else {
+    gridSpacing = 3.0 * Math.exp(-0.2 * s);
+  }
+};
+document.onmousedown = function (ev) {
+  dragEvent = true;
+  lastPosition.x = ev.clientX;
+  lastPosition.y = ev.clientY;
+  console.log(ev);
+};
+document.onmousemove = function (ev) {
+  if (dragEvent) {
+    var maxRange = 50.0;
+    var newRange = 0.01;
+    offsets.x -= Math.max(Math.min(ev.clientX - lastPosition.x, maxRange), -maxRange) / maxRange * newRange;
+    offsets.y += Math.max(Math.min(ev.clientY - lastPosition.y, maxRange), -maxRange) / maxRange * newRange;
+  }
+};
+document.onmouseup = function (ev) {
+  dragEvent = false;
+};
 
 },{"./cfuncs.js":9,"./funcs":10,"mouse-change":1,"mouse-wheel":3,"regl":5,"tweakpane":8,"tweakpane-latex":7}]},{},[11]);

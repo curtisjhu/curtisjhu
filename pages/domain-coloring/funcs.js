@@ -13,10 +13,16 @@ exports.functions = [
 		"text": "dynamic"
 	},
 	{
-		"f": `
-			return cdiv(cmul(csqr(z) - vec2(1, 0), csqr(z - vec2(2, 1))), csqr(z) + vec2(2, 2));
+		"f":
+		`
+			const float max = 100.0;
+			vec2 sum = vec2(0.0);
+			for (float n = 1.0; n < max; n+=1.0 ) {
+				sum = sum + cinv(cpow(vec2(n, 0.0), z));
+			}
+			z = sum;
 		`,
-		"text": "f(z)=..."
+		"text": "riemann_zeta(z)"
 	},
 	{
 		"f": `
@@ -33,15 +39,21 @@ exports.functions = [
 	},
 	{
 		"f": `
+			return cpow(z, 0.5);
+		`,
+		"text": "f(z)=z^0.5"
+	},
+	{
+		"f": `
 			return cpow(z, 2.0);
 		`,
 		"text": "f(z)=z^2"
 	},
 	{
 		"f": `
-			return cpow(z, 3.0);
+			return cpow(z, z);
 		`,
-		"text": "f(z)=z^3"
+		"text": "f(z)=z^z"
 	},
 	{
 		"f": `
@@ -87,21 +99,15 @@ exports.functions = [
 	},
 	{
 		"f": `
-			return csec(z);
-		`,
-		"text": "f(z)=sec(z)"
-	},
-	{
-		"f": `
 			return ccos(z);
 		`,
 		"text": "f(z)=cos(z)"
 	},
 	{
 		"f": `
-			return ccot(z);
+			return ctan(z);
 		`,
-		"text": "f(z)=cot(z)"
+		"text": "f(z)=tan(z)"
 	},
 	{
 		"f": `
@@ -111,8 +117,68 @@ exports.functions = [
 	},
 	{
 		"f": `
-			return ctan(z);
+			return csec(z);
 		`,
-		"text": "f(z)=tan(z)"
+		"text": "f(z)=sec(z)"
+	},
+	{
+		"f": `
+			return ccot(z);
+		`,
+		"text": "f(z)=cot(z)"
+	},
+	{
+		"f": `
+			return casin(z);
+		`,
+		"text": "f(z)=asin(z)"
+	},
+	{
+		"f": `
+			return cacos(z);
+		`,
+		"text": "f(z)=acos(z)"
+	},
+	{
+		"f": `
+			return catan(z);
+		`,
+		"text": "f(z)=atan(z)"
+	},
+	{
+		"f": `
+			return csinh(z);
+		`,
+		"text": "f(z)=sinh(z)"
+	},
+	{
+		"f": `
+			return ccosh(z);
+		`,
+		"text": "f(z)=cosh(z)"
+	},
+	{
+		"f": `
+			return ctanh(z);
+		`,
+		"text": "f(z)=tanh(z)"
+	},
+	{
+		"f": `
+			return casinh(z);
+		`,
+		"text": "f(z)=asinh(z)"
+	},
+	{
+		"f": `
+			return cacosh(z);
+		`,
+		"text": "f(z)=acosh(z)"
+	},
+	{
+		"f": `
+			return catanh(z);
+		`,
+		"text": "f(z)=atanh(z)"
 	},
 ]

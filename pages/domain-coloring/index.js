@@ -15,28 +15,31 @@ var currentFunc = params.get("function") ? params.get("function") : 0;
 console.log(currentFunc)
 const PARAMS = {
 	function: parseInt(currentFunc),
-	preserveGridSpacing: false
+	preserveGridSpacing: false,
+	applyGridLines: false
 }
 const pane = new Pane({
-    title: "Domain Coloring (Prototype I)"
+    title: "Domain Coloring"
 })
 pane.registerPlugin(TweakpaneLatex);
 pane.addBlade({
   view: "latex",
   content: `
 # Domain coloring
-Basically you map a complex number $z$ to another complex number $z'$.
+Map a complex number $z$ to another complex number $z'$.
 Here, each $z$, which is assigned a color on a colorwheel,
-are mapped onto a new complex plane seen here.
+is mapped onto a new complex plane seen here.
 
-## Controls
-DRAG SCROSS, ZOOM
+Hint: drag and scroll!
+
+References: <a href="https://rreusser.github.io/sketches/">Ricky Reusser</a>
 `,
   border: false,
   markdown: true,
 });
 
 pane.addInput(PARAMS, "preserveGridSpacing")
+pane.addInput(PARAMS, "applyGridLines")
 
 var optionList = {};
 for (let i =0; i < functions.length; i++) {
@@ -73,6 +76,7 @@ const draw = regl({
 		t: (ctx) => ctx.time,
 		scale: regl.prop("scale"),
 		gridSpacing: regl.prop("gridSpacing"),
+		applyGridLines: regl.prop("applyGridLines"),
 		offsetX: regl.prop("offsetX"),
 		offsetY: regl.prop("offsetY")
     },
@@ -106,6 +110,7 @@ const draw = regl({
 	uniform vec2 u_resolution;
 	uniform float pixelRatio, gridWidth, opacity, t, gridSpacing, scale;
 	uniform float offsetX, offsetY;
+	uniform bool applyGridLines;
 
 	${cfuncs}
 
@@ -146,14 +151,12 @@ const draw = regl({
 		vec3 col = hsl2rgb(hsl);
 
 		// apply polar gridlines
-		polar.g = polar.g * 4.0 / (PI);
-		polar.r = polar.r*gridSpacing;
-		float gridFact = gridFactor(polar, 0.4 * gridWidth * pixelRatio, 1.0);
-		col = mix(vec3(0.6), col, opacity * gridFact);
-
-		// apply rectangular grid lines
-		// float gridFact2 = gridFactor(z, 0.4 * gridWidth * pixelRatio, 1.0);
-		// col = mix(vec3(0.3), col, opacity * gridFact2);
+		if (applyGridLines) {
+			polar.g = polar.g * 4.0 / (PI);
+			polar.r = polar.r*gridSpacing;
+			float gridFact = gridFactor(polar, 0.4 * gridWidth * pixelRatio, 1.0);
+			col = mix(vec3(0.6), col, opacity * gridFact);
+		}
 
       	gl_FragColor = vec4(col, 1);
     }`,
@@ -161,9 +164,8 @@ const draw = regl({
 
 var s = 1.0;
 var gridSpacing = 2;
-var lastTimeWheel = 0;
-var lastTimeMove = 0;
 var lastPosition = { x: 0, y: 0};
+var dragEvent = false;
 
 var offsets = { x: 0, y: 0};
 regl.frame(({ time }) => {
@@ -172,45 +174,46 @@ regl.frame(({ time }) => {
         depth: 1,
     });
 
-	mouseWheel(function(dx, dy) {
-		if (time - lastTimeWheel < 0.3) return;
-
-		var inc = dy > 0 ? 0.1 : -0.1;
-		var maxScale = 10;
-		s = Math.min(Math.max(1, s + inc), maxScale);
-
-		// or preserve the number with
-		if (PARAMS.preserveGridSpacing) {
-			gridSpacing = maxScale;
-		} else {
-			gridSpacing = 3.0 * Math.exp(-0.2*s);
-		}
-
-		lastTimeWheel = time;
-	})
-
-	mouseMove(function(button, x, y) {
-		if (time - lastTimeMove < 0.05) return;
-
-		var moveDist = 0.1 * Math.exp(-0.4*s);
-		if (button == 1) {
-			offsets.x += x - lastPosition.x > 0 ? moveDist : -moveDist;
-			offsets.y += y - lastPosition.y > 0 ? -moveDist : moveDist;
-		}
-		lastPosition.x = x;
-		lastPosition.y = y;
-
-		lastTimeMove = time;
-	})
-
 
     draw({
 		gridSpacing: gridSpacing,
+		applyGridLines: PARAMS.applyGridLines,
 		scale: s,
 		offsetX: offsets.x,
 		offsetY: offsets.y
 	});
 });
 
+document.onwheel = function(ev) {
+	var dy = ev.deltaY;
 
+	var increment = 0.08;
+	var inc = dy > 0 ? increment : -increment;
+	var maxScale = 10;
+	s = Math.min(Math.max(1, s + inc), maxScale);
 
+	// or preserve the number with
+	if (PARAMS.preserveGridSpacing) {
+		gridSpacing = maxScale;
+	} else {
+		gridSpacing = 3.0 * Math.exp(-0.2*s);
+	}
+}
+
+document.onmousedown = function(ev) {
+	dragEvent = true;
+	lastPosition.x = ev.clientX;
+	lastPosition.y = ev.clientY;
+	console.log(ev)
+}
+document.onmousemove = function(ev) {
+	if(dragEvent) {
+		var maxRange = 50.0;
+		var newRange = 0.01;
+		offsets.x -= (Math.max(Math.min(ev.clientX - lastPosition.x, maxRange), -maxRange)/maxRange)*newRange;
+		offsets.y += (Math.max(Math.min(ev.clientY - lastPosition.y, maxRange), -maxRange)/maxRange)*newRange;
+	}
+}
+document.onmouseup = function(ev) {
+	dragEvent = false;
+}
