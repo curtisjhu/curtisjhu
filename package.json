@@ -55,8 +55,7 @@
     "regl-gpu-lines": "^2.4.1",
     "regl-line": "^1.0.0",
     "three": "^0.151.3",
-    "tweakpane": "^3.1.7",
-    "tweakpane-plugin-infodump": "github:doersino/tweakpane-plugin-infodump"
+    "tweakpane": "^3.1.7"
   },
   "devDependencies": {
     "concurrently": "^7.6.0",
