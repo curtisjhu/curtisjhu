@@ -11,6 +11,7 @@ const path = require('path');
 const fs = require('fs');
 const esbuild = require("esbuild");
 const fse = require("fs-extra");
+const inject = require("node-inject-html");
 
 var projectDir = process.argv[2];
 
@@ -59,7 +60,9 @@ switch (entryFile.type) {
     try {
       const metadataPath = require.resolve(path.join(__dirname, '..', projectDir, 'metadata.json'));
       metadata = require(metadataPath);
-    } catch (e) { }
+    } catch (e) {
+      console.log("no metadata")
+     }
 
     if (!fs.existsSync(outputDir))
       mkdirp.mkdirpSync(outputDir);
@@ -97,9 +100,42 @@ switch (entryFile.type) {
 
     // creating html
     console.log("creating html")
-    fse.copy(path.join(__dirname, "../templates/_index.html"), htmlOutputPath, function(err) {
-      if (err) console.error(err);
-    })
+    // fse.copy(path.join(__dirname, "../templates/_index.html"), htmlOutputPath, function(err) {
+    //   if (err) console.error(err);
+    // })
+
+    var htmlString = fse.readFileSync(path.join(__dirname, "../templates/_index.html"));
+
+    const injectHtml = `
+    <title>${metadata.title}</title>
+    <meta name='og:site_name' content='${metadata.title}' />
+    <meta property="twitter:title" content="${metadata.title}" />
+    <meta name='og:title' content='${metadata.title}' />
+
+    <meta
+      name="description"
+      content="${metadata.description}"
+    />
+    <meta
+      property="twitter:description"
+      content="${metadata.description}"
+    />
+    <meta name='og:description' content='${metadata.description}' />
+
+    <meta name='og:url' content='http://www.funnyscar.com/${metadata.filename}' />
+    <meta property="twitter:url" content="https://funnyscar.com/${metadata.filename}" />
+
+    <meta name='og:image' content='${metadata.image}' />
+    <meta
+      property="twitter:image"
+      content="${metadata.image}"
+    />
+    `
+    inject(htmlString, {
+      headEnd: injectHtml
+    });
+
+    fse.writeFileSync(htmlOutputPath, htmlString);
 
     console.log("created html")
 
