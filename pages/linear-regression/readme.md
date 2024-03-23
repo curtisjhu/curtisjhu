@@ -1,0 +1,1 @@
+https://observablehq.com/@observablehq/plot-wind-map?intent=fork

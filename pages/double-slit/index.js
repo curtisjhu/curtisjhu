@@ -5,6 +5,9 @@ const draw = regl({
         iTime: (ctx) => ctx.time,
 		source1: [-1, 0.2],
 		source2: [-1, -0.2],
+		propRatio: (context, props) => {
+			return context.viewportHeight / context.viewportWidth;
+		}
     },
     attributes: {
         position: regl.buffer([
@@ -29,19 +32,37 @@ const draw = regl({
     precision mediump float;
 	varying vec2 uv;
 
-	uniform float iTime;
+	uniform float iTime, propRatio;
 	uniform vec2 source1, source2;
 
     void main() {
-		float speed = iTime*0.3;
+        
+        vec3 col = vec3(0.08);
+
+		float t = iTime*0.3;
 		float frequency = 30.0;
 
-		// inverse square law
-		// cosine waves
-		vec3 wave1 = vec3(cos(frequency*(length(uv-source1)+speed)));
-		vec3 wave2 = vec3(cos(frequency*(length(uv-source2)+speed)));
 
-      	gl_FragColor = vec4(wave2+wave1, 1);
+        float slitWidth = 0.03;
+
+        float divideX = 0.5;
+        float lineWidth = 0.01*propRatio;
+        float grad = smoothstep(lineWidth, 0.003*propRatio, abs(uv.x + divideX)) * smoothstep(slitWidth-0.01, slitWidth, abs(uv.y));
+        col = mix(col, vec3(0.62, 0.68, 0.71), grad);
+
+        // huygens
+        // more of diffraction here.
+
+        // mesh function
+        // superposition of waves
+        // these waves must bounce off walls.
+        // 
+        
+
+
+
+
+      	gl_FragColor = vec4(col, 1);
     }`,
 
 });
