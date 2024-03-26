@@ -34,6 +34,7 @@
     "dat.gui": "^0.7.9",
     "fail-nicely": "^2.0.0",
     "fs-extra": "^11.1.1",
+    "function-plot": "^1.23.3",
     "glsl-colormap": "^1.0.1",
     "glsl-solid-wireframe": "^1.0.1",
     "katex": "^0.16.4",
@@ -48,6 +49,7 @@
     "ndarray": "^1.0.19",
     "numjs": "^0.16.1",
     "p5": "^1.6.0",
+    "pathfinding": "^0.4.18",
     "preact": "^10.13.2",
     "react": "^18.2.0",
     "regl": "^2.1.0",
@@ -55,9 +57,17 @@
     "regl-gpu-lines": "^2.4.1",
     "regl-line": "^1.0.0",
     "three": "^0.151.3",
-    "tweakpane": "^3.1.7"
+    "tweakpane": "^3.1.7",
+    "tweakpane-latex": "^0.1.2",
+    "tweakpane-plugin-infodump": "github:doersino/tweakpane-plugin-infodump",
+    "vector-field": "^2.1.1",
+    "vis-network": "^9.1.6"
   },
   "devDependencies": {
+    "@babel/plugin-proposal-class-properties": "^7.18.6",
+    "@babel/plugin-proposal-private-property-in-object": "^7.21.11",
+    "@babel/plugin-transform-private-methods": "^7.22.5",
+    "@babel/plugin-transform-private-property-in-object": "^7.22.11",
     "concurrently": "^7.6.0",
     "glslify": "^7.1.1"
   }
