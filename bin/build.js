@@ -11,7 +11,7 @@ const path = require('path');
 const fs = require('fs');
 const esbuild = require("esbuild");
 const fse = require("fs-extra");
-const inject = require("node-inject-html");
+const { injectHTML } = require("node-inject-html");
 
 var projectDir = process.argv[2];
 
@@ -100,9 +100,14 @@ switch (entryFile.type) {
 
     // creating html
     console.log("creating html")
-    // fse.copy(path.join(__dirname, "../templates/_index.html"), htmlOutputPath, function(err) {
-    //   if (err) console.error(err);
-    // })
+
+    if (Object.keys(metadata).length === 0) {
+      fse.copy(path.join(__dirname, "../templates/_index.html"), htmlOutputPath, function(err) {
+        if (err) console.error(err);
+      })
+      console.log("html created")
+      break;
+    }
 
     var htmlString = fse.readFileSync(path.join(__dirname, "../templates/_index.html"));
 
@@ -131,7 +136,7 @@ switch (entryFile.type) {
       content="${metadata.image}"
     />
     `
-    inject(htmlString, {
+    injectHTML(htmlString, {
       headEnd: injectHtml
     });
 
