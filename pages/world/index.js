@@ -1,16 +1,48 @@
 const regl = require("regl")();
 const camera = require("regl-camera")(regl, {
 	theta: Math.PI/2,
-	phi: -Math.PI/3
+	phi: -Math.PI/3,
+    center: [0, 0, 0]
+    
 });
 const createMesh = require("./createMesh");
+const { Pane } = require("tweakpane")
+const TweakpaneLatex = require("tweakpane-latex")
+
+const pane = new Pane({
+    title: "World Generation"
+})
+pane.registerPlugin(TweakpaneLatex);
+pane.addBlade({
+  view: "latex",
+  content: `
+# World Generation
+
+Creating a random, pseudo-realistic world using a random seed.
+
+`,
+  border: false,
+  markdown: true,
+});
 
 
+var sp = new URLSearchParams(window.location.search);
+console.log(sp.get("seed"))
 const PARAMS = {
-	seed: 1
+	seed: sp.get("seed") || 1,
+    numPoints: 1200
 }
+pane.addInput(PARAMS, "seed")
+    .on("change", (ev) => {
+        if (sp.has("seed")) {
+            sp.set("seed", ev.value);
+            window.location.search = sp.toString();
+        } else {
+            window.location.href += "?seed="+ev.value
+        }
+})
 
-var range = 1;
+var range = 2;
 var buffer = createMesh({
 	u: {
 		x: -range,
@@ -20,10 +52,9 @@ var buffer = createMesh({
 		x: -range,
 		y: range
 	},
-	numPoints: 100
+	numPoints: PARAMS.numPoints
 })
 
-console.log(buffer)
 
 const draw = regl({
     uniforms: {
@@ -32,7 +63,7 @@ const draw = regl({
     attributes: {
         position: regl.prop("buffer"),
     },
-    count: 6,
+    count: regl.prop("count"),
     vert: `
     precision mediump float;
     attribute vec2 position;
@@ -71,7 +102,7 @@ const draw = regl({
 	uniform float iTime;
     void main() {
 
-		vec3 col = 0.5 + 0.5*cos(iTime+uv.xyx+vec3(0,2,4));
+		vec3 col = mix(vec3(0.058, 0.45, 0.086), vec3(0.28, 0.71, 0.15), uv.z);
       	gl_FragColor = vec4(col, 1);
     }`,
 });
@@ -84,7 +115,8 @@ regl.frame(({ time }) => {
 		});
 
 		draw({
-			buffer: buffer.positions
+			buffer: buffer.positions,
+            count: buffer.positions.length
 		});
 	})
 });
