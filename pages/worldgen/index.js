@@ -1,5 +1,5 @@
 const regl = require("regl")();
-const glslify = require("glslify");
+const {utils} = require("./utils");
 
 const drawShape = regl({
 	uniforms: {
@@ -30,21 +30,34 @@ varying vec2 fragCoord;
 uniform float iTime;
 uniform float propRatio;
 
+${utils}
+
 float iTerrain( in vec3 ro, in vec3 rd)
 {
 	// https://www.shadertoy.com/view/4ttSWf
-	
-    // Plane is:
-    // y = 0
-    // ro.y + t*rd.y = 0
-    // t = -ro.y/rd.y
-    return -ro.y/rd.y;
+	for (float t = 0.0; t < 20.0; t += 0.1) {
+		vec3 p = ro + rd * t;
+
+		if (abs(p.z - fbm(p.xy)) < 0.1) {
+			// hit
+			return t;
+		}
+	}
+	return -1.0;
 }
 
-vec3 nTerrain(in vec3 pla)
+vec3 nTerrain(in vec3 pos)
 {
     // the normal vector
-    return vec3(0.0, 1.0, 0.0);
+	// (1, df/dz, 0) cross (0, df/dx, 1) = (-df/dx, 1, df/dz)
+	vec2 p = pos.xy;
+	float df_dx = fbm(p + vec2(0.01, 0.0)) - fbm(p);
+	float df_dy = fbm(p + vec2(0.0, 0.01)) - fbm(p);
+
+	vec3 n = vec3(-df_dx, 1.0, df_dy);
+	n = normalize(n);
+
+    return n;
 }
 
 vec3 skyColor(in float time) {
@@ -52,19 +65,19 @@ vec3 skyColor(in float time) {
 
 	vec3 daytime = vec3(135.0/255.0, 206.0/255.0, 235.0/255.0);
 	vec3 nighttime = vec3(0.0, 0.0, 0.0);
-	return vec3(0.0);
+	return vec3(1.0);
 }
 
-float intersect( in vec3 ro, in vec3 rd, out float t)
+int intersect( in vec3 ro, in vec3 rd, out float t)
 {
     t = 1000.0;
-    float id = -1.0; // by default, it will be a miss
+    int id = -1; // by default, it will be a miss
     float tpla = iTerrain(ro, rd);
     
     
     // report which ever comes first
     if (tpla > 0.0) {
-        id = 2.0;
+        id = 2;
         t = tpla;
     }
     
@@ -87,14 +100,14 @@ void main() {
     
     float t = -1.0;
     // intersect
-    float id = intersect(ro, rd, t);
+    int id = intersect(ro, rd, t);
     
     vec3 light = vec3(1.0, 1.0, 1.0);
     
     // draw background color
     vec3 col = skyColor(time);
 
-    if ( id > 1.5)
+    if ( id == 2)
     {
         // we hit the plane
         vec3 pos = ro + t*rd;
