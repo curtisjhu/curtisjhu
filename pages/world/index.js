@@ -16,9 +16,9 @@ pane.registerPlugin(TweakpaneLatex);
 pane.addBlade({
   view: "latex",
   content: `
-# World Generation
+# World / terrain Generation
 
-Creating a random, pseudo-realistic world using a random seed.
+Creating a random, pseudo-realistic terrain using a random seed.
 
 `,
   border: false,
@@ -30,7 +30,7 @@ var sp = new URLSearchParams(window.location.search);
 console.log(sp.get("seed"))
 const PARAMS = {
 	seed: sp.get("seed") || 1,
-    numPoints: 1200
+    numPoints: 4000
 }
 pane.addInput(PARAMS, "seed")
     .on("change", (ev) => {
@@ -68,6 +68,7 @@ const draw = regl({
     precision mediump float;
     attribute vec2 position;
 	varying vec3 uv;
+	varying vec3 normal;
 	uniform mat4 projection, view;
 
     float rand (in vec2 st) {
@@ -92,17 +93,46 @@ const draw = regl({
             (d - b) * u.x * u.y;
     }
 
+    float fbm(in vec2 pos) {
+        float frequency = 1.0;
+        float amplitude = 1.0;
+        float value = 0.0;
+
+        const int octaves = 6;
+
+        for (int i = 0; i < octaves; i++) {
+            value += amplitude * noise(frequency * pos);
+            amplitude *= 0.5;
+            frequency *= 2.0;
+        }
+
+        return value;
+    }
+
+    vec3 normalVec(in vec2 pos) {
+        float delta = 0.01;
+        float df_dx = (fbm(pos + vec2(delta, 0.0)) - fbm(pos)) / delta;
+        float df_dy = (fbm(pos + vec2(0.0, delta)) - fbm(pos)) / delta;
+        return vec3(-df_dx, 1.0, df_dy);
+    }
+
     void main() {
-		uv = vec3(position, noise(position));
+        normal = normalVec(position);
+		uv = vec3(position, fbm(position));
     	gl_Position = projection * view * vec4(uv, 1);
     }`,
     frag: `
     precision mediump float;
 	varying vec3 uv;
+	varying vec3 normal;
+
 	uniform float iTime;
     void main() {
+        vec3 lightSource = vec3(1.0, 1.0, 1.0);
+        vec3 lightRay = lightSource - uv;
 
-		vec3 col = mix(vec3(0.058, 0.45, 0.086), vec3(0.28, 0.71, 0.15), uv.z);
+        float intensity = dot(lightRay, normal);
+		vec3 col = vec3(0.058, 0.25, 0.086) * intensity;
       	gl_FragColor = vec4(col, 1);
     }`,
 });
