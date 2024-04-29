@@ -35,10 +35,11 @@ ${utils}
 float iTerrain( in vec3 ro, in vec3 rd)
 {
 	// https://www.shadertoy.com/view/4ttSWf
-	for (float t = 0.0; t < 20.0; t += 0.1) {
+	for (float t = 0.0; t < 10.0; t += 0.1) {
 		vec3 p = ro + rd * t;
+		p.y += 1.0; // offset
 
-		if (abs(p.z - fbm(p.xy)) < 0.1) {
+		if (abs(p.y - fbm(p.xz)) < 0.1) {
 			// hit
 			return t;
 		}
@@ -50,11 +51,12 @@ vec3 nTerrain(in vec3 pos)
 {
     // the normal vector
 	// (1, df/dz, 0) cross (0, df/dx, 1) = (-df/dx, 1, df/dz)
-	vec2 p = pos.xy;
-	float df_dx = fbm(p + vec2(0.01, 0.0)) - fbm(p);
-	float df_dy = fbm(p + vec2(0.0, 0.01)) - fbm(p);
+	vec2 p = pos.xz;
+	float delta = 0.01;
+	float df_dx = (fbm(p + vec2(delta, 0.0)) - fbm(p)) / delta;
+	float df_dz = (fbm(p + vec2(0.0, delta)) - fbm(p)) / delta;
 
-	vec3 n = vec3(-df_dx, 1.0, df_dy);
+	vec3 n = vec3(-df_dx, 1.0, df_dz);
 	n = normalize(n);
 
     return n;

@@ -2,13 +2,13 @@ export const utils = `
 
 float rand (in float x) {
 	return fract(sin(x * 12.9898)
-				* 43758.5453123 * 1234.0);
+				* 43758.5453123);
 }
 
 float rand (in vec2 st) {
 	return fract(sin(dot(st.xy,
 						vec2(12.9898, 78.233)))
-				* 43758.5453123 * 1234.0);
+				* 43758.5453123);
 }
 
 float noise(in vec2 pos) {
@@ -28,19 +28,19 @@ float noise(in vec2 pos) {
 }
 
 float fbm(in vec2 pos) {
-	float value = 0.0;
-	float amplitude = 0.5;
-	float frequency = 0.0;
+	float value = noise(pos);
+	float amplitude = 0.2;
+	float frequency = 1.0;
 	float angle = 0.0;
 
-	const int octaves = 6;
+	const int octaves = 8;
 
 	// analogous to fourier series
 	for (int i = 0; i < octaves; i++) {
 		angle = rand(float(i));
-		mat2 rotationMatrix = mat2(cos(angle), sin(angle), -sin(angle), cos(angle));
+		mat2 rotationMatrix = mat2(cos(angle), -sin(angle), sin(angle), cos(angle));
 
-		pos *= rotationMatrix;
+		pos = pos * rotationMatrix;
 
 		value += amplitude * noise(frequency * pos);
 		frequency *= 2.0;
@@ -49,7 +49,6 @@ float fbm(in vec2 pos) {
 
 	return value;
 }
-
 
 
 `;
