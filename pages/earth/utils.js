@@ -1,4 +1,4 @@
-export const utils = `
+exports.utils = `
 // craters based on the following examples
 // https://www.shadertoy.com/view/MtjGRD
 
