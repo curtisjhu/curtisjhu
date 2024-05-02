@@ -24387,7 +24387,8 @@ The spaceship is essentially riding a "wave"
 var sp = new URLSearchParams(window.location.search);
 console.log(sp.get("angle"));
 const PARAMS = {
-  angle: parseFloat(sp.get("angle")) || 0.3
+  angle: parseFloat(sp.get("angle")) || 0.3,
+  v: parseFloat(sp.get("v")) || 0.5
 };
 pane.addInput(PARAMS, "angle").on("change", ev => {
   if (sp.has("angle")) {
@@ -24395,6 +24396,14 @@ pane.addInput(PARAMS, "angle").on("change", ev => {
     window.location.search = sp.toString();
   } else {
     window.location.href += "?angle=" + ev.value;
+  }
+});
+pane.addInput(PARAMS, "v").on("change", ev => {
+  if (sp.has("v")) {
+    sp.set("v", ev.value);
+    window.location.search = sp.toString();
+  } else {
+    window.location.href += "?v=" + ev.value;
   }
 });
 const forms = pane.addFolder({
@@ -24424,7 +24433,8 @@ const drawShape = regl({
     propRatio: (context, props) => {
       return context.viewportHeight / context.viewportWidth;
     },
-    rotateAngle: regl.prop("rotateAngle")
+    rotateAngle: regl.prop("rotateAngle"),
+    velocity: regl.prop("v")
   },
   attributes: {
     position: [[-1, -1], [1, -1], [-1, 1], [1, -1], [-1, 1], [1, 1]]
@@ -24447,6 +24457,7 @@ varying vec2 fragCoord;
 uniform float iTime;
 uniform float propRatio;
 uniform float rotateAngle;
+uniform float velocity;
 
 #define PI 3.1415926535
 
@@ -24468,7 +24479,7 @@ float spaceFabric(in vec2 p, in vec2 ship) {
     float delta = 0.01;
     float df_dr = (topHat(r+delta) - topHat(r)) / delta;
 
-    float v_s = 0.5; // velocity determines power of the field around
+    float v_s = velocity; // velocity determines power of the field around
 
     y += v_s * p.x * df_dr / r;
 
@@ -24566,7 +24577,8 @@ void main() {
 });
 regl.frame(context => {
   drawShape({
-    rotateAngle: PARAMS.angle
+    rotateAngle: PARAMS.angle,
+    v: PARAMS.v
   });
 });
 
