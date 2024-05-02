@@ -5,6 +5,9 @@ const regl = require("regl")();
 const draw = regl({
     uniforms: {
         iTime: (ctx) => ctx.time,
+		propRatio: (context, props) => {
+			return context.viewportHeight / context.viewportWidth;
+		}
     },
     attributes: {
         position: regl.buffer([
@@ -29,6 +32,7 @@ const draw = regl({
     precision mediump float;
 	varying vec2 uv;
 	uniform float iTime;
+	uniform float propRatio;
 
     #define SEED 134.0
 
@@ -40,7 +44,10 @@ const draw = regl({
 		vec4 col = vec4(135./255., 206./255., 235./255., 1.0);
 
         float t = iTime * 0.01;
-        vec2 p = uv + vec2(t, 0.);
+
+        vec2 p = uv;
+        p.y = uv.y*propRatio;
+        p += vec2(t, 0.);
 
 
         vec3 sun = vec3(1.0, 1.0, .3);
