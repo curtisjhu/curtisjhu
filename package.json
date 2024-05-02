@@ -47,6 +47,7 @@
     "mouse-change": "^1.4.0",
     "mouse-wheel": "^1.2.0",
     "ndarray": "^1.0.19",
+    "node-inject-html": "^0.0.5",
     "numjs": "^0.16.1",
     "p5": "^1.6.0",
     "pathfinding": "^0.4.18",

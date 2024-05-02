@@ -1,152 +1,112 @@
 const regl = require("regl")();
-const d3 = require("../d3.min.js");
-const camera = require("regl-camera")(regl, {
-    center: [0, 0, 3],
-    theta: Math.PI/2,
-    phi: -4*Math.PI/9,
-    damping: 0.3,
-    distance: 40
-});
-
-function genPoints() {
-    var uniform = d3.randomLcg(0.4212687683098432008)
-    
-    return d3.range(500).map((i) => {
-    
-        var range  = 7;
-        var z = uniform() * range;
-
-        var R = Math.exp(0.3 * z) * uniform();
-        var ang = uniform() * 2 * Math.PI;
-
-        return {
-            x: R * Math.cos(ang),
-            y: R * Math.sin(ang),
-            z: z,
-            m: uniform(),
-        }
-    });
-}
-
-var buffer = genPoints();
+const {utils} = require("util");
 
 const draw = regl({
     uniforms: {
         iTime: (ctx) => ctx.time,
     },
     attributes: {
-        position: regl.prop("buffer"),
-    },
-
-    count: regl.prop("numPoints"),
-    primitive: "points",
-    vert: `
-    precision mediump float;
-    attribute vec3 position;
-	varying vec2 uv;
-    uniform mat4 projection, view;
-
-    float perlinNoise(float x) {
-        float i = floor(x);
-        float f = fract(x);
-        return mix(i, f, f);
-        // return mix(rand(i), rand(i+1.0), smoothstep(0.0, 1.0, f));
-    }
-
-    vec2 perlin(float z, float t) {
-        // (x,y) = perlin_noise(z, t) 
-
-        float range = 2.0;
-
-        return vec2(0.0, 0.0);
-    }
-
-    void main() {
-		uv = position.xy;
-        gl_PointSize = 2.0;
-    	gl_Position = projection * view * vec4(position, 1);
-    }`,
-    frag: `
-    precision mediump float;
-	varying vec2 uv;
-	uniform float iTime;
-    void main() {
-        vec3 col = vec3(0.0);
-      	gl_FragColor = vec4(col, 1);
-    }`,
-});
-
-const k = 10;
-const drawGround =  regl({
-    uniforms: {},
-    attributes: {
         position: regl.buffer([
-            [-k, -k],
-            [k, k],
-            [-k, k],
-            [k, k],
-            [-k, -k],
-            [k, -k],
+            [-1, -1],
+            [1, 1],
+            [-1, 1],
+            [1, 1],
+            [-1, -1],
+            [1, -1],
         ]),
     },
     count: 6,
     vert: `
     precision mediump float;
     attribute vec2 position;
-    uniform mat4 projection, view;
-	varying vec3 uv;
-
-    float rand (in vec2 st) {
-        return fract(sin(dot(st.xy,
-                         vec2(12.9898,78.233)))
-                 * 43758.5453123);
-    }
-
-    float perlin(in vec2 pos) {
-        vec2 i = floor(pos);
-        vec2 f = fract(pos);
-
-        float a = rand(i);
-        float b = rand(i + vec2(1.0, 0.0));
-        float c = rand(i + vec2(0.0, 1.0));
-        float d = rand(i + vec2(1.0, 1.0));
-
-        vec2 u = smoothstep(0.,1.,f);
-
-        return mix(a, b, u.x) +
-            (c - a)* u.y * (1.0 - u.x) +
-            (d - b) * u.x * u.y;
-    }
-
+	varying vec2 uv;
     void main() {
-        vec2 pos = position;
-
-        float z = perlin(pos);
-        uv = vec3(pos, z);
-
-    	gl_Position = projection * view * vec4(uv, 1);
+		uv = position;
+    	gl_Position = vec4(position, 0, 1);
     }`,
     frag: `
-    precision mediump float;
-	varying vec3 uv;
-    void main() {
-        vec3 col = mix(vec3(0.7, 0.47, 0.05), vec3(0.058, 0.45, 0.086), uv.z);
-      	gl_FragColor = vec4(col, 1);
+precision mediump float;
+attribute vec2 position;
+
+${utils}
+
+vec3 surfaceNormal(vec3 pos)
+{
+ 	vec3 delta = vec3(0.01, 0.0, 0.0);
+    vec3 normal;
+    normal.x = map(pos + delta.xyz,0.0) - map(pos - delta.xyz,0.0);
+    normal.y = map(pos + delta.yxz,0.0) - map(pos - delta.yxz,0.0);
+    normal.z = map(pos + delta.zyx,0.0) - map(pos - delta.zyx,0.0);
+    return normalize(normal);
+}
+
+float trace(vec3 o, vec3 r, float q)
+{
+	float t = 0.0;
+    float ta = 0.0;
+    for (int i = 0; i < 8; ++i) {
+        float d = map(o + r * t, q);
+        t += d * 1.0;
+    }
+    return t;
+}
+
+void mainImage( out vec4 fragColor, in vec2 fragCoord )
+{
+	vec2 uv = fragCoord.xy / iResolution.xy;
+    uv = uv * 2.0 - 1.0;
+    uv.x *= iResolution.x / iResolution.y;
+    
+    vec3 r = normalize(vec3(uv, 1.0));
+    float tn = texture(iChannel0,vec2(iTime*0.1,0.0)).x;
+    tn = tn * 2.0 - 1.0;
+    r *= zrot(sin(tn)*0.2) * xrot(-pi*0.05+sin(tn)*0.1);
+    
+    vec3 o = vec3(0.0, 0.15, -0.5);
+    
+    float t = trace(o, r, 0.0);
+    vec3 world = o + r * t;
+    vec3 sn = surfaceNormal(world);
+    
+    vec3 vol = vec3(0.0);
+    
+    for (int i = 0; i < 3; ++i) {
+        float rad = 0.2+float(1+i)/3.0;
+        float tt = trace(o,r,rad);
+        vec3 wa = o + r * tt;
+        float atlu = atan(wa.x,wa.z) - tt * 4.0 + iTime;
+        float atlv = acos(wa.y/length(wa)) + tt * 4.0;
+        vec3 at = texture(iChannel0, vec2(atlu,atlv)).xxx;
+        vol += at / 3.0;
+    }
+    
+    float prod = max(dot(sn, -r), 0.0);
+    
+    float fd = map(world, 0.0);
+    float fog = 1.0 / (1.0 + t * t * 0.1 + fd * 10.0);
+    
+    vec3 sky = vec3(148.0,123.0,120.0) / 255.0;
+    
+    vec3 fgf = vec3(210.0,180.0,140.0) / 255.0;
+    vec3 fgb = vec3(139.0,69.0,19.0) / 255.0;
+    vec3 fg = mix(fgb, fgf, prod);
+    
+    vec3 back = mix(fg, sky, 1.0-fog);
+    
+    vec3 mmb = mix(vol, back, 0.8);
+    
+    vec3 fc = mmb * vec3(1.0);
+    
+	fragColor = vec4(fc, 1.0);
+
     }`,
-})
+});
 
 regl.frame(({ time }) => {
+    regl.clear({
+        color: [0, 0, 0, 1],
+        depth: 1,
+    });
 
-    camera((state) => {
-        regl.clear({
-            color: [1, 1, 1, 1],
-            depth: 1,
-        });
-
-        draw({
-            buffer: buffer.map((el) => [el.x, el.y, el.z]),
-            numPoints: buffer.length
-        });
-        drawGround();
-    })
+    draw();
 });

@@ -1,7 +1,6 @@
 # Tornados
 
-Based off the work of Leigh Orf
-
+https://www.shadertoy.com/view/ltSGDhi
 
 Basic cylindrical
 
