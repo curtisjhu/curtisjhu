@@ -12,7 +12,7 @@ node.innerHTML = `
 <p>
 Under the umbrella of computer vision, feature extractions are helpful in extracting useful abstractions from images (commonly found in Convolutional Neural Networks).
 
-They consist of these matrices (such as the one in the bottom left corner), that move across all the pixels in the image, acting as a "sifter" that alters the image in relation to its neighboring pixels.
+They consist of these matrices (such as the one in the bottom left corner), that move across all the pixels in the image, acting as a "sifter" that alters the pixel in relation to its neighboring pixels.
 </p>
 <p>
 In this demo, we are running well-known convolution kernels (filters) on all pixels through the GPU.
