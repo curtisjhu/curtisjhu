@@ -1,3 +1,5 @@
+// References
+// https://www.shadertoy.com/view/tsB3Rz
 const regl = require("regl")();
 
 const draw = regl({

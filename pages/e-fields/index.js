@@ -1,3 +1,7 @@
+// References
+// https://www.shadertoy.com/view/WlVGzK
+// https://rreusser.github.io/magnet/
+
 const regl = require("regl")();
 
 const draw = regl({
