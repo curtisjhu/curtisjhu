@@ -1,5 +1,13 @@
 // Basically the Earth sketch
+// TODO:
 // Stars: https://clockworkchilli.com/blog/4_space_shaders_-_twinkle_twinkle_little_star
+// Sun
+// Atmosphere
+// clouds
+// diffusive lighting
+// Snowy peaks
+// yellowing
+// moon
 
 const regl = require("regl")();
 const { utils } = require("./utils");
@@ -16,7 +24,9 @@ pane.addBlade({
   content: `
 # Edge of Space Generation
 
-Creating a random, pseudo-realistic earth using a random seed.
+Point of View: you are an astronaut on the ISS.
+
+Still a work in progress. There are a lot of details to fix.
 
 `,
   border: false,
@@ -172,18 +182,19 @@ void main() {
     vec2 uv = fragCoord;
     uv.y = fragCoord.y*propRatio;
     
-    float time = 3. * iTime;
-    mat3 rotate = mat3( vec3(cos(time), 0.0, sin(time)),
-                        vec3(0.0, 1.0, 0.0),
-                        vec3(-sin(time), 0.0, cos(time))
+    float time = .03 * iTime;
+    mat3 rotate = mat3(
+						1.0, 0.0, 0.0,
+						vec3(0.0, cos(time), sin(time)),
+                        vec3(0.0, -sin(time), cos(time))
                       );
     vec3 ro = vec3(0.0, 1.0, CAMERADIST);
     vec3 rd = normalize( vec3( uv, -2.0) );
     vec3 light = ro*1.4;
 
-    // ro *= rotate;
-    // rd *= rotate;
-	// light *= rotate;
+    ro *= rotate;
+    rd *= rotate;
+	light *= rotate;
     
     float t = iSphere(ro, rd, sphere);
 	// t *= smoothstep(0.0, 1.0, 5.0*t + 0.5);
