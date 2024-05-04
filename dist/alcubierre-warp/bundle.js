@@ -24403,7 +24403,11 @@ pane.addInput(PARAMS, "v").on("change", ev => {
     sp.set("v", ev.value);
     window.location.search = sp.toString();
   } else {
-    window.location.href += "?v=" + ev.value;
+    if (window.location.href.match("/?/")) {
+      window.location.href += "&v=" + ev.value;
+    } else {
+      window.location.href += "?v=" + ev.value;
+    }
   }
 });
 const forms = pane.addFolder({
