@@ -24390,25 +24390,13 @@ const PARAMS = {
   angle: parseFloat(sp.get("angle")) || 0.3,
   v: parseFloat(sp.get("v")) || 0.5
 };
-pane.addInput(PARAMS, "angle").on("change", ev => {
-  if (sp.has("angle")) {
-    sp.set("angle", ev.value);
-    window.location.search = sp.toString();
-  } else {
-    window.location.href += "?angle=" + ev.value;
-  }
+pane.addInput(PARAMS, "angle", {
+  min: 0,
+  max: 2 * 3.14159
 });
-pane.addInput(PARAMS, "v").on("change", ev => {
-  if (sp.has("v")) {
-    sp.set("v", ev.value);
-    window.location.search = sp.toString();
-  } else {
-    if (window.location.href.match("/?/")) {
-      window.location.href += "&v=" + ev.value;
-    } else {
-      window.location.href += "?v=" + ev.value;
-    }
-  }
+pane.addInput(PARAMS, "v", {
+  min: -2,
+  max: 2
 });
 const forms = pane.addFolder({
   title: "Formulas",
