@@ -1,8 +1,3 @@
-// references
-// https://inria.hal.science/inria-00596050/document
-// https://www.shadertoy.com/view/XlsBDf
-// Basically Navier-Stokes theorem over single pass of a shader
-
 const regl = require("regl")();
 
 const draw = regl({
