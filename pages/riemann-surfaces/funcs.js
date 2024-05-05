@@ -44,6 +44,64 @@ exports.functions = [
 	{
 		"f": [
 		`
+			// Stirling's approximation
+			// https://en.wikipedia.org/wiki/Gamma_function#Stirling's_formula
+			// https://www.rskey.org/CMS/the-library/?view=article&id=11
+			// Adding more terms is more accurate
+
+			// Lancos approximation
+			vec2 K = cmul(cpow(z + vec2(5.5, 0.0), z + vec2(0.5, 0.0)), cexp(-z - vec2(5.5, 0.0)));
+			float q[7];
+			q[0] = 75122.6331530;
+			q[1] = 80916.6278952;
+			q[2] = 36308.2951477;
+			q[3] = 8687.24529705; 
+			q[4] = 1168.92649479;
+			q[5] = 83.8676043424;
+			q[6] = 2.50662827511;
+
+			vec2 Y = vec2(0.0);
+			vec2 U = vec2(1.0, 0.0);
+			for (int i = 0; i < 7; i++) {
+				Y += cmul(vec2(q[i], 0.0), cpow(z, float(i)));
+				U = cmul(U, cadd(z, vec2(i, 0.0)));
+			}
+
+			z = cdiv(cmul(Y, K), U);
+		`,
+		],
+		"text": "gamma(z)"
+	},
+	{
+		"f": [
+		`
+			// Lancos approximation
+			vec2 K = cmul(cpow(z + vec2(5.5, 0.0), z + vec2(0.5, 0.0)), cexp(-z - vec2(5.5, 0.0)));
+			float q[7];
+			q[0] = 75122.6331530;
+			q[1] = 80916.6278952;
+			q[2] = 36308.2951477;
+			q[3] = 8687.24529705; 
+			q[4] = 1168.92649479;
+			q[5] = 83.8676043424;
+			q[6] = 2.50662827511;
+
+			vec2 Y = vec2(0.0);
+			vec2 U = vec2(1.0, 0.0);
+			for (int i = 0; i < 7; i++) {
+				Y += cmul(vec2(q[i], 0.0), cpow(z, float(i)));
+				U = cmul(U, cadd(z, vec2(i, 0.0)));
+			}
+
+			z = cdiv(cmul(Y, K), U);
+			z.x = cabs(z);
+		`,
+		],
+		"text": "abs_gamma(z)"
+	},
+	{
+		"f": [
+		`
 			z = cexp(cinv(z));
 		`],
 		"text": "f(z)=e^(1/z)"

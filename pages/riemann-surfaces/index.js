@@ -17,7 +17,7 @@ const camera = require("regl-camera")(regl, {
 
 
 var params = new URLSearchParams(document.location.search);
-var currentFunc = params.get("function") ? params.get("function") : "1";
+var currentFunc = params.get("function") ? params.get("function") : "2";
 console.log(currentFunc)
 const PARAMS = {
 	function: parseInt(currentFunc),
