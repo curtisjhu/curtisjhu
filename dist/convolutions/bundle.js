@@ -26,7 +26,7 @@ gui.closed = false;
 
 const kernels = [ 'identity', 'edge0', 'edge1', "edge2", "sharpen",  "box blur", "gaussian blur", "emboss", "sobel operator", "prewitt operator"];
 var PARAMS = {
-	"kernel": kernels[7],
+	"kernel": kernels[8],
 }
 
 gui.add(PARAMS, 'kernel', kernels);
