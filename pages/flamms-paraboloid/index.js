@@ -16,7 +16,7 @@ pane.addBlade({
   content: `
 # Flamm's Paraboloid
 
-Banana
+Here's one of the earlier geometric interpretations of black holes in 3D space (done with ray tracing)
 `,
   border: false,
   markdown: true,
@@ -29,6 +29,7 @@ console.log(sp.get("angle"))
 const PARAMS = {
 	angle: parseFloat(sp.get("angle")) || 0.7,
 	rs: parseFloat(sp.get("rs")) || 0.3,
+    gridLines: false
 }
 
 pane.addInput(PARAMS, "angle", {
@@ -40,6 +41,7 @@ pane.addInput(PARAMS, "rs", {
     min: 0.1,
     max: 1.6
 })
+pane.addInput(PARAMS, "gridLines");
 
 const forms = pane.addFolder({ title: "Formulas", expanded: false});
 forms.addBlade({
@@ -90,7 +92,8 @@ const drawShape = regl({
             return context.viewportHeight / context.viewportWidth;
         },
         rotateAngle: regl.prop("rotateAngle"),
-        rs: regl.prop("rs")
+        rs: regl.prop("rs"),
+        gridLines: regl.prop("gridLines")
     },
 
     attributes: {
@@ -122,6 +125,7 @@ uniform float iTime;
 uniform float propRatio;
 uniform float rotateAngle;
 uniform float rs;
+uniform bool gridLines;
 
 #define PI 3.1415926535
 #define BLACKHOLE vec2(0.0)
@@ -157,16 +161,25 @@ vec3 nFabric(in vec3 p)
     return vec3(-df_dx, 1.0, df_dz);
 }
 
+float iPlane( in vec3 ro, in vec3 rd) {
+    float height = min(rs, 0.3);
+    return (height-ro.y)/rd.y;
+}
+
 
 int intersect( in vec3 ro, in vec3 rd, out float t)
 {
     t = 1000.0;
     int id = -1; // by default, it will be a miss
-    float tpla = iFabric(ro, rd);
+    float tfab = iFabric(ro, rd);
+    float tpla = iPlane(ro, rd);
     
     // report which ever comes first
-    if (tpla > 0.0) {
+    if (tfab < tpla) {
         id = 2;
+        t = tfab;
+    } else if (tpla > 0.0) {
+        id = 1;
         t = tpla;
     }
     
@@ -199,12 +212,17 @@ void main() {
     // intersect
     int id = intersect(ro, rd, t);
     
-    vec3 light = vec3(0.0, 1.0, 1.0);
+    vec3 light = vec3(0.0, 1.0, 0.0);
     
     // draw black by default
     vec3 col = vec3(0.0);
     
-    if ( id == 2)
+    if ( id == 1 )
+    {
+        col = vec3(0.1);
+    }
+    
+    if ( id == 2 )
     {
         // we hit the plane
         vec3 pos = ro + t*rd;
@@ -217,16 +235,20 @@ void main() {
 
         // gridlines
         // with |x|^k + |y|^k = r^|k| as distance func
-        vec2 p1 = pos.xz;
-        vec2 p2 = floor(p1) + 0.5;
-        float k  = 12.0;
-        vec2 p = abs(p1 - p2); 
+        vec2 point = pos.xz;
+        vec2 step_origin = floor(point) + 0.5; // make "little" coordinate systems.
+        float k  = 100.0;
+        vec2 p = abs(point - step_origin); 
         float val = pow(pow(p.x, k) + pow(p.y, k), 1.0/k);
 
-        float thickness = 0.5, falloff = 34.0;
+        float thickness = 0.5, falloff = 70.0;
         float brightness = 1.0 - (thickness - val)*falloff;
         
-        col = vec3(brightness) * intensity;
+        col = vec3(0.3) * intensity;
+
+        if (gridLines) {
+            col *= brightness;
+        }
     }
     
     gl_FragColor = vec4(col,1.0);
@@ -237,7 +259,8 @@ void main() {
 regl.frame((context) => {
 	drawShape({
         rotateAngle: PARAMS.angle,
-        rs: PARAMS.rs
+        rs: PARAMS.rs,
+        gridLines: PARAMS.gridLines
     });
 })
 
