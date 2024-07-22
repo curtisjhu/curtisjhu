@@ -1,133 +1,202 @@
-/*
-  tags: advanced
+// Done in collaboration with Derrick Pickrel
 
-  <p>This example shows how you can render reflections with an environment map.</p>
+const { Pane } = require("tweakpane")
+const TweakpaneLatexPlugin = require("tweakpane-latex");
 
- */
 
-  const regl = require('../regl')()
-  const mat4 = require('gl-mat4')
-  const bunny = require('bunny')
-  const normals = require('angle-normals')
+
+
+const regl = require('regl')()
+const camera = require("regl-camera")(regl, {
+center: [0, 0, 0],
+damping: 0.5,
+rotationSpeed: 0.5
+});
+
+const pane = new Pane({
+	title: "Wormhole (GPU intensive)"
+});
+pane.registerPlugin(TweakpaneLatexPlugin);
+
+pane.addBlade({
+	view: "latex",
+	markdown: true,
+	content: "There is"
+})
   
-  const setupEnvMap = regl({
-	context: {
-	  view: ({tick}) => {
-		const t = 0.01 * tick
-		return mat4.lookAt([],
-		  [30 * Math.cos(t), 2.5, 30 * Math.sin(t)],
-		  [0, 2.5, 0],
-		  [0, 1, 0])
-	  }
+const setupEnvMap = regl({
+	uniforms: {
+		envmap1: regl.prop('cube1'),
+		envmap2: regl.prop('cube2'),
+		iTime: (context) => context.time,
+		propRatio: (context, props) => {
+		return context.viewportHeight / context.viewportWidth;
+		}
 	},
 	frag: `
 	precision mediump float;
-	uniform samplerCube envmap;
+	uniform samplerCube envmap1;
+	uniform samplerCube envmap2;
+	varying vec2 uv;
 	varying vec3 reflectDir;
-	void main () {
-	  gl_FragColor = textureCube(envmap, reflectDir);
-	}`,
-	uniforms: {
-	  envmap: regl.prop('cube'),
-	  view: regl.context('view'),
-	  projection: ({viewportWidth, viewportHeight}) =>
-		mat4.perspective([],
-		  Math.PI / 4,
-		  viewportWidth / viewportHeight,
-		  0.01,
-		  1000),
-	  invView: ({view}) => mat4.invert([], view)
+	uniform float iTime;
+	uniform float propRatio;
+
+	// CHECK DISTANCE FROM CAMERA TO SPHERE SURFACE
+	// RETURNS -1 IF MISSES SPHERE
+	float iSphere (in vec3 ro, in vec3 rd, in vec4 sphere)
+	{
+		vec3 nro = ro - sphere.xyz;
+		float r = sphere.w;
+		float b = 2.0 * dot(rd, nro);
+		float c = dot(nro, nro) - r*r;
+		
+		// discriminant shows the # of roots
+		float h = b*b - 4.0*c;
+		
+		// if discriminants < 0 (imaginary), then return a miss;
+		if (h < 0.0)
+			return -1.0;
+			
+		// if 1+ discriminant, return the t value that intersects
+		// this is the quadratic equation.
+		return (-b - sqrt(h)) / 2.0;
 	}
-  })
-  
-  const drawBackground = regl({
+
+	void main () {
+		// RAY TRACING
+
+		vec3 ro = vec3(0.0);
+		vec3 rd = normalize(reflectDir);
+
+		// draw cube1 cubemap by default
+		vec4 col = textureCube(envmap2, reflectDir);
+
+		float time = 0.3*iTime;
+		mat3 rotate = mat3(cos(time), 0.0, sin(time), 
+								0.0, 1.0, 0.0,
+							-sin(time), 0.0, cos(time));
+		
+		// SPHERE
+		vec4 sphere = vec4(-0.04, 0.0, 0.0, 0.01);
+		sphere.xyz *= rotate;
+
+		float t = iSphere(ro, rd, sphere);
+		if (t > 0.0) { // INTERSECTS SPHERE
+			vec3 pos = ro + t*rd;
+			vec3 nSphere = normalize(sphere.xyz - pos);
+
+			float gradient = dot(nSphere, rd);
+			col = textureCube(envmap1, reflectDir) * gradient;
+		}
+
+		gl_FragColor = col;
+	}`,
+})
+
+const drawBackground = regl({
 	vert: `
 	precision mediump float;
 	attribute vec2 position;
 	uniform mat4 view;
 	varying vec3 reflectDir;
+
 	void main() {
-	  reflectDir = (view * vec4(position, 1, 0)).xyz;
-	  gl_Position = vec4(position, 0, 1);
+		reflectDir = (view * vec4(position, 1, 0)).xyz;
+		gl_Position = vec4(position, 0, 1);
 	}`,
 	attributes: {
-	  position: [
+		position: [
 		-4, -4,
 		-4, 4,
 		8, 0]
 	},
 	depth: {
-	  mask: false,
-	  enable: false
+		mask: false,
+		enable: false
 	},
 	count: 3
-  })
+})
   
-  const drawBunny = regl({
-	vert: `
-	precision mediump float;
-	attribute vec3 position, normal;
-	uniform mat4 projection, view, invView;
-	varying vec3 reflectDir;
-	void main() {
-	  vec4 eye = invView * vec4(0, 0, 0, 1);
-	  reflectDir = reflect(
-		normalize(position.xyz - eye.xyz / eye.w),
-		normal);
-	  gl_Position = projection * view * vec4(position, 1);
-	}`,
-	attributes: {
-	  position: bunny.positions,
-	  normal: normals(bunny.cells, bunny.positions)
-	},
-	elements: bunny.cells
-  })
-  
-  require('resl')({
+require('resl')({
 	manifest: {
-	  posx: {
-		type: 'image',
-		src: 'posx.jpg'
-	  },
-	  negx: {
-		type: 'image',
-		src: 'negx.jpg'
-	  },
-	  posy: {
-		type: 'image',
-		src: 'posy.jpg'
-	  },
-	  negy: {
-		type: 'image',
-		src: 'negy.jpg'
-	  },
-	  posz: {
-		type: 'image',
-		src: 'posz.jpg'
-	  },
-	  negz: {
-		type: 'image',
-		src: 'negz.jpg'
-	  }
+			posx: {
+				type: 'image',
+				src: 'assets/gamlastan/posx.jpg'
+			},
+			negx: {
+				type: 'image',
+				src: 'assets/gamlastan/negx.jpg'
+			},
+			posy: {
+				type: 'image',
+				src: 'assets/gamlastan/posy.jpg'
+			},
+			negy: {
+				type: 'image',
+				src: 'assets/gamlastan/negy.jpg'
+			},
+			posz: {
+				type: 'image',
+				src: 'assets/gamlastan/posz.jpg'
+			},
+			negz: {
+				type: 'image',
+				src: 'assets/gamlastan/negz.jpg'
+			},
+			posx2: {
+				type: 'image',
+				src: 'assets/surface2/posx.jpg'
+			},
+			negx2: {
+				type: 'image',
+				src: 'assets/surface2/negx.jpg'
+			},
+			posy2: {
+				type: 'image',
+				src: 'assets/surface2/posy.jpg'
+			},
+			negy2: {
+				type: 'image',
+				src: 'assets/surface2/negy.jpg'
+			},
+			posz2: {
+				type: 'image',
+				src: 'assets/surface2/posz.jpg'
+			},
+			negz2: {
+				type: 'image',
+				src: 'assets/surface2/negz.jpg'
+			}
 	},
-  
-	onDone: ({ posx, negx, posy, negy, posz, negz }) => {
-	  const cube = regl.cube(
+
+	onDone: ({ posx, negx, posy, negy, posz, negz, posx2, negx2, posy2, negy2, posz2, negz2 }) => {
+		const cube1 = regl.cube(
 		posx, negx,
 		posy, negy,
 		posz, negz)
-	  regl.frame(() => {
-		setupEnvMap({ cube }, () => {
-		  drawBackground()
-		  drawBunny()
+
+		const cube2 = regl.cube(
+		posx2, negx2,
+		posy2, negy2,
+		posz2, negz2)
+
+		regl.frame(() => {
+		camera((state) => {
+			// Performance boost 
+			// if (!state.dirty) return;
+			
+			setupEnvMap({ cube1, cube2 }, () => {
+				drawBackground();
+			})
 		})
-	  })
+		})
 	},
-  
+
 	onProgress: (fraction) => {
-	  const intensity = 1.0 - fraction
-	  regl.clear({
+		const intensity = 1.0 - fraction
+		regl.clear({
 		color: [intensity, intensity, intensity, 1]
-	  })
+		})
 	}
-  })
+})

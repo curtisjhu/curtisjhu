@@ -11,7 +11,7 @@ const esbuild = require("esbuild");
 
 var projectDir = process.argv[2];
 if (!projectDir) {
-    throw new Error("Must provide filepath");
+    throw new Error("Must provide project directory");
 }
 
 if (!/^pages\//.test(projectDir)) projectDir = path.join("pages", projectDir);
@@ -20,19 +20,11 @@ const entryFile = getEntryFile(projectDir);
 const port = 4000;
 const host = "localhost";
 var projectDest = path.join(__dirname, "..", projectDir);
+console.log("YOUR PROJECT PATH: ", projectDest);
 
 switch (entryFile.type) {
     case "html":
         console.log("Serving as raw HTML");
-
-        esbuild.buildSync({
-            entryPoints: [path.join(projectDest, "main.js")],
-            bundle: true,
-            outfile: path.join(projectDest, "bundle.js"),
-            minify: true,
-            treeShaking: true,
-            splitting: true,
-        });
 
         budo(null, {
             dir: projectDest,
@@ -101,6 +93,7 @@ switch (entryFile.type) {
         });
         break;
     case "mdx":
+        // DEPRECATED. I DON"T REALLY USE MDX
         console.log("Serving mdx...");
 
         if (!fs.existsSync(path.join(projectDest, "index.html"))) {

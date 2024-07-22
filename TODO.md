@@ -1,6 +1,8 @@
 
 I don't see any real reason to migrate up for now. Can put off for later. If it works, it works. Until it doesn't work or there are significant advantages (like using other extensions), then I'll migrate.
-tweakpane": "^3.1.7" ->
+tweakpane": "^3.1.7" -> "^4.0.4
+
+So some of the tweakpane programs are using 3x and are older. I solved this by using yarn so that I 
 
 ## Check Out
 https://eyes.nasa.gov/
