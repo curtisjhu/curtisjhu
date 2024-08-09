@@ -217,6 +217,7 @@ void main() {
 		
 		float intensity = 0.4*dot(light, norm);
 		
+		
 		// inverse square law
 		float r = length(light - pos);
 		intensity = intensity / (r*r);

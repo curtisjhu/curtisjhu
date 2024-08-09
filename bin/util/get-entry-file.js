@@ -12,12 +12,13 @@ const FILETYPE_PRIORITY = {
 
 const getExt = (filename) => path.extname(filename).replace(/^\./,'').toLowerCase();
 
-module.exports = function (projectDir) {
-  assert(projectDir, 'Expected project directory but got ' + projectDir);
+module.exports = function (absProjectDir) {
+  assert(absProjectDir, 'Get Entry File: Expected project directory as argument but got ' + absProjectDir);
+  assert(path.isAbsolute(absProjectDir), "Get Entry File: Path is not absolute");
+  assert(fs.existsSync(absProjectDir), "Get Entry File: Path does not exist");
 
-  const relativeDest = path.join(__dirname, '..', '..', projectDir);
-
-  const indexFiles = fs.readdirSync(relativeDest)
+  // FILES OF INTEREST MUST CONTAIN A FILE PREFIXED WITH "index"
+  const indexFiles = fs.readdirSync(absProjectDir)
     .filter((filename) => /^index\./.test(filename))
     .sort((a, b) => (FILETYPE_PRIORITY[getExt(b)] || 0) - (FILETYPE_PRIORITY[getExt(a)] || 0));
 
@@ -25,6 +26,6 @@ module.exports = function (projectDir) {
 
   return {
     type: getExt(indexFiles[0]),
-    name: path.resolve(path.join(relativeDest, indexFiles[0]))
+    name: path.resolve(path.join(absProjectDir, indexFiles[0]))
   }
 };

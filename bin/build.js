@@ -12,74 +12,155 @@ const fs = require('fs');
 const esbuild = require("esbuild");
 const fse = require("fs-extra");
 const { injectHTML } = require("node-inject-html");
+const { htmlWithMetadata } = require("./injectHTML");
 
 var projectDir = process.argv[2];
 
 if (!projectDir)
   throw new Error("NEEDS PROJECT FOLDER")
 
-if (!/^src\//.test(projectDir)) projectDir = path.join('pages', projectDir);
-const entryFile = getEntryFile(projectDir);
-const outputFile = entryFile.name.replace("pages", 'dist');
+if (!/^pages\//.test(projectDir))
+  projectDir = path.join('pages', projectDir);
+projectDir = path.join(__dirname, "..", projectDir);
 
 const outputDir = projectDir.replace("pages", "dist");
+console.log('FROM PROJECT FOLDER: ', projectDir);
+console.log('TO PROJECT FOLDER: ', outputDir);
 
-console.log('Building ', projectDir);
+const entryFile = getEntryFile(projectDir);
+console.log("COMPILING FROM FILE: ", entryFile);
+
+const outputFile = entryFile.name.replace("pages", 'dist');
+console.log("COMPILING TO FILE: ", outputFile);
+
+
 
 switch (entryFile.type) {
   case 'html':
-    break;
-  case 'jsx':
-    console.log("Building for jsx");
-
-    fse.copy(projectDir, outputDir, function (err) {
-      if (err) {
-        console.error(err);
-      } else {
-        console.log("success!");
-      }
-    });
-
-    if (fs.existsSync(outputFile)) {
-      fs.rmSync(outputFile);
-    }
-
-    esbuild
-        .buildSync({
-            entryPoints: [path.join(projectDir, "index.jsx")],
-            bundle: true,
-            minify: true,
-            treeShaking: true,
-            outfile: path.join(outputDir, "bundle.js"),
-        })
-    break;
-  case 'js':
-    console.log("Building for js");
-
-    var metadata = {};
-    try {
-      const metadataPath = require.resolve(path.join(__dirname, '..', projectDir, 'metadata.json'));
-      metadata = require(metadataPath);
-    } catch (e) {
-      console.log("no metadata")
-     }
+    /////////////////////////////////////////////
+    // Copying Over HTML files 
+    /////////////////////////////////////////////
+    console.log("Building for HTML");
 
     if (!fs.existsSync(outputDir))
       mkdirp.mkdirpSync(outputDir);
 
-    fse.copy(projectDir, outputDir, function (err) {
-      if (err) {
-        console.error(err);
-      } else {
-        console.log("copied over!");
-      }
+    fse.copySync(projectDir, outputDir);
+    console.log("Successfully copied over directory!");
+
+  case 'jsx':
+  case 'js':
+    /////////////////////////////////////////////
+    // Copying Over Template HTML files 
+    /////////////////////////////////////////////
+    if (!fs.existsSync(outputDir))
+      mkdirp.mkdirpSync(outputDir);
+
+    var htmlOutputPath = path.join(outputDir, 'index.html');
+    if (!fs.existsSync(htmlOutputPath))
+      fse.copySync(path.join(__dirname, "..", "templates", "_index.html"), htmlOutputPath);
+    console.log("html created")
+
+  case 'html':
+  case 'js':
+  case 'jsx':
+    /////////////////////////////////////////////
+    // Injecting Metadata 
+    /////////////////////////////////////////////
+
+    var htmlOutputPath = path.join(outputDir, 'index.html');
+    var outputHtmlString = fse.readFileSync(htmlOutputPath);
+
+    // by default use these metadata
+    var metadata = JSON.parse(fse.readFileSync(path.join(__dirname, "..", "templates", "meta.json")));
+
+    // add on the meta data in the project dir
+    var metadataFilePath = path.join(projectDir, "meta.json");
+    if (fs.existsSync(metadataFilePath)) {
+      var metadataString = fse.readFileSync(metadataFilePath);
+      var metadataCustom = JSON.parse(metadataString);
+
+      metadata = {
+        ...metadata,
+        ...metadataCustom
+      };
+    }
+
+    var injectHtml = htmlWithMetadata(metadata);
+
+    injectHTML(outputHtmlString, {
+      headEnd: injectHtml
     });
 
+    fse.writeFileSync(htmlOutputPath, htmlString);
+    console.log("injected metadata into html file")
 
-    const htmlOutputPath = path.join(__dirname, '..', outputDir, 'index.html');
-    const bundleOutputPath = path.join(__dirname, '..', outputDir, 'bundle.js');
+  case 'html':
 
-    console.log(entryFile.name)
+    // GRAB all js files in directory
+    const jsFiles = fs.readdirSync(outputDir)
+      .filter((filename) => /.js$/.test(filename));
+    console.log("ALL JS FILES TO COMPILE: ", jsFiles);
+
+    var bundleFiles = jsFiles.map(file => path.join(outputDir, file));
+
+    esbuild.buildSync({
+        entryPoints: bundleFiles,
+        bundle: true,
+        outdir: outputDir,
+        minify: true,
+        treeShaking: true,
+        format: "esm",
+        allowOverwrite: true,
+        splitting: true,
+    });
+    console.log("Done compiling js files");
+    console.log("WRITTEN JS FILES TO: ", bundleFiles);
+
+    console.log("Done")
+
+    break;
+  case 'jsx':
+    console.log("Building for jsx");
+
+    if (!fs.existsSync(outputDir))
+      mkdirp.mkdirpSync(outputDir);
+
+    fse.copySync(projectDir, outputDir);
+    console.log("Copied directory");
+
+    esbuild
+        .buildSync({
+            entryPoints: [outputFile],
+            bundle: true,
+            minify: true,
+            treeShaking: true,
+            outfile: path.join(outputDir, "bundle.js"), // will bundle into bundle.js
+        })
+
+        // Remove jsx file from output folder
+        if (fs.existsSync(outputFile)) {
+          fs.rmSync(outputFile);
+        }
+
+        console.log("Done")
+    break;
+  case 'js':
+    console.log("Building for js");
+
+    if (!fs.existsSync(outputDir))
+      mkdirp.mkdirpSync(outputDir);
+
+    fse.copySync(projectDir, outputDir);
+    console.log("copied over!");
+
+
+    //////////////////////////////////////////////////////
+    // Compiling js file
+    //////////////////////////////////////////////////////
+
+    const bundleOutputPath = path.join(outputDir, 'bundle.js');
+
     var b = browserify(entryFile.name, {
       transform: [
         glslify,
@@ -94,56 +175,15 @@ switch (entryFile.type) {
 
     console.log("bundle.js generated")
     
-    if (fs.existsSync(path.join(outputDir, "index.js")))
-      fs.rmSync(path.join(outputDir, "index.js"));
-    
+    const removeJsFiles = fs.readdirSync(outputDir)
+      .filter((filename) => (/.js$/.test(filename) && !/^bundle./.test(filename)));
 
-    // creating html
-    console.log("creating html")
+    removeJsFiles.map(file => {
+      fs.rmSync(path.join(outputDir, file));
+    })
+    console.log("Removed JS files: ", removeJsFiles);
 
-    if (Object.keys(metadata).length === 0) {
-      fse.copy(path.join(__dirname, "../templates/_index.html"), htmlOutputPath, function(err) {
-        if (err) console.error(err);
-      })
-      console.log("html created")
-      break;
-    }
-
-    var htmlString = fse.readFileSync(path.join(__dirname, "../templates/_index.html"));
-
-    const injectHtml = `
-    <title>${metadata.title}</title>
-    <meta name='og:site_name' content='${metadata.title}' />
-    <meta property="twitter:title" content="${metadata.title}" />
-    <meta name='og:title' content='${metadata.title}' />
-
-    <meta
-      name="description"
-      content="${metadata.description}"
-    />
-    <meta
-      property="twitter:description"
-      content="${metadata.description}"
-    />
-    <meta name='og:description' content='${metadata.description}' />
-
-    <meta name='og:url' content='http://www.funnyscar.com/${metadata.filename}' />
-    <meta property="twitter:url" content="https://funnyscar.com/${metadata.filename}" />
-
-    <meta name='og:image' content='${metadata.image}' />
-    <meta
-      property="twitter:image"
-      content="${metadata.image}"
-    />
-    `
-    injectHTML(htmlString, {
-      headEnd: injectHtml
-    });
-
-    fse.writeFileSync(htmlOutputPath, htmlString);
-
-    console.log("created html")
-
+    console.log("Done")
     break;
   default:
     assert(entryFile.type, 'Unknown filetype for file "' + entryFile.name + '"');

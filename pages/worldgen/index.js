@@ -1,5 +1,6 @@
 const regl = require("regl")();
 const {utils} = require("./utils");
+const camera = require("regl-camera")(regl);
 
 const drawShape = regl({
 	uniforms: {
@@ -29,17 +30,7 @@ precision mediump float;
 varying vec2 fragCoord;
 uniform float iTime;
 uniform float propRatio;
-
-float rand (in float x) {
-	return fract(sin(x * 12.9898)
-				* 43758.5453123);
-}
-
-float rand (in vec2 st) {
-	return fract(sin(dot(st.xy,
-						vec2(12.9898, 78.233)))
-				* 43758.5453123);
-}
+uniform mat4 projection, view;
 
 ${utils}
 
@@ -81,6 +72,7 @@ vec3 nTerrain(in vec3 pos)
 {
     // the normal vector
 	// (1, df/dz, 0) cross (0, df/dx, 1) = (-df/dx, 1, df/dz)
+
 	vec2 p = pos.xz;
 	float delta = 0.01;
 	float d = fbm(p);
@@ -91,54 +83,6 @@ vec3 nTerrain(in vec3 pos)
 	n = normalize(n);
 
     return n;
-}
-
-// https://iquilezles.org/articles/rmshadows/
-// float softshadow( in vec3 ro, in vec3 rd, float mint, float maxt, float k ) {
-//     float res = 1.0;
-//     float t = mint;
-//     for( int i=0; i<256 && t<maxt; i++ )
-//     {
-//         float h = map(ro + rd*t);
-//         if( h<0.001 )
-//             return 0.0;
-//         res = min( res, k*h/t );
-//         t += h;
-//     }
-//     return res;
-// }
-
-float shadows(in vec3 p, in vec3 lightRay) {
-	vec3 ray = normalize(lightRay);
-	for (float t = 0.0; t < 10.0; t++) {
-		if (abs(fbm((p + lightRay * t).xz) - fbm(p.xz)) < 0.1) {
-			return 1.0;
-		}
-	}
-	return 0.0;
-}
-
-vec3 skyColor(in vec3 lightSource, in float time) {
-	// https://www.shadertoy.com/view/XsBXDc
-
-	vec3 daytime = vec3(135.0/255.0, 206.0/255.0, 235.0/255.0);
-	vec3 nighttime = vec3(0.0, 0.0, 0.0);
-
-    // float sunD = dot(lightSource, nml) > 0.995 ? 1.0 : 0.0;
-	// vec3 sun = vec3(6.5, 3.5, 2.0);
-	// float skyPow = dot(nml, vec3(0.0, -1.0, 0.0));
-    // float centerPow = 0.0; //-dot(uv,uv);
-    // float horizonPow = pow(1.0-abs(skyPow), 3.0)*(5.0+centerPow);
-	// float sunPow = dot(nml, bgLight);
-	// float sp = max(sunPow, 0.0);
-    // float scattering = clamp(1.0 - abs(2.0*(-bgLight.y)), 0.0, 1.0);
-	// vec3 bgCol = max(0.0, skyPow)*2.0*vec3(0.8);
-	// bgCol += 0.5*vec3(0.8)*(horizonPow);
-	// bgCol += sun*(sunD+pow( sp, max(128.0, abs(bgLight.y)*512.0) ));
-	// bgCol += vec3(0.4,0.2,0.15)*(pow( sp, 8.0) + pow( sp, max(8.0, abs(bgLight.y)*128.0) ));
-    // bgCol *= mix(vec3(0.7, 0.85, 0.95), vec3(1.0, 0.45, 0.1), scattering);
-    // bgCol *= 1.0 - clamp(bgLight.y*3.0, 0.0, 0.6);
-	return vec3(1.0);
 }
 
 int intersect( in vec3 ro, in vec3 rd, out float t)
@@ -168,14 +112,14 @@ void main() {
     float cameraDist = 5.0;
     float time = 0.3 * iTime;
     vec3 ro = vec3(0.0, 1.0, cameraDist);
-    vec3 rd = normalize( vec3( uv, -2.0) );
+    vec3 rd = (projection * view * normalize( vec4( uv, -2.0, 0.0) )).xyz;
     
     float t = -1.0;
     // intersect
     int id = intersect(ro, rd, t);
     
 	float lightDist = 3.0;
-    vec3 light = vec3(lightDist * cos(10.0), lightDist*abs(sin(10.0)) + PI/4.0, 0.0);
+    vec3 light = vec3(lightDist * vec2(cos(10.0), abs(sin(10.0)) + PI/3.0), 0.0);
     
     // draw background color
     vec3 col = skyColor(light, time);
@@ -205,9 +149,9 @@ void main() {
 		float lambda_g = exp(-0.1 * d);
 		float lambda_b = exp(-0.1 * d);
 
-		col = col * lambda_r + (1.0 - lambda_r) * vec3(0.4, 0.0, 0.0);
-		col = col * lambda_b + (1.0 - lambda_b) * vec3(0.0, 0.0, 0.4);
-		col = col * lambda_g + (1.0 - lambda_g) * vec3(0.0, 0.4, 0.0);
+		// col = col * lambda_r + (1.0 - lambda_r) * vec3(0.4, 0.0, 0.0);
+		// col = col * lambda_b + (1.0 - lambda_b) * vec3(0.0, 0.0, 0.4);
+		// col = col * lambda_g + (1.0 - lambda_g) * vec3(0.0, 0.4, 0.0);
     }
     
     gl_FragColor = vec4(col,1.0);
@@ -215,7 +159,10 @@ void main() {
 	`
 })
 
-regl.frame((context) => {
-	drawShape();
+regl.frame(() => {
+	camera((state) => {
+		if (!state.dirty) return;
+		drawShape();
+	})
 })
 
