@@ -21,27 +21,27 @@ pane.addBinding(PARAMS, 'time', {
 
 
 
-let contentsBounds = document.body.getBoundingClientRect();
-let width = 800;
-let height = 500;
-let ratio = contentsBounds.width / width;
-width *= ratio;
-height *= ratio;
+  let contentsBounds = document.body.getBoundingClientRect();
+  let width = 800;
+  let height = 500;
+  let ratio = contentsBounds.width / width;
+  width *= ratio;
+  height *= ratio;
 
-functionPlot({
-  target: "#app",
-  width,
-  height,
-  yAxis: { domain: [-2, 2] },
-  grid: true,
-  data: [
-    {
-      fn: "sin(x)",
-    },
-    {
-      fn: "x",
-    }
-  ]
-});
+  functionPlot({
+    target: "#app",
+    width,
+    height,
+    yAxis: { domain: [-2, 2] },
+    grid: true,
+    data: [
+      {
+        fn: "sin(x)",
+      },
+      {
+        fn: "x",
+      }
+    ]
+  });
 
 
