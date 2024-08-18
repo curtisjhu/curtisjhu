@@ -14,12 +14,12 @@ if (!projectDir) {
     throw new Error("Must provide project directory");
 }
 
-if (!/^pages\//.test(projectDir)) projectDir = path.join("pages", projectDir);
-const entryFile = getEntryFile(projectDir);
+var projectDest = path.join(__dirname, "..", "pages", projectDir);
+
+const entryFile = getEntryFile(projectDest);
 
 const port = 4000;
 const host = "localhost";
-var projectDest = path.join(__dirname, "..", projectDir);
 console.log("YOUR PROJECT PATH: ", projectDest);
 
 switch (entryFile.type) {
@@ -30,8 +30,6 @@ switch (entryFile.type) {
             dir: projectDest,
             live: true,
             open: true,
-            host: host,
-            port: port,
             stream: process.stdout,
             browserify: {
                 transform: [[babelify]],
@@ -73,8 +71,6 @@ switch (entryFile.type) {
             dir: projectDest,
             live: true,
             open: true,
-            host: host,
-            port: port,
             css: hasCss ? "index.css" : null,
             stream: process.stdout,
             debug: true,
