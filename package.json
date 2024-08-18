@@ -64,11 +64,8 @@
     "regl-line": "^1.0.0",
     "resl": "^1.0.3",
     "three": "^0.151.3",
-    "tweakpane": "^3.1.9",
-    "tweakpane-latex": "^0.1.2",
-    "tweakpane-latex4": "npm:tweakpane-latex@^0.1.4",
-    "tweakpane-plugin-infodump": "github:doersino/tweakpane-plugin-infodump",
-    "tweakpane4": "npm:tweakpane@^4.0.4",
+    "tweakpane": "^4.0.4",
+    "tweakpane-latex": "^0.1.4",
     "vis-network": "^9.1.9"
   },
   "devDependencies": {

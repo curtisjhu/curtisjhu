@@ -14,7 +14,7 @@ if (!projectDir) {
     throw new Error("Must provide project directory");
 }
 
-if (!/^pages\//.test(projectDir)) projectDir = path.join("pages", projectDir);
+if (!/^pages\//.test(projectDir)) projectDir = path.join(__dirname, "..", "pages", projectDir);
 const entryFile = getEntryFile(projectDir);
 
 const port = 4000;

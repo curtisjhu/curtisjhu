@@ -14,8 +14,8 @@ const getExt = (filename) => path.extname(filename).replace(/^\./,'').toLowerCas
 
 module.exports = function (absProjectDir) {
   assert(absProjectDir, 'Get Entry File: Expected project directory as argument but got ' + absProjectDir);
-  assert(path.isAbsolute(absProjectDir), "Get Entry File: Path is not absolute");
-  assert(fs.existsSync(absProjectDir), "Get Entry File: Path does not exist");
+  assert(path.isAbsolute(absProjectDir), "Get Entry File: Path is not absolute. Path was " + absProjectDir);
+  assert(fs.existsSync(absProjectDir), "Get Entry File: Path does not exist. Attempted to find " + absProjectDir);
 
   // FILES OF INTEREST MUST CONTAIN A FILE PREFIXED WITH "index"
   const indexFiles = fs.readdirSync(absProjectDir)
