@@ -90,7 +90,7 @@ switch (entryFile.type) {
 
     var headHtml = htmlWithMetadata(metadata);
 
-    injectHTML(outputHtmlString, {
+    outputHtmlString = injectHTML(outputHtmlString, {
       headEnd: headHtml
     });
 
