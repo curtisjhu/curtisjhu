@@ -1,7 +1,7 @@
 
 
-export const htmlWithMetadata = (metadata) => (
-`
+function htmlWithMetadata (metadata) {
+	return (`
 <title>${metadata.title}</title>
 <meta
 	name="description"
@@ -40,4 +40,6 @@ export const htmlWithMetadata = (metadata) => (
 />
 
 
-`);
+`)};
+
+module.exports = htmlWithMetadata;

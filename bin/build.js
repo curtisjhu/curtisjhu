@@ -1,7 +1,6 @@
 #!/usr/bin/env node
 
 const getEntryFile = require('./util/get-entry-file');
-const minifyStream = require('minify-stream');
 const browserify = require('browserify');
 const glslify = require('glslify');
 const mkdirp = require('mkdirp');
@@ -12,7 +11,8 @@ const fs = require('fs');
 const esbuild = require("esbuild");
 const fse = require("fs-extra");
 const { injectHTML } = require("node-inject-html");
-const { htmlWithMetadata } = require("./injectHTML");
+const htmlWithMetadata = require("./injectHTML");
+const esmify = require("esmify");
 
 var projectDir = process.argv[2];
 
@@ -30,11 +30,13 @@ console.log('TO PROJECT FOLDER: ', outputDir);
 const entryFile = getEntryFile(projectDir);
 console.log("COMPILING FROM FILE: ", entryFile);
 
-const outputFile = entryFile.name.replace("pages", 'dist');
+const outputFile = entryFile.name.replace("pages", 'dist').replace("index", "bundle");
 console.log("COMPILING TO FILE: ", outputFile);
 
 
-
+/////////////////////////////////////////////
+// generate HTML files 
+/////////////////////////////////////////////
 switch (entryFile.type) {
   case 'html':
     /////////////////////////////////////////////
@@ -69,7 +71,7 @@ switch (entryFile.type) {
     /////////////////////////////////////////////
 
     var htmlOutputPath = path.join(outputDir, 'index.html');
-    var outputHtmlString = fse.readFileSync(htmlOutputPath);
+    var outputHtmlString = fse.readFileSync(htmlOutputPath, "utf8");
 
     // by default use these metadata
     var metadata = JSON.parse(fse.readFileSync(path.join(__dirname, "..", "templates", "meta.json")));
@@ -86,15 +88,20 @@ switch (entryFile.type) {
       };
     }
 
-    var injectHtml = htmlWithMetadata(metadata);
+    var headHtml = htmlWithMetadata(metadata);
 
     injectHTML(outputHtmlString, {
-      headEnd: injectHtml
+      headEnd: headHtml
     });
 
-    fse.writeFileSync(htmlOutputPath, htmlString);
+    fse.writeFileSync(htmlOutputPath, outputHtmlString);
     console.log("injected metadata into html file")
+  default:
+    break;
 
+}
+
+switch(entryFile.type) {
   case 'html':
 
     // GRAB all js files in directory
@@ -142,6 +149,7 @@ switch (entryFile.type) {
         if (fs.existsSync(outputFile)) {
           fs.rmSync(outputFile);
         }
+        fs.rmSync(path.join(outputDir, "meta.json"));
 
         console.log("Done")
     break;
@@ -162,6 +170,7 @@ switch (entryFile.type) {
     const bundleOutputPath = path.join(outputDir, 'bundle.js');
 
     var b = browserify(entryFile.name, {
+      plugin: [esmify],
       transform: [
         glslify,
         babelify
@@ -181,6 +190,7 @@ switch (entryFile.type) {
     removeJsFiles.map(file => {
       fs.rmSync(path.join(outputDir, file));
     })
+    fs.rmSync(path.join(outputDir, "meta.json"));
     console.log("Removed JS files: ", removeJsFiles);
 
     console.log("Done")

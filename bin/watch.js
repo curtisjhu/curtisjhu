@@ -8,6 +8,7 @@ const path = require("path");
 const fs = require("fs");
 const budo = require("budo");
 const esbuild = require("esbuild");
+const esmify = require("esmify");
 
 var projectDir = process.argv[2];
 if (!projectDir) {
@@ -76,6 +77,7 @@ switch (entryFile.type) {
             debug: true,
             verbose: true,
             browserify: {
+                plugin: [esmify],
                 transform: [
                     [glslify],
                     [
