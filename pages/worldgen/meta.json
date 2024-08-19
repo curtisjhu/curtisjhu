@@ -1,6 +1,6 @@
 {
-	"title": "funnyscar graphics",
-	"description": "Mathematics, physics, computer science. Exploring the world through math with a heavy emphasis on a visual intuition.",
-	"image": "https://bucket.funnyscar.com/riemann-surfaces.png",
-	"keywords": "regl"
+	"title": "Terrain Generation | funnyscar graphics",
+	"description": "Exploring what it takes to create a pseudo-realistic terrain",
+	"image": "https://bucket.funnyscar.com/worldgen/worldgen.png",
+	"keywords": "regl, terrain generation, curtisjhu, funnyscar"
 }
