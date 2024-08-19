@@ -36,15 +36,16 @@ float noise(in vec2 pos) {
 		
 }
 
-float fbm(in vec2 pos) {
+float fbm( in vec2 pos ) {
 	float value = 0.0;
-	float amplitude = 0.3;
+	float amplitude = 1.0;
 	float frequency = 0.5;
 
 	float angle = 10.0; // arbitrary angle for rotation
 	mat2 rotationMatrix = mat2(cos(angle), -sin(angle), sin(angle), cos(angle));
-
-	const int octaves = 10;
+	
+	// max is \sum^octaves amplitude * gamma^i
+	const int octaves = 9;
 
 	// analogous to fourier series
 	for (int i = 0; i < octaves; i++) {
@@ -52,43 +53,67 @@ float fbm(in vec2 pos) {
 
 		value += amplitude * noise(frequency * pos);
 		frequency *= 2.0;
-		amplitude *= 0.6;
+		amplitude *= 0.5;
 	}
 
 	return value;
 }
 
-float shadows(in vec3 p, in vec3 lightRay) {
+float fbm_norm( in vec2 pos ) {
+	float value = 0.0;
+	float amplitude = 1.0;
+	float frequency = 0.5;
+
+	float angle = 10.0; // arbitrary angle for rotation
+	mat2 rotationMatrix = mat2(cos(angle), -sin(angle), sin(angle), cos(angle));
+	
+	// max is \sum^octaves amplitude * gamma^i
+	const int octaves = 9;
+
+	float tot = 0.0;
+	// analogous to fourier series
+	for (int i = 0; i < octaves; i++) {
+	 	pos = pos * rotationMatrix;
+
+		value += amplitude * noise(frequency * pos);
+		tot += amplitude;
+		frequency *= 2.0;
+		amplitude *= 0.5;
+	}
+
+	return value/tot;
+}
+
+
+float shadows(in vec3 p, in float ref, in vec3 lightRay) {
 	vec3 ray = normalize(lightRay);
 	for (float t = 0.0; t < 10.0; t++) {
-		if (abs(fbm((p + lightRay * t).xz) - fbm(p.xz)) < 0.1) {
-			return 1.0;
+		vec3 newPos = p + lightRay * t;
+		if (abs(fbm(newPos.xz) - ref) < 0.1) {
+			return newPos.y/t;
 		}
 	}
 	return 0.0;
 }
 
-vec3 skyColor(in vec3 lightSource, in float time) {
+vec3 skyColor(in vec3 lightSource, in float time, in vec3 ro, in vec3 rd) {
 	// https://www.shadertoy.com/view/XsBXDc
 
-	vec3 daytime = vec3(135.0/255.0, 206.0/255.0, 235.0/255.0);
+	vec3 daytime = vec3(130.0/255.0, 180.0/255.0, 235.0/255.0);
 	vec3 nighttime = vec3(0.0, 0.0, 0.0);
 
-    // float sunD = dot(lightSource, nml) > 0.995 ? 1.0 : 0.0;
-	// vec3 sun = vec3(6.5, 3.5, 2.0);
-	// float skyPow = dot(nml, vec3(0.0, -1.0, 0.0));
-    // float centerPow = 0.0; //-dot(uv,uv);
-    // float horizonPow = pow(1.0-abs(skyPow), 3.0)*(5.0+centerPow);
-	// float sunPow = dot(nml, bgLight);
-	// float sp = max(sunPow, 0.0);
-    // float scattering = clamp(1.0 - abs(2.0*(-bgLight.y)), 0.0, 1.0);
-	// vec3 bgCol = max(0.0, skyPow)*2.0*vec3(0.8);
-	// bgCol += 0.5*vec3(0.8)*(horizonPow);
-	// bgCol += sun*(sunD+pow( sp, max(128.0, abs(bgLight.y)*512.0) ));
-	// bgCol += vec3(0.4,0.2,0.15)*(pow( sp, 8.0) + pow( sp, max(8.0, abs(bgLight.y)*128.0) ));
-    // bgCol *= mix(vec3(0.7, 0.85, 0.95), vec3(1.0, 0.45, 0.1), scattering);
-    // bgCol *= 1.0 - clamp(bgLight.y*3.0, 0.0, 0.6);
-	return vec3(.9);
+	daytime.y += 0.2 * rd.y;
+
+	float cloudHeight = 10.0;
+	// ro.y + rd.y * t = cloudHeight
+	float t = clamp((cloudHeight - ro.y)/rd.y, 0.0, 10.0);
+
+	vec2 p = (t * rd + ro).xz;
+
+	float cloud = fbm_norm(2.0*p);
+	daytime = mix(vec3(0.8), daytime, cloud);
+
+	return daytime;
 }
 
 // https://iquilezles.org/articles/rmshadows/

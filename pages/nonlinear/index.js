@@ -1,5 +1,9 @@
 const regl = require("regl")();
 
+// A while back, I saw someone presenting about nonlinear systems
+// at a small undergraduate conference. You know Strogatz stuff.
+// That was enough to spark my eventual interest in creating these animations
+
 const draw = regl({
     uniforms: {
         iTime: (ctx) => ctx.time,

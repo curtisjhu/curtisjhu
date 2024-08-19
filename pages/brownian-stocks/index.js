@@ -1,39 +1,32 @@
-// References
-// https://www.shadertoy.com/view/WlVGzK
-// https://rreusser.github.io/magnet/
-
 const regl = require("regl")();
+
+// Statistical Physics have been the early influences for modeling financial assets.
+
+var values = regl.buffer([[-1, -1], [1, 0.5]]);
+function updateValues() {
+	// values += Math.random();
+}
 
 const draw = regl({
     uniforms: {
         iTime: (ctx) => ctx.time,
     },
     attributes: {
-        position: regl.buffer([
-            [-1, -1],
-            [1, 1],
-            [-1, 1],
-            [1, 1],
-            [-1, -1],
-            [1, -1],
-        ]),
+        position: regl.prop("data"),
     },
-    count: 6,
+	count: (cx, props) => props.data.length,
+	primitive: "lines",
     vert: `
     precision mediump float;
     attribute vec2 position;
-	varying vec2 uv;
     void main() {
-		uv = position;
     	gl_Position = vec4(position, 0, 1);
     }`,
     frag: `
     precision mediump float;
-	varying vec2 uv;
 	uniform float iTime;
     void main() {
-
-		vec3 col = 0.5 + 0.5*cos(iTime+uv.xyx+vec3(0,2,4));
+		vec3 col = vec3(sin(iTime));
       	gl_FragColor = vec4(col, 1);
     }`,
 });
@@ -44,5 +37,8 @@ regl.frame(({ time }) => {
         depth: 1,
     });
 
-    draw();
+	updateValues();
+    draw({
+		data: values
+	});
 });

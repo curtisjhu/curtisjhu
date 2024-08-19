@@ -47,9 +47,6 @@ functionPlot({
   grid: true,
   data: [
     {
-      fn: "",
-    },
-    {
       fn: "x",
     }
   ]

@@ -1,6 +1,6 @@
 const { utils } = require("./utils");
-
 const regl = require("regl")();
+
 
 const draw = regl({
     uniforms: {
