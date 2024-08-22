@@ -1,0 +1,6 @@
+{
+	"title": "Geometric Brownian Motion | funnyscar graphics",
+	"description": "Exploring how we model financial assets in the stock market",
+	"image": "https://bucket.funnyscar.com/brownian-stocks/brownian-stocks.png",
+	"keywords": "finance, math, mathematical finance, p5, js, statistical physics, diffusion"
+}
