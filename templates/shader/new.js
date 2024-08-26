@@ -1,5 +1,22 @@
 const regl = require("regl")();
 
+const { Pane } = require("tweakpane")
+const TweakpaneLatexPlugin = require("tweakpane-latex");
+
+const pane = new Pane({
+	title: "Example Title"
+});
+pane.registerPlugin(TweakpaneLatexPlugin);
+
+pane.addBlade({
+	view: "latex",
+	markdown: true,
+	content: `
+Hello world
+$$ x^2$$
+`
+})
+
 const draw = regl({
     uniforms: {
         iTime: (ctx) => ctx.time,
