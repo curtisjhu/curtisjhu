@@ -24,10 +24,7 @@ pane.addBlade({
   content: `
 # Edge of Space Generation
 
-Point of View: you are an astronaut on the ISS.
-
-Still a work in progress. There are a lot of details to fix.
-
+Point of View: you are an astronaut flying over a planet.
 `,
   border: false,
   markdown: true,
@@ -38,18 +35,21 @@ var sp = new URLSearchParams(window.location.search);
 console.log(sp.get("seed"))
 const PARAMS = {
 	seed: sp.get("seed") || 1.3,
-    numPoints: 4000
+    numPoints: 4000,
+	speed: 0.03
 }
-pane.addInput(PARAMS, "seed")
+pane.addBinding(PARAMS, "seed")
     .on("change", (ev) => {
-        if (sp.has("seed")) {
-            sp.set("seed", ev.value);
-            window.location.search = sp.toString();
-        } else {
-            window.location.href += "?seed="+ev.value
+		if (ev.last) {
+			if (sp.has("seed")) {
+				sp.set("seed", ev.value);
+				window.location.search = sp.toString();
+			} else {
+				window.location.href += "?seed="+ev.value
+			}
         }
 })
-
+pane.addBinding(PARAMS, "speed");
 
 
 const drawShape = regl({
@@ -57,7 +57,8 @@ const drawShape = regl({
 		iTime: (context, props) => context.time,
 		propRatio: (context, props) => {
 			return context.viewportHeight / context.viewportWidth;
-		}
+		},
+		speed: regl.prop("speed")
 	},
 	
 	attributes: {
@@ -80,10 +81,14 @@ precision mediump float;
 varying vec2 fragCoord;
 uniform float iTime;
 uniform float propRatio;
+uniform float speed;
 
 #define SEED ${parseFloat(PARAMS.seed).toFixed(4)}
 #define CAMERADIST .8
+
+// lower is higher up geographically
 #define WATERLINE 3.8
+#define ICELINE 2.5
 
 ${utils}
 
@@ -182,7 +187,7 @@ void main() {
     vec2 uv = fragCoord;
     uv.y = fragCoord.y*propRatio;
     
-    float time = .03 * iTime;
+    float time = speed * iTime;
     mat3 rotate = mat3(
 						1.0, 0.0, 0.0,
 						vec3(0.0, cos(time), sin(time)),
@@ -190,11 +195,10 @@ void main() {
                       );
     vec3 ro = vec3(0.0, 1.0, CAMERADIST);
     vec3 rd = normalize( vec3( uv, -2.0) );
-    vec3 light = ro*1.4;
+    vec3 light = vec3(0.0, 0.0, -1.2*CAMERADIST);
 
     ro *= rotate;
     rd *= rotate;
-	light *= rotate;
     
     float t = iSphere(ro, rd, sphere);
 	// t *= smoothstep(0.0, 1.0, 5.0*t + 0.5);
@@ -207,6 +211,11 @@ void main() {
     vec4 col = mix( vec4(108./255.,146./255.,192./255.,1.), vec4(59./255., 96./255., 149./255., 1.0), smoothstep(0.0, r_k, dr));
 	col = mix(col, vec4(0.0, 0.0, 0.0, 1.0), smoothstep(r_k, r_k + 0.3, dr));
 
+	// sun
+	// float sun = clamp( dot(light-ro, rd), 0.0, 1.0 );
+	// sun = 1.0 + -exp(-pow(sun, 8.0));
+	// col = mix(vec4(1.0), col, sun);
+
 	if (t > 0.0) {
 		
 		// if we hit sphere
@@ -215,28 +224,28 @@ void main() {
 		float height = map(pos - sphere.xyz);
 		vec3 norm = nEarth(pos);
 		
-		float intensity = 0.4*dot(light, norm);
-		
-		
-		// inverse square law
-		float r = length(light - pos);
-		intensity = intensity / (r*r);
+		float nLight = dot(normalize(light), normalize(norm));
+		// spread it out a bit more
+		nLight = 1.2*nLight;
 
-		// rgba(57,78,71,255)
-		vec3 c = intensity*mix(vec3(52./255., 165./255., 111./255.), vec3(57./255., 72./255., 71./255.), smoothstep(0.0, 1.7, height));
+		float nYou = dot(normalize(rd), norm);
+		float intensity = nLight;
+
+		// landmass
+		vec3 c = intensity*mix(vec3(147./255., 127./255., 111./255.), vec3(41./255., 65./255., 50./255.), smoothstep(WATERLINE+0.1, WATERLINE-0.6, height));
 		col = vec4(c, 1.0);
 
 		// water
-		// water is shinier
-		intensity *= smoothstep(0.2, 1.4, height) + 1.0;
-		col = mix(vec4(21./255.,43./255.,83./255., 1.), col, smoothstep(0.0, 0.2, abs(height - WATERLINE)));
+		col = mix(vec4(9./255.,20./255.,38./255., 1.), col, smoothstep(0.0, 0.2, abs(height - WATERLINE)));
+
+		// icy mountains
+		col = mix(vec4(.8), col, smoothstep(0.0, 0.6, abs(height - ICELINE)));
 
 		// clouds is just opacity on fbm
 		// intensity -> 0, opacity *= 1
 		// intensity -> large, opacity *= fbm...
-		// col.a = mix(1.0, fbm(pos) + fbm(3.0 * pos), smoothstep(0.3, 0.9, intensity));
+		// col.a = mix(1.0, fbm(3.*pos) + fbm(6.0 * pos), smoothstep(0.3, 0.9, intensity));
 		// col.a *= fbm(2.0*pos) + fbm(4.0*pos);
-
 
 		col.rgb *= intensity;
 	}
@@ -247,6 +256,8 @@ void main() {
 })
 
 regl.frame((context) => {
-	drawShape();
+	drawShape({
+		speed: PARAMS.speed
+	});
 })
 
