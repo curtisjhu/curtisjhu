@@ -1,0 +1,6 @@
+{
+	"title": "Learning Taylor Series with Backprop",
+	"description": "How can train the backprop algorithm to learn the coefficients of a Taylor series?",
+	"image": "https://bucket.funnyscar.com/nn/taylor-series/nn-taylor-series.png",
+	"keywords": "ML, machine learning, backprop, backpropagation, regl"
+}
