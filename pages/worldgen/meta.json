@@ -1,6 +1,6 @@
 {
 	"title": "Terrain Generation | funnyscar graphics",
 	"description": "Exploring what it takes to create a pseudo-realistic terrain",
-	"image": "https://bucket.funnyscar.com/worldgen/worldgen.png",
+	"image": "https://graphics.funnyscar.com/worldgen/worldgen.png",
 	"keywords": "regl, terrain generation, curtisjhu, funnyscar"
 }

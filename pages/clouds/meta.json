@@ -1,6 +1,6 @@
 {
 	"title": "Clouds | funnyscar graphics",
 	"description": "Creating volumetric clouds with fractional brownian motion. Based on iquillez's technique.",
-	"image": "https://bucket.funnyscar.com/clouds/clouds.png",
+	"image": "https://graphics.funnyscar.com/clouds/clouds.png",
 	"keywords": "clouds, shader, regl"
 }
