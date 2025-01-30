@@ -1,0 +1,6 @@
+{
+	"title": "image segmentation | funnyscar graphics",
+	"description": "Let's visualize the pixels of an image in a 3D space and cluster them using k-means algorithm.",
+	"image": "https://bucket.funnyscar.com/nn/image-k-means.png",
+	"keywords": "regl, computer vision, segmentation, clustering, k meanst "
+}
