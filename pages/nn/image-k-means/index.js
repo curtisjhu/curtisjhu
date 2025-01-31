@@ -34,7 +34,7 @@ pane.addBinding(PARAMS, "image", {
 		"dylan": "./dylan.jpg",
 		"abbey road": "./abbey-road.jpg",
 		"mars rover": "./mars-rover.jpg",
-		"sirens": "./sirens.jpg",
+		"last supper": "./last-supper.jpg",
 	}
 }).on("change", (ev) => {
 	instance.setup();
